@@ -1,0 +1,69 @@
+{
+ "spec": "/tmp/work10_tritongue/robots/tritongue/spec.json",
+ "rendered_at": 1795058238.362271,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "roller",
+  "claw_l",
+  "claw_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    9.5,
+    -4.5
+   ],
+   "to": [
+    -4.5,
+    -14.5,
+    -5.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -14.5,
+    -5.0
+   ],
+   "to": [
+    -16.5,
+    -5.5,
+    4.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    15.5,
+    6.5,
+    4.5
+   ],
+   "to": [
+    5.5,
+    -28.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    6.5,
+    4.5
+   ],
+   "to": [
+    -5.5,
+    -28.0,
+    0.0
+   ]
+  }
+ }
+}

@@ -1,0 +1,109 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 80,
+  "width": 70,
+  "height": 32,
+  "ramp": 0,
+  "side": [
+   [
+    -40,
+    4
+   ],
+   [
+    40,
+    4
+   ],
+   [
+    40,
+    20
+   ],
+   [
+    0,
+    34
+   ],
+   [
+    -40,
+    34
+   ]
+  ]
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 16,
+  "width": 7,
+  "y": [
+   -28
+  ]
+ },
+ "colors": {
+  "body": "#d8322a",
+  "wheel": "#3a3a3e",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  1
+ ],
+ "name": "tritongue",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "cyl": [
+    15,
+    50
+   ],
+   "at": [
+    0,
+    34,
+    30
+   ],
+   "axis": "x",
+   "weapon": "lifter",
+   "pivot": [
+    32,
+    26
+   ],
+   "id": "roller",
+   "color": "#f2e6dc"
+  },
+  {
+   "side": [
+    [
+     20,
+     2
+    ],
+    [
+     40,
+     2
+    ],
+    [
+     84,
+     0
+    ],
+    [
+     80,
+     8
+    ],
+    [
+     50,
+     16
+    ],
+    [
+     20,
+     18
+    ]
+   ],
+   "x": [
+    30,
+    36
+   ],
+   "mirror": true,
+   "kind": "wedge",
+   "id": "claw",
+   "color": "#d8322a"
+  }
+ ]
+}
