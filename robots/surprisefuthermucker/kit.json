@@ -1,0 +1,55 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 74,
+  "width": 58,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 13,
+  "width": 8,
+  "y": [
+   -26,
+   26
+  ]
+ },
+ "colors": {
+  "body": "#f08a1c",
+  "wheel": "#f07a1c",
+  "weapon": "#3a3d44",
+  "fork": "#c9cdd3"
+ },
+ "textured": [],
+ "name": "surprisefuthermucker",
+ "weapon": {
+  "kind": "disc",
+  "radius": 17,
+  "width": 4,
+  "y": 6,
+  "teeth": 2,
+  "z": 20,
+  "axis": "x",
+  "x": 8
+ },
+ "macros": [
+  {
+   "box": [
+    40,
+    50,
+    2
+   ],
+   "at": [
+    0,
+    -10,
+    30
+   ],
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "id": "lid",
+   "color": "#e6e6e0"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 4,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "surprisefuthermucker.aws63.webp"
+ ],
+ "view": {
+  "surprisefuthermucker.aws63.webp": "front_right_iso"
+ },
+ "view_source": {
+  "surprisefuthermucker.aws63.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
+ }
+}
