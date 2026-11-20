@@ -1,0 +1,85 @@
+{
+ "robot_type": "lifter",
+ "cluster": 2,
+ "body": {
+  "length": 70,
+  "width": 84,
+  "height": 22,
+  "ramp": 0,
+  "plan": "trapezoid",
+  "front_width": 30
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -24
+  ]
+ },
+ "colors": {
+  "body": "#2a2a34",
+  "wheel": "#1c1c1f",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "crop": {
+  "0": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "1": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ },
+ "name": "slice and dice",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    22,
+    34,
+    10
+   ],
+   "at": [
+    0,
+    48,
+    7
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    30,
+    6
+   ],
+   "id": "clamp",
+   "color": "#1c1c1f"
+  },
+  {
+   "sphere": 4,
+   "at": [
+    -10,
+    10,
+    26
+   ],
+   "color": "#f4f4f4",
+   "id": "eye_l"
+  },
+  {
+   "sphere": 4,
+   "at": [
+    10,
+    10,
+    26
+   ],
+   "color": "#f4f4f4",
+   "id": "eye_r"
+  }
+ ]
+}

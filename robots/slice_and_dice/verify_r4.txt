@@ -1,0 +1,95 @@
+BLOCKERS: 12
+  [ran] integrity 0.11s
+  [proxy] wiring 1.66s
+  [ran] mass 0.00s
+  [proxy] interference 14.48s
+  [ran] connections 1.92s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.04s
+  [ran] shape 0.39s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.92s
+  [ran] process 0.00s
+  [ran] electrical 0.65s
+  [ran] combat 0.10s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.11s
+  [ran] bom 0.01s
+  [ran] wire_review 0.39s
+  [ran] fastener_record 0.00s
+  [ran] likeness 13.44s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.41s
+  [ran] dfm 0.16s
+  [ran] realworld 1.04s
+slice and dice: ok=False 12 blockers in 12 root causes, mass 103.1/75 g
+1. [integrity.solids] `eye_l` has 1 closed solid(s) and 2 open/invalid shell(s), expected 1 (268 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | eye_l: x -14.00..-6.00  y 6.00..14.00  z 11.00..19.00  size 8.00 x 8.00 x 8.00 mm
+   |   centre (-10.00, 10.00, 15.00), volume 268.1 mm3
+   |   overlap allowed `chassis` 0.93 mm (allowed inf)
+   |   gap to `el_rx_esc` 1.37 mm
+2. [integrity.solids] `eye_r` has 1 closed solid(s) and 2 open/invalid shell(s), expected 1 (268 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | eye_r: x 6.00..14.00  y 6.00..14.00  z 11.00..19.00  size 8.00 x 8.00 x 8.00 mm
+   |   centre (10.00, 10.00, 15.00), volume 268.1 mm3
+   |   overlap allowed `chassis` 0.93 mm (allowed inf)
+   |   gap to `el_rx_esc` 1.37 mm
+3. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [mass.over] 103.1 g (range 86.7 to 119.5 g) against the 75 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+5. [proxy.interference] `chassis` and `clamp` overlap by 1.38 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+   |   centre (0.00, 0.00, 2.00), volume 42799.0 mm3
+   |   OVERLAP `clamp` 1.38 mm (allowed 0.08)
+   |   overlap allowed `eye_l` 0.93 mm (allowed inf)
+   |   overlap allowed `eye_r` 0.93 mm (allowed inf)
+6. [proxy.sweep] joint `clamp`: `clamp` hits `chassis` 1.38 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint clamp` lists the closest approach to every part.
+   | clamp: x -11.00..11.00  y 31.00..65.00  z -9.00..1.00  size 22.00 x 34.00 x 10.00 mm
+   |   centre (0.00, 48.00, -4.00), volume 7480.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 30, -5.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.38 mm (allowed 0.08)
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+7. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_bat_sw` not drawn; renders/top.png: wire `w_bat_sw` not drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+8. [wire.render_count] iso.png: 6 routes vs 7 spec wires (missing ['w_bat_sw']); top.png: 6 routes vs 7 spec wires (missing ['w_bat_sw'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+9. [likeness.view] `reference/slice_and_dice.aws64.webp` is declared `front` (IoU 0.10 there) but the model matches it better from front_left_iso (elevation 45, azimuth 120) (IoU 0.77).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+10. [likeness.silhouette] `reference/slice_and_dice.aws64.webp`: best silhouette IoU 0.10 at camera front (elevation 0, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.19). Regions (photo frame, left third first) 0.20 / 0.08 / 0.00: worst = rear third. Height/length 0.29 model vs 1.01 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+11. [likeness.view] `reference/slice_and_dice.aws72.webp` is declared `front` (IoU 0.08 there) but the model matches it better from front_right_iso (elevation 45, azimuth 60) (IoU 0.77).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+12. [likeness.silhouette] `reference/slice_and_dice.aws72.webp`: best silhouette IoU 0.08 at camera front (elevation 0, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.20). Regions (photo frame, left third first) 0.00 / 0.06 / 0.18: worst = front third. Height/length 0.29 model vs 0.83 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 103.1 g of 75 g (-28.1 g margin)
+    chassis                    40.74 g  fills 33% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_act_clamp                7.50 g  fills 67% of its box
+    clamp                       7.12 g  fills 100% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    el_lesc                     3.00 g  fills 100% of its box
+    wheel_l0                    2.26 g  fills 57% of its box
+    wheel_r0                    2.26 g  fills 57% of its box
+    dt_hub_wheel_l0             0.93 g  fills 69% of its box
+    dt_hub_wheel_r0             0.93 g  fills 69% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    eye_l                       0.26 g  fills 52% of its box
+    eye_r                       0.26 g  fills 52% of its box
+    mass.over: 103.1 g (range 86.7 to 119.5 g) against the 75 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 15 miss

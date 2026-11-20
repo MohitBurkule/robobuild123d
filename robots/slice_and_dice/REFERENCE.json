@@ -1,0 +1,34 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "slice_and_dice.aws64.webp",
+  "slice_and_dice.aws72.webp"
+ ],
+ "crop": {
+  "slice_and_dice.aws64.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "slice_and_dice.aws72.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ },
+ "view": {
+  "slice_and_dice.aws64.webp": "front",
+  "slice_and_dice.aws72.webp": "front"
+ },
+ "elevation": {
+  "slice_and_dice.aws64.webp": 70,
+  "slice_and_dice.aws72.webp": 70
+ }
+}
