@@ -1,0 +1,124 @@
+BLOCKERS: 64
+  [ran] integrity 0.03s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.70s
+  [ran] connections 0.10s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.24s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.49s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.04s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.33s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.02s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.03s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+rbmk: ok=False 64 blockers in 55 root causes, mass 268.1/225 g
+1. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -36.90..-33.10  y -32.40..-28.60  z 25.60..27.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-35.00, -30.50, 26.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 33.10..36.90  y -32.40..-28.60  z 25.60..27.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (35.00, -30.50, 26.30), volume 15.9 mm3
+2. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 195160.0 mm3
+   |   OVERLAP `motor_l` 2.34 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 2.34 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_bar2` 1.78 mm (allowed 0.08)
+3. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4860.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+4. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `motor_l`. (+1 consequences)
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4860.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_shaft_weapon`. (+1 consequences)
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4860.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+6. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_hubw_weapon`. (+1 consequences)
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4860.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+7. [proxy.sweep] joint `bar2`: `bar2` hits `chassis` 1.46 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint bar2` lists the closest approach to every part. (+1 consequences)
+   | bar2: x -79.50..-0.50  y 14.00..34.00  z -19.12..15.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (-40.00, 24.00, -2.00), volume 5040.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, -4.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 1.46 mm (allowed 0.08)
+8. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -36.90..-33.10  y -32.40..-28.60  z 25.60..27.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-35.00, -30.50, 26.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 195160.0 mm3
+9. [mass.over] 268.1 g (range 224.6 to 311.6 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+10. [proxy.interference] `chassis` and `weapon` overlap by 1.46 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 195160.0 mm3
+   |   OVERLAP `motor_l` 2.34 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 2.34 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_bar2` 1.78 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `motor_l` overlap by 2.34 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 195160.0 mm3
+   |   OVERLAP `motor_l` 2.34 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 2.34 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_bar2` 1.78 mm (allowed 0.08)
+12. [proxy.interference] `chassis` and `motor_r` overlap by 2.34 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 195160.0 mm3
+   |   OVERLAP `motor_l` 2.34 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 2.34 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_bar2` 1.78 mm (allowed 0.08)
+... 43 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 268.1 g of 225 g (-43.1 g margin)
+    chassis                   185.79 g  fills 91% of its box  <- solid block? a tub should be a shell
+    weapon                     38.39 g  fills 9% of its box
+    dt_hubw_weapon             13.35 g  fills 79% of its box
+    dt_shaft_bar2               8.84 g  fills 79% of its box
+    bar2                        4.80 g  fills 9% of its box
+    motor_l                     4.79 g  fills 79% of its box
+    motor_r                     4.79 g  fills 79% of its box
+    dt_shaft_weapon             4.67 g  fills 79% of its box
+    skid_l                      0.57 g  fills 100% of its box
+    skid_r                      0.57 g  fills 100% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    mass.over: 268.1 g (range 224.6 to 311.6 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 3 hit / 0 miss, group 0 hit / 31 miss, inside 7 hit / 6 miss, likeness 3 hit / 0 miss, min_gap 48 hit / 26 miss, overlap 176 hit / 151 miss, part_check 2 hit / 0 miss, part_geom 13 hit / 0 miss, ray 7 hit / 58 miss

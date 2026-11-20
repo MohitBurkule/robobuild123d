@@ -1,0 +1,20 @@
+{
+ "rbmk.aws71.webp": {
+  "view": "75,25~",
+  "azimuth": 75.0,
+  "elevation": 40.0,
+  "iou": 0.691
+ },
+ "rbmk.aws74.webp": {
+  "view": "80,12~",
+  "azimuth": 80.0,
+  "elevation": 12.0,
+  "iou": 0.651
+ },
+ "rbmk.aws76.webp": {
+  "view": "130,23~",
+  "azimuth": 160.0,
+  "elevation": 16.0,
+  "iou": 0.616
+ }
+}

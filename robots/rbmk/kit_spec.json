@@ -1,0 +1,164 @@
+{
+ "name": "rbmk",
+ "profile": "aws2025",
+ "robot_type": "horizontal_spinner",
+ "locomotion": "walker",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -32.0,
+       0.0
+      ],
+      [
+       32.0,
+       0.0
+      ],
+      [
+       32.0,
+       1.5
+      ],
+      [
+       32.0,
+       18.0
+      ],
+      [
+       -32.0,
+       18.0
+      ]
+     ],
+     "height": 56.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -8.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#cfe0da",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "steel",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -36.0,
+       -3.6
+      ],
+      [
+       -33.0,
+       -6.0
+      ],
+      [
+       30.0,
+       -6.0
+      ],
+      [
+       36.0,
+       -1.2
+      ],
+      [
+       36.0,
+       3.6
+      ],
+      [
+       33.0,
+       6.0
+      ],
+      [
+       -30.0,
+       6.0
+      ],
+      [
+       -36.0,
+       1.2
+      ]
+     ],
+     "height": 3.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0.0,
+    16.0,
+    22.0
+   ],
+   "rot": [
+    0.0,
+    -20.0,
+    0.0
+   ],
+   "color": "#1c1c1f",
+   "weapon": {
+    "kind": "bar",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 2,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "pivot": [
+     0.0,
+     16.0,
+     22.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": []
+}

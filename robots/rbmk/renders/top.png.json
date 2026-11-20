@@ -1,0 +1,119 @@
+{
+ "spec": "/tmp/work10_rbmk/robots/rbmk/spec.json",
+ "rendered_at": 1795089968.3894494,
+ "bodies": [
+  "chassis",
+  "base_plate",
+  "lid",
+  "weapon_motor_r",
+  "weapon_r",
+  "lock_pin_r",
+  "weapon_motor_l",
+  "weapon_l",
+  "lock_pin_l",
+  "ins_t0",
+  "ins_b0",
+  "ins_t1",
+  "ins_b1",
+  "ins_t2",
+  "ins_b2",
+  "ins_t3",
+  "ins_b3",
+  "roller_axle",
+  "roller_r",
+  "roller_l",
+  "el_battery",
+  "el_rx",
+  "el_wesc_r",
+  "el_wesc_l",
+  "el_switch",
+  "lid_s0",
+  "base_s0",
+  "lid_s1",
+  "base_s1",
+  "lid_s2",
+  "base_s2",
+  "lid_s3",
+  "base_s3",
+  "sw_s0",
+  "sw_s1",
+  "mot_r0",
+  "mot_r1",
+  "mot_l0",
+  "mot_l1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.0,
+    1.0,
+    11.3
+   ],
+   "to": [
+    -3.0,
+    -25.0,
+    8.85
+   ]
+  },
+  "w_sw_wesc_r": {
+   "from": [
+    0.0,
+    -25.0,
+    8.85
+   ],
+   "to": [
+    18.9,
+    -0.1999999999999993,
+    8.35
+   ]
+  },
+  "w_ph_r": {
+   "from": [
+    15.9,
+    21.8,
+    8.35
+   ],
+   "to": [
+    31.3379275059167,
+    12.0,
+    10.000254223357919
+   ]
+  },
+  "w_ph_l": {
+   "from": [
+    -15.9,
+    21.8,
+    8.35
+   ],
+   "to": [
+    -31.337927505916703,
+    12.0,
+    10.000254223357917
+   ]
+  },
+  "w_rx_wesc_r": {
+   "from": [
+    0.0,
+    27.3,
+    8.35
+   ],
+   "to": [
+    12.899999999999999,
+    -0.1999999999999993,
+    8.35
+   ]
+  },
+  "w_rx_wesc_l": {
+   "from": [
+    -5.0,
+    27.3,
+    8.35
+   ],
+   "to": [
+    -18.900000000000002,
+    -0.1999999999999993,
+    8.35
+   ]
+  }
+ }
+}
