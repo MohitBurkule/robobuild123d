@@ -1,0 +1,101 @@
+{
+ "photo": "team_phyte_s_little_sytes.aws76.webp",
+ "evidence": [
+  "photo mask",
+  "monocular depth (Depth Anything V2 small)"
+ ],
+ "declared_view": "front_left_iso",
+ "camera": {
+  "azimuth": 109.68,
+  "elevation": -1.46,
+  "roll": 16.96,
+  "distance_mm": 288.7,
+  "intrinsics_px": {
+   "fx": 5251.4,
+   "fy": 5251.4,
+   "cx": 1369.0,
+   "cy": 453.1,
+   "width": 2626,
+   "height": 1341,
+   "fov_deg_long_side": 28.1
+  },
+  "camera_position_mm": [
+   -97.2,
+   271.7,
+   -7.3
+  ],
+  "robot_in_camera_4x4": [
+   [
+    -0.90314,
+    -0.31516,
+    0.29157,
+    -0.0
+   ],
+   [
+    -0.26643,
+    -0.12116,
+    -0.95621,
+    -0.0
+   ],
+   [
+    0.33668,
+    -0.94127,
+    0.02545,
+    288.65624
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "view_string": "110,-1!"
+ },
+ "scores": {
+  "iou": 0.728,
+  "depth_corr": 0.68
+ },
+ "confidence": "ambiguous",
+ "runner_up_loss_gap": 0.039,
+ "alternatives": [
+  {
+   "azimuth": 105.4,
+   "elevation": -2.2,
+   "loss": 0.386,
+   "iou": 0.72,
+   "depth_corr": 0.696
+  },
+  {
+   "azimuth": 301.5,
+   "elevation": 15.6,
+   "loss": 0.424,
+   "iou": 0.702,
+   "depth_corr": 0.64
+  },
+  {
+   "azimuth": 99.8,
+   "elevation": 18.4,
+   "loss": 0.569,
+   "iou": 0.454,
+   "depth_corr": 0.932
+  },
+  {
+   "azimuth": 261.2,
+   "elevation": 35.8,
+   "loss": 0.638,
+   "iou": 0.408,
+   "depth_corr": 0.87
+  }
+ ],
+ "model_bbox_centre_mm": [
+  -0.0,
+  5.2,
+  14.0
+ ],
+ "assumptions": [
+  "robot flat on floor",
+  "square pixels",
+  "spec articulation as built"
+ ]
+}

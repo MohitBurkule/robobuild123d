@@ -1,0 +1,28 @@
+{
+ "hypothesis": "wedge",
+ "name": "Team Phyte's Little Sytes",
+ "shape": "box",
+ "outline": [
+  [
+   -70,
+   -57
+  ],
+  [
+   70,
+   -57
+  ],
+  [
+   70,
+   57
+  ],
+  [
+   -70,
+   57
+  ]
+ ],
+ "taper": 6,
+ "y0": -57,
+ "y1": 57,
+ "zb": -8,
+ "zt": 8
+}

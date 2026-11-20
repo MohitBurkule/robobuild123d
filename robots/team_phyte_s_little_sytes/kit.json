@@ -1,0 +1,143 @@
+{
+ "robot_type": "wedge",
+ "cluster": 2,
+ "body": {
+  "length": 96,
+  "width": 112,
+  "height": 30,
+  "ramp": 0,
+  "side": [
+   [
+    -42,
+    1
+   ],
+   [
+    52,
+    1
+   ],
+   [
+    54,
+    3
+   ],
+   [
+    6,
+    7
+   ],
+   [
+    -18,
+    15
+   ],
+   [
+    -30,
+    31
+   ],
+   [
+    -42,
+    31
+   ]
+  ]
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 10,
+  "width": 9,
+  "y": [
+   -34
+  ],
+  "outside": false,
+  "x": 44
+ },
+ "colors": {
+  "body": "#1f5a38",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     -42,
+     1
+    ],
+    [
+     34,
+     1
+    ],
+    [
+     -8,
+     26
+    ],
+    [
+     -42,
+     36
+    ]
+   ],
+   "x": [
+    54,
+    57
+   ],
+   "id": "fin",
+   "mirror": true,
+   "color": "#1f5a38"
+  },
+  {
+   "box": [
+    104,
+    3,
+    2
+   ],
+   "at": [
+    0,
+    53,
+    2
+   ],
+   "kind": "wedge",
+   "id": "lip",
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#cfd8d4"
+  },
+  {
+   "box": [
+    70,
+    14,
+    6
+   ],
+   "at": [
+    0,
+    -34,
+    33
+   ],
+   "id": "electronics_tray",
+   "color": "#2a2c30"
+  },
+  {
+   "side": [
+    [
+     -44,
+     30
+    ],
+    [
+     -28,
+     30
+    ],
+    [
+     -40,
+     48
+    ]
+   ],
+   "x": [
+    50,
+    57
+   ],
+   "mirror": true,
+   "id": "ear",
+   "color": "#1f5a38"
+  }
+ ],
+ "name": "team phyte s little sytes",
+ "weapon": {
+  "kind": "none"
+ }
+}
