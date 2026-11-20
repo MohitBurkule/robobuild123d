@@ -15,7 +15,8 @@ inner tier sees them too.
 - fastener.lock           machine screws into metal (nut, metal part) on a rotating or motor joint vibrate loose: they
                           need `lock: nyloc | threadlock | thread_forming | locknut | safety_wire`.
 - battery.armour_gap      LiPo surface closer than BATTERY_GAP_MM to the outer envelope: a hit dents armour into it.
-- battery.rotor_gap       LiPo within BATTERY_ROTOR_MM of a revolved rotor volume.
+- battery.rotor_gap       LiPo within BATTERY_ROTOR_MM of a revolved rotor volume (a hinged weapon: only the volume
+                          it sweeps over its declared joint range, see arm_sweep).
 - heat.neighbour          battery / ESC / receiver touching a motor can (heat soak; ESC thermal cut-out, LiPo puff).
 - rf.antenna              receiver whose every line out ends on conductive armour (Faraday cage: failsafe trips).
 - led.visible             some power indicator (part kind `led`, else the receiver) visible from outside: judges and
@@ -30,7 +31,7 @@ import numpy as np
 
 from ..finding import BLOCKER, WARNING, fail, note, ok
 from ._review import fastener_rotates, rotating, x
-from .wire_review import _route_points, bundle_radius, enclosed, rotor_groups, swept_bands, band_dist
+from .wire_review import _route_points, bundle_radius, enclosed, rotor_groups, rotor_sweeps
 from .wiring import _from, default_awg, wire_od
 
 G = "realworld"
@@ -320,11 +321,7 @@ def battery_checks(ctx):
     r, w = ctx.r, ctx.world
     out = []
     hull = shell_hull(ctx)
-    bands = []
-    for grp, piv, ax, ids in rotor_groups(r.spec, w):
-        bs = [b for b in (w.body(i) for i in ids) if b is not None and b.mesh is not None and len(b.mesh.faces)]
-        if bs:
-            bands.append((grp, piv, ax, swept_bands(bs, piv, ax)))
+    sweeps = rotor_sweeps(r.spec, w)
     for p in r.spec.parts:
         if p.kind != "battery" or p._extra.get("exposed"):
             continue
@@ -340,11 +337,13 @@ def battery_checks(ctx):
                                  f"`{p.id}` pokes {-gap:.1f} mm outside the armour envelope; nothing protects it there."))
                            .on(p.id).expect(f">= {BATTERY_GAP_MM:g} mm", f"{gap:.1f} mm")
                            .fix("Move it inward, add foam / a thicker wall in front of it."))
-        for grp, piv, ax, bd in bands:
-            g = float((band_dist(P, piv, ax, bd)).min())
+        for grp, piv, ax, ids, sw in sweeps:
+            # vertices alone miss a face or edge of the cell that reaches into a limited (sector) sweep
+            Pb = np.vstack([P, b.surface(0.5)[0]]) if hasattr(sw, "angles") else P
+            g = float(sw.dist(Pb, cap=BATTERY_ROTOR_MM + 2.0).min())
             if g < BATTERY_ROTOR_MM:
-                out.append(fail("battery.rotor_gap", G, BLOCKER, "LiPo next to a spinning part",
-                                f"`{p.id}` is {g:.1f} mm from the volume swept by `{grp}`.").on(p.id, grp)
+                out.append(fail("battery.rotor_gap", G, BLOCKER, "LiPo next to a moving weapon or wheel",
+                                f"`{p.id}` is {g:.1f} mm from the volume swept by `{grp}` ({sw.label()}).").on(p.id, grp)
                            .expect(f">= {BATTERY_ROTOR_MM:g} mm", f"{g:.1f} mm").fix("Move the battery or add a wall."))
     return out
 
