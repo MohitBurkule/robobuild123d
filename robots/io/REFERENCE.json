@@ -1,0 +1,18 @@
+{
+ "robot_type": "flipper",
+ "wheels": 2,
+ "weapon": {
+  "kind": "flipper",
+  "axis": "x"
+ },
+ "photos": [
+  "io.aws63.webp"
+ ],
+ "mask_mode": {},
+ "view": {
+  "io.aws63.webp": "front"
+ },
+ "elevation": {
+  "io.aws63.webp": 45
+ }
+}

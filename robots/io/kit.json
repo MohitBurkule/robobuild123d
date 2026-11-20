@@ -1,0 +1,57 @@
+{
+ "robot_type": "flipper",
+ "body": {
+  "length": 90,
+  "width": 80,
+  "height": 20,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 10,
+  "width": 8,
+  "y": [
+   -25
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#e8c81c",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "textured": [
+  0
+ ],
+ "name": "io",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    60,
+    112,
+    12
+   ],
+   "at": [
+    0,
+    5,
+    48
+   ],
+   "weapon": "flipper",
+   "pivot": [
+    40,
+    20
+   ],
+   "id": "flipper",
+   "color": "#8a8d92",
+   "rot": [
+    32,
+    0,
+    0
+   ]
+  }
+ ]
+}
