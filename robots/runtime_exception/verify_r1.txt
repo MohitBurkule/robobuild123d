@@ -1,0 +1,96 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.67s
+  [ran] connections 0.01s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.14s
+  [ran] dynamics 0.01s
+  [ran] strength 0.01s
+  [ran] printability 0.41s
+  [ran] process 0.02s
+  [ran] electrical 0.01s
+  [ran] combat 0.06s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.67s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+runtime exception: ok=False 14 blockers in 14 root causes, mass 194.3/225 g
+1. [proxy.interference] `chassis` and `wheel_l0` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -40.00..40.00  z -11.00..11.00  size 92.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 0.00), volume 154880.0 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   gap to `spine` 0.50 mm
+2. [proxy.interference] `chassis` and `wheel_r0` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -40.00..40.00  z -11.00..11.00  size 92.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 0.00), volume 154880.0 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   gap to `spine` 0.50 mm
+3. [connection.floating] `scoop` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 4.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | scoop: x -58.00..58.00  y 44.00..47.00  z -13.00..25.00  size 116.00 x 3.00 x 38.00 mm
+   |   centre (0.00, 45.50, 6.00), volume 11628.0 mm3
+   | chassis: x -46.00..46.00  y -40.00..40.00  z -11.00..11.00  size 92.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 0.00), volume 154880.0 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+4. [connection.floating] `spine` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | spine: x -10.00..10.00  y -35.00..25.00  z 11.50..14.50  size 20.00 x 60.00 x 3.00 mm
+   |   centre (0.00, -5.00, 13.00), volume 3600.0 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -46.00..46.00  y -40.00..40.00  z -11.00..11.00  size 92.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 0.00), volume 154880.0 mm3
+5. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+6. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+7. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 35.00..45.00  y -35.00..-9.00  z -13.00..13.00  size 10.00 x 25.99 x 26.00 mm
+   |   centre (40.00, -22.00, 0.00), volume 5309.3 mm3
+   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
+8. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -45.00..-35.00  y -35.00..-9.00  z -13.00..13.00  size 10.00 x 25.99 x 26.00 mm
+   |   centre (-40.00, -22.00, 0.00), volume 5309.3 mm3
+   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
+9. [process.print_orientation] `spine` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | spine: x -10.00..10.00  y -35.00..25.00  z 11.50..14.50  size 20.00 x 60.00 x 3.00 mm
+   |   centre (0.00, -5.00, 13.00), volume 3600.0 mm3
+   |   gap to `chassis` 0.50 mm
+10. [electrical.receiver_supply] No receiver: no part of kind `receiver` and no combined ESC/receiver.
+   fix: Wire the receiver to an ESC with a BEC.
+11. [likeness.silhouette] `reference/runtime_exception.aws72.webp`: best silhouette IoU 0.79 at camera elevation 25 deg, azimuth 240 deg (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.78). Regions (photo frame, left third first) 0.64 / 0.86 / 0.84: worst = front third. Height/length 0.63 model vs 0.67 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+12. [likeness.silhouette] `reference/runtime_exception.aws74.webp`: best silhouette IoU 0.80 at camera elevation 25 deg, azimuth 300 deg (mirrored) (need 0.81: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.81). Regions (photo frame, left third first) 0.75 / 0.89 / 0.73: worst = rear third. Height/length 0.63 model vs 0.66 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+... 2 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 194.3 g of 225 g (+30.7 g margin)
+    chassis                   147.45 g  fills 96% of its box  <- solid block? a tub should be a shell
+    scoop                      31.40 g  fills 88% of its box  <- solid block? a tub should be a shell
+    wheel_l0                    5.42 g  fills 79% of its box
+    wheel_r0                    5.42 g  fills 79% of its box
+    spine                       3.43 g  fills 100% of its box
+    mass.may_be_over: 194.3 g (range 160.1 to 228.5 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 0 hit / 5 miss, likeness 2 hit / 0 miss, min_gap 4 hit / 8 miss, overlap 8 hit / 19 miss, part_check 0 hit / 2 miss, part_geom 5 hit / 0 miss, ray 0 hit / 25 miss

@@ -1,0 +1,74 @@
+{
+ "spec": "/tmp/work10_runtime_exception/robots/runtime_exception/spec.json",
+ "rendered_at": 1795078756.2939065,
+ "bodies": [
+  "chassis",
+  "top_plate",
+  "wheel_l0",
+  "wheel_r0",
+  "spine",
+  "scoop",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_strut_scoop",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch",
+  "fs_look_top_plate_0",
+  "fs_look_top_plate_1",
+  "fs_look_top_plate_2",
+  "fs_look_top_plate_3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.012999999999998652,
+    -10.983,
+    -5.989
+   ],
+   "to": [
+    -4.0,
+    -24.0,
+    -7.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -24.0,
+    -7.0
+   ],
+   "to": [
+    -11.987,
+    19.017,
+    -8.489
+   ]
+  },
+  "w_m1": {
+   "from": [
+    11.013,
+    27.017,
+    -8.489
+   ],
+   "to": [
+    6.100000000000001,
+    -22.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    27.017,
+    -8.489
+   ],
+   "to": [
+    -6.100000000000001,
+    -22.0,
+    0.0
+   ]
+  }
+ }
+}

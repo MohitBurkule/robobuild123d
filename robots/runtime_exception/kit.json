@@ -1,0 +1,81 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 80,
+  "width": 92,
+  "height": 22,
+  "ramp": 0,
+  "plan": "pentagon",
+  "front_width": 60,
+  "nose": 20
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 15,
+  "width": 10,
+  "y": [
+   -22
+  ],
+  "outside": false,
+  "x": 40,
+  "notch": true
+ },
+ "colors": {
+  "body": "#1f4a38",
+  "wheel": "#3a3d40",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0
+ ],
+ "name": "runtime exception",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    20,
+    60,
+    3
+   ],
+   "at": [
+    0,
+    -5,
+    26
+   ],
+   "id": "spine",
+   "color": "#16181a"
+  },
+  {
+   "front": [
+    [
+     -58,
+     0
+    ],
+    [
+     58,
+     0
+    ],
+    [
+     46,
+     26
+    ],
+    [
+     -46,
+     26
+    ]
+   ],
+   "y": [
+    44,
+    47
+   ],
+   "color": "#c9cdd3",
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "id": "scoop"
+  }
+ ]
+}
