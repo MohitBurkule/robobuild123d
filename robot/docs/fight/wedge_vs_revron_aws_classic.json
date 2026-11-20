@@ -1,0 +1,180 @@
+{
+ "robots": [
+  "Reference_2WD_wedge",
+  "Revron"
+ ],
+ "seconds": 45.0,
+ "arena": "aws_classic",
+ "wall_s": 46.0,
+ "events": [
+  [
+   2.89604999999992,
+   "out",
+   "Revron",
+   "arena",
+   0
+  ]
+ ],
+ "hits": [],
+ "outcome": {
+  "Reference_2WD_wedge": {
+   "inverted": true,
+   "stuck_inverted": true,
+   "out_of_arena": false,
+   "parts_lost": [],
+   "pos": [
+    0.175,
+    0.202,
+    0.021
+   ]
+  },
+  "Revron": {
+   "inverted": false,
+   "stuck_inverted": false,
+   "out_of_arena": false,
+   "parts_lost": [],
+   "pos": [
+    1.382,
+    0.695,
+    -0.027
+   ]
+  }
+ },
+ "peak": {
+  "Reference_2WD_wedge": {
+   "tilt_deg": 177.4,
+   "lift_mm": 43.5
+  },
+  "Revron": {
+   "tilt_deg": 167.5,
+   "lift_mm": 84.2
+  }
+ },
+ "welds": [
+  {
+   "robot": "Reference_2WD_wedge",
+   "part": "wedge",
+   "break_N": 880.0,
+   "peak_N": 499.2,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "top_panel",
+   "break_N": 880.0,
+   "peak_N": 191.6,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "fork_l",
+   "break_N": 120.0,
+   "peak_N": 57.4,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "wedgelet_l",
+   "break_N": 400.0,
+   "peak_N": 95.7,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "side_l",
+   "break_N": 1200.0,
+   "peak_N": 537.3,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "fork_r",
+   "break_N": 120.0,
+   "peak_N": 13.4,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "wedgelet_r",
+   "break_N": 400.0,
+   "peak_N": 28.7,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "side_r",
+   "break_N": 1200.0,
+   "peak_N": 304.0,
+   "broken_at": null
+  }
+ ],
+ "defaults": {
+  "Reference_2WD_wedge": [
+   "forward",
+   "strategy",
+   "drive",
+   "danger",
+   "breakable"
+  ],
+  "Revron": [
+   "breakable"
+  ]
+ },
+ "hazards": {
+  "dead": {
+   "Reference_2WD_wedge": null,
+   "Revron": null
+  },
+  "tyres": {},
+  "wires_cut": {
+   "Reference_2WD_wedge": [],
+   "Revron": []
+  },
+  "debris_live": []
+ },
+ "electric": {
+  "Reference_2WD_wedge": {
+   "battery_v": 8.29,
+   "soc": 0.991,
+   "motors": {
+    "wheel_l": {
+     "temp_c": 32.6,
+     "dead": false
+    },
+    "wheel_r": {
+     "temp_c": 31.4,
+     "dead": false
+    }
+   }
+  },
+  "Revron": {
+   "battery_v": 7.81,
+   "soc": 0.965,
+   "motors": {
+    "weapon": {
+     "temp_c": 28.6,
+     "dead": false
+    },
+    "wheel_rl": {
+     "temp_c": 33.0,
+     "dead": false
+    },
+    "wheel_fl": {
+     "temp_c": 33.0,
+     "dead": false
+    },
+    "wheel_rr": {
+     "temp_c": 32.2,
+     "dead": false
+    },
+    "wheel_fr": {
+     "temp_c": 32.3,
+     "dead": false
+    }
+   }
+  }
+ },
+ "unstable_at": null,
+ "solver_retries": 0,
+ "winner": "Reference_2WD_wedge"
+}
