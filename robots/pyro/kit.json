@@ -1,0 +1,73 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 90,
+  "width": 112,
+  "height": 36,
+  "ramp": 35,
+  "style": "twin_pods",
+  "slot": 14
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 8,
+  "y": [
+   -32
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 40,
+  "width": 4,
+  "y": 2,
+  "teeth": 2,
+  "z": 44,
+  "axis": "x"
+ },
+ "colors": {
+  "body": "#1f6a4a",
+  "wheel": "#e0e0d8",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "forks": {
+  "n": 2,
+  "length": 24,
+  "width": 10,
+  "spread": 80,
+  "tilt_deg": 8
+ },
+ "name": "pyro",
+ "macros": [
+  {
+   "cyl": [
+    10,
+    34
+   ],
+   "at": [
+    0,
+    0,
+    42
+   ],
+   "axis": "x",
+   "id": "motor",
+   "color": "#2a55c0"
+  },
+  {
+   "box": [
+    8,
+    30,
+    40
+   ],
+   "at": [
+    14,
+    -5,
+    24
+   ],
+   "mirror": true,
+   "id": "upright",
+   "color": "#1f6a4a"
+  }
+ ]
+}

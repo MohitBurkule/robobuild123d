@@ -1,0 +1,18 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "pyro.aws71.webp"
+ ],
+ "view": {
+  "pyro.aws71.webp": "front_right_iso"
+ },
+ "view_source": {
+  "pyro.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
+ }
+}
