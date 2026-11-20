@@ -1,0 +1,22 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "speed_demon.aws.71.webp",
+  "speed_demon.aws72.webp",
+  "speed_demon.aws74.webp"
+ ],
+ "view": {
+  "speed_demon.aws.71.webp": "front_left_iso",
+  "speed_demon.aws72.webp": "front_left_iso",
+  "speed_demon.aws74.webp": "front"
+ },
+ "elevation": {
+  "speed_demon.aws.71.webp": 45,
+  "speed_demon.aws72.webp": 45,
+  "speed_demon.aws74.webp": 25
+ }
+}

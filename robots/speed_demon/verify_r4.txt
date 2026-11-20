@@ -1,0 +1,74 @@
+BLOCKERS: 5
+  [ran] integrity 0.12s
+  [proxy] wiring 0.92s
+  [ran] mass 0.00s
+  [proxy] interference 16.07s
+  [ran] connections 1.35s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.73s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 1.24s
+  [ran] process 0.02s
+  [ran] electrical 0.01s
+  [ran] combat 0.17s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
+  [ran] bom 0.01s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 25.19s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.24s
+  [ran] dfm 0.12s
+  [ran] realworld 0.10s
+speed demon: ok=False 5 blockers in 5 root causes, mass 169.7/150 g
+1. [mass.over] 169.7 g (range 143.5 to 195.9 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [connection.cover_fasteners] `front_plate` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | front_plate: x -48.00..48.00  y 29.75..50.25  z -10.25..10.25  size 96.00 x 20.51 x 20.51 mm
+   |   centre (0.00, 40.00, 0.00), volume 7272.4 mm3
+   |   overlap allowed `chassis` 1.48 mm (allowed inf)
+   |   gap to `dm_wheel_l1` 0.62 mm
+   |   gap to `dm_wheel_r1` 0.62 mm
+3. [likeness.silhouette] `reference/speed_demon.aws72.webp`: best silhouette IoU 0.77 at camera front_left_iso (elevation 45, azimuth 150) (need 0.81: >= 0.8 and no worse than the closest stock template `revron` at 0.81). Regions (photo frame, left third first) 0.61 / 0.83 / 0.81: worst = front third. Height/length 0.81 model vs 0.70 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+4. [likeness.view] `reference/speed_demon.aws74.webp` is declared `front` (IoU 0.66 there) but the model matches it better from front_right_iso (elevation 25, azimuth 60) (IoU 0.86).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+5. [likeness.silhouette] `reference/speed_demon.aws74.webp`: best silhouette IoU 0.66 at camera front (elevation 25, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.65). Regions (photo frame, left third first) 0.56 / 0.81 / 0.59: worst = front third. Height/length 0.65 model vs 0.62 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 169.7 g of 150 g (-19.7 g margin)
+    chassis                    77.42 g  fills 30% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    front_plate                 6.92 g  fills 18% of its box
+    wheel_l0                    4.12 g  fills 57% of its box
+    wheel_r0                    4.12 g  fills 57% of its box
+    wheel_l1                    4.12 g  fills 57% of its box
+    wheel_r1                    4.12 g  fills 57% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    fork_0                      2.37 g  fills 15% of its box
+    fork_1                      2.37 g  fills 15% of its box
+    dt_hub_wheel_l0             1.70 g  fills 72% of its box
+    dt_hub_wheel_l1             1.70 g  fills 72% of its box
+    dt_hub_wheel_r1             1.70 g  fills 72% of its box
+    dt_hub_wheel_r0             1.70 g  fills 72% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 169.7 g (range 143.5 to 195.9 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 19 miss

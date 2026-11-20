@@ -1,0 +1,58 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 95,
+  "width": 96,
+  "height": 30,
+  "ramp": 32
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 14,
+  "width": 9,
+  "y": [
+   -30,
+   26
+  ]
+ },
+ "colors": {
+  "body": "#dfe6e2",
+  "wheel": "#4fbf4f",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "name": "speed demon",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    96,
+    3,
+    26
+   ],
+   "at": [
+    0,
+    40,
+    14
+   ],
+   "kind": "armor",
+   "id": "front_plate",
+   "color": "#e6e6ea",
+   "rot": [
+    -45,
+    0,
+    0
+   ]
+  }
+ ],
+ "forks": {
+  "n": 2,
+  "length": 24,
+  "width": 8,
+  "spread": 60,
+  "tilt_deg": 20,
+  "taper": true
+ }
+}
