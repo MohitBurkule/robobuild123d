@@ -1,0 +1,33 @@
+{
+ "spec": "/tmp/work9_th_under_er/robots/th_under_er/spec.json",
+ "rendered_at": 1795019843.94524,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "motor_l",
+  "wheel_l",
+  "motor_r",
+  "wheel_r",
+  "insert_c0",
+  "insert_c1",
+  "insert_c2",
+  "insert_c3",
+  "battery",
+  "esc",
+  "wesc",
+  "power_switch",
+  "weapon_motor",
+  "weapon",
+  "wshaft",
+  "pod_r",
+  "pod_l",
+  "hub_disc",
+  "bolt_c0",
+  "bolt_c1",
+  "bolt_c2",
+  "bolt_c3",
+  "bolt_wma",
+  "bolt_wmb"
+ ],
+ "wires": {}
+}

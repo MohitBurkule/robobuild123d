@@ -1,0 +1,24 @@
+{
+ "robot_type": "hspin_bar",
+ "weapon": {
+  "kind": "bar",
+  "axis": "z",
+  "position": "middle",
+  "width_frac": 0.5,
+  "teeth": 2
+ },
+ "wheels": 2,
+ "source": "read from photos",
+ "view": {
+  "th_under_er.aws71.webp": "rear_right_iso",
+  "th_under_er.aws72.webp": "rear_left_iso"
+ },
+ "view_source": {
+  "th_under_er.aws71.webp": "user camera pick (azimuth 300, elevation 35); replaces the automatic label",
+  "th_under_er.aws72.webp": "user camera pick (azimuth 240, elevation 35); replaces the automatic label"
+ },
+ "rear_ok": [
+  "th_under_er.aws71.webp",
+  "th_under_er.aws72.webp"
+ ]
+}

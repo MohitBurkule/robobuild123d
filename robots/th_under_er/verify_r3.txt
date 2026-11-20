@@ -1,0 +1,146 @@
+BLOCKERS: 102
+/usr/local/lib/python3.13/site-packages/trimesh/triangles.py:302: RuntimeWarning: invalid value encountered in divide
+  center_mass = integrated[1:4] / volume
+  [ran] integrity 0.09s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 4.10s
+  [ran] connections 4.18s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.12s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.90s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.21s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.06s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.84s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.29s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+Th'UNDER'er: ok=False 102 blockers in 80 root causes, mass 222.9/150 g
+1. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -52.90..-49.10  y -32.90..-29.10  z 9.00..10.40  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-51.00, -31.00, 9.70), volume 15.9 mm3
+   |   gap to `pod_l` 0.00 mm (touching)
+   | dt_screw_1: x 49.10..52.90  y -32.90..-29.10  z 9.00..10.40  size 3.80 x 3.80 x 1.40 mm
+   |   centre (51.00, -31.00, 9.70), volume 15.9 mm3
+2. [proxy.interference] `hub_disc` and `hub_boss0` overlap by 0.93 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   | hub_disc: x -16.00..16.00  y 2.00..34.00  z 8.90..10.90  size 32.00 x 31.99 x 2.00 mm
+   |   centre (0.00, 18.00, 9.90), volume 1608.5 mm3
+   |   OVERLAP `weapon_motor` 0.93 mm (allowed 0.08)
+   |   OVERLAP `hub_boss0` 0.93 mm (allowed 0.08)
+   |   OVERLAP `hub_boss1` 0.93 mm (allowed 0.08)
+3. [connection.floating] `hub_boss0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `hub_disc`, 0.0 mm away. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | hub_boss0: x -3.50..3.50  y 31.50..38.50  z 8.90..10.90  size 7.00 x 7.00 x 2.00 mm
+   |   centre (0.00, 35.00, 9.90), volume 77.0 mm3
+   |   OVERLAP `hub_disc` 0.93 mm (allowed 0.08)
+   | hub_disc: x -16.00..16.00  y 2.00..34.00  z 8.90..10.90  size 32.00 x 31.99 x 2.00 mm
+   |   centre (0.00, 18.00, 9.90), volume 1608.5 mm3
+4. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis_bottom`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `motor_l`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+6. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `wheel_l`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+7. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `motor_r`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+8. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `wheel_r`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+9. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `battery`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+10. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `pod_r`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+11. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `pod_l`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+12. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_hub_wheel_l`. (+1 consequences)
+   | weapon: x -40.00..28.00  y -62.00..48.00  z -8.50..-5.50  size 68.00 x 110.00 x 3.00 mm
+   |   centre (-6.00, -7.00, -7.00), volume 5219.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-10.6, 0.0, 0.0] range 0..360 default 90
+   |   parent weapon_motor (moves with it)
+   |   OVERLAP `wheel_r` 1.39 mm (allowed 0.08)
+... 68 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 222.9 g of 150 g (-72.9 g margin)
+    chassis_bottom             41.95 g  fills 38% of its box
+    weapon                     41.23 g  fills 23% of its box
+    chassis_top                25.08 g  fills 26% of its box
+    pod_r                      18.21 g  fills 100% of its box  <- solid block? a tub should be a shell
+    pod_l                      18.21 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    battery                    15.80 g  fills 100% of its box  <- solid block? a tub should be a shell
+    dt_shaft_weapon             7.74 g  fills 79% of its box
+    motor_l                     7.50 g  fills 67% of its box
+    motor_r                     7.50 g  fills 67% of its box
+    wesc                        5.00 g  fills 100% of its box
+    wheel_l                     3.15 g  fills 77% of its box
+    wheel_r                     3.15 g  fills 77% of its box
+    esc                         2.30 g  fills 100% of its box
+    hub_disc                    1.70 g  fills 79% of its box
+    dt_axle_wheel_r             1.04 g  fills 79% of its box
+    dt_axle_wheel_l             1.04 g  fills 79% of its box
+    dt_hub_wheel_l              0.90 g  fills 79% of its box
+    dt_hub_wheel_r              0.90 g  fills 79% of its box
+    power_switch                0.50 g  fills 100% of its box
+    dt_nut_wheel_l              0.27 g  fills 79% of its box
+    dt_nut_wheel_r              0.27 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    hub_boss0                   0.08 g  fills 79% of its box
+    hub_boss1                   0.08 g  fills 79% of its box
+    hub_boss2                   0.08 g  fills 79% of its box
+    mass.over: 222.9 g (range 189.1 to 256.7 g) against the 150 g limit; 9.0 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 3 hit / 0 miss, group 0 hit / 31 miss, inside 13 hit / 11 miss, likeness 2 hit / 0 miss, min_gap 371 hit / 409 miss, overlap 363 hit / 374 miss, part_check 11 hit / 0 miss, part_geom 29 hit / 0 miss, ray 159 hit / 68 miss
