@@ -22,6 +22,11 @@ Shape extras (all optional):
  weapon.kind "ring": a band ring (radius, width = band height, `thick` wall), axis z; weapon.tilt_deg tilts the weapon
    about y (angled blade); weapon.kind "bar" + `curve` mm bends the bar tips (S-blade)
  forks.tilt_deg: forks pitched down at the nose
+ forks.style "plate" | "sheet": the shared fork set (robot/modules/forks.py) instead of plain tines: n, length, width,
+   taper (tip/root width), thick, pitch (tine centre spacing) or spread, tilt_deg (auto: tips on the floor), tab +
+   holes + hole_d (mounting tab), hinge {pin_d, range: [min, max]} (or "hinged": true, "range"), lift {servo} (coaxial
+   servo + horn link), x + mirror (a mirror pair either side of a centre weapon), y / z (frame origin override),
+   tip_gap (tip underside above the floor, default 0.3)
  body.pod_nose: "round" rounds each twin pod's nose
  "legs": {"n": 2, "length": .., "width": 8, "thick": 4, "foot": 14, "y": [..]} per side: walker / shuffler, no wheels
    (locomotion "walker": 225 g non-roller limit, as AWS; set "locomotion" yourself to override)
@@ -215,6 +220,11 @@ def build(k: dict) -> dict:
         i += 1
 
     fk = k.get("forks") or {}
+    if fk.get("style"):  # shared parametric fork set (robot/modules/forks.py); no style = the legacy plain tines below
+        from .modules import forks as forks_mod
+        for p in forks_mod.from_kit({**fk, "color": fk.get("color", COL["fork"])}, y1, -R, zb, W):
+            parts.append(p)
+        fk = {}
     for j in range(int(fk.get("n", 0))):
         fl, fw = float(fk.get("length", 25)), float(fk.get("width", 6))
         sp = float(fk.get("spread", W * 0.6))
