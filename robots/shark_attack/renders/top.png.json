@@ -1,0 +1,80 @@
+{
+ "spec": "/tmp/work10_shark_attack/robots/shark_attack/spec.json",
+ "rendered_at": 1795065836.5302143,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "hump_l",
+  "hump_r",
+  "fin",
+  "hammer_tip",
+  "hinge_block",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_mount_fork_0",
+  "dt_mount_fork_1",
+  "dt_mount_fork_2",
+  "dt_mount_fork_3",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch",
+  "wa_act"
+ ],
+ "wires": {
+  "w_sw_esc": {
+   "from": [
+    -4.5,
+    -13.0,
+    -3.0
+   ],
+   "to": [
+    0.4999999999999994,
+    -18.0,
+    -1.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    0.5000000000000007,
+    14.0,
+    10.5
+   ],
+   "to": [
+    12.5,
+    -25.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    0.49999999999999867,
+    -18.0,
+    10.5
+   ],
+   "to": [
+    -12.5,
+    -25.0,
+    0.0
+   ]
+  },
+  "w_wpn": {
+   "from": [
+    0.5000000000000013,
+    14.0,
+    -1.5
+   ],
+   "to": [
+    -15.149999999999999,
+    10.999999999999998,
+    11.0
+   ]
+  }
+ }
+}

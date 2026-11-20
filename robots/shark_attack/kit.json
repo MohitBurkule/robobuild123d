@@ -1,0 +1,129 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 85,
+  "width": 100,
+  "height": 30,
+  "ramp": 25
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -25
+  ],
+  "outside": false
+ },
+ "forks": {
+  "n": 4,
+  "length": 28,
+  "width": 12,
+  "spread": 78,
+  "tilt_deg": 8
+ },
+ "colors": {
+  "body": "#2a6fe0",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "name": "shark attack",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    36,
+    40,
+    10
+   ],
+   "at": [
+    26,
+    -12,
+    37
+   ],
+   "mirror": true,
+   "id": "hump",
+   "color": "#2a6fe0"
+  },
+  {
+   "side": [
+    [
+     14,
+     28
+    ],
+    [
+     22,
+     28
+    ],
+    [
+     22,
+     34
+    ],
+    [
+     -4,
+     62
+    ],
+    [
+     -10,
+     58
+    ]
+   ],
+   "x": [
+    -3,
+    3
+   ],
+   "weapon": "axe",
+   "pivot": [
+    18,
+    31
+   ],
+   "id": "fin",
+   "color": "#eeeeea"
+  },
+  {
+   "side": [
+    [
+     -4,
+     62
+    ],
+    [
+     -2,
+     78
+    ],
+    [
+     -9,
+     78
+    ],
+    [
+     -10,
+     58
+    ]
+   ],
+   "x": [
+    -2,
+    2
+   ],
+   "id": "hammer_tip",
+   "material": "hdpe",
+   "process": "laser",
+   "color": "#2fae5a"
+  },
+  {
+   "box": [
+    14,
+    12,
+    10
+   ],
+   "at": [
+    0,
+    18,
+    34
+   ],
+   "id": "hinge_block",
+   "color": "#2a6fe0"
+  }
+ ]
+}

@@ -1,0 +1,25 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "axe",
+  "axis": "x"
+ },
+ "photos": [
+  "shark_attack.aws72.webp",
+  "shark_attack.aws74.webp",
+  "shark_attack.aws76.webp"
+ ],
+ "view": {
+  "shark_attack.aws72.webp": "front_left_iso",
+  "shark_attack.aws74.webp": "front_right_iso",
+  "shark_attack.aws76.webp": "front_right_iso"
+ },
+ "elevation": {
+  "shark_attack.aws74.webp": 45,
+  "shark_attack.aws76.webp": 45
+ },
+ "view_source": {
+  "shark_attack.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
+}
