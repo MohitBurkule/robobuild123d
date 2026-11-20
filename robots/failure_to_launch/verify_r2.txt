@@ -1,0 +1,110 @@
+BLOCKERS: 25
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.06s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.01s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.40s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.38s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+failure to launch: ok=False 25 blockers in 25 root causes, mass 136.2/150 g
+1. [proxy.interference] `chassis` and `flip_arm_l` overlap by 7.38 mm (allowed 0.08).
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 78000.0 mm3
+   |   OVERLAP `flip_arm_l` 7.38 mm (allowed 0.08)
+   |   OVERLAP `flip_arm_r` 7.38 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.50 mm
+2. [proxy.interference] `chassis` and `flip_arm_r` overlap by 7.38 mm (allowed 0.08).
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 78000.0 mm3
+   |   OVERLAP `flip_arm_l` 7.38 mm (allowed 0.08)
+   |   OVERLAP `flip_arm_r` 7.38 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.50 mm
+3. [proxy.sweep] joint `flip_arm_l`: `flip_arm_l` hits `chassis` 7.38 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flip_arm_l` lists the closest approach to every part.
+   | flip_arm_l: x 8.00..30.00  y 10.00..95.00  z -12.00..12.00  size 22.00 x 85.00 x 24.00 mm
+   |   centre (19.00, 52.50, 0.00), volume 24860.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 10, 8.0] range 0..80 default 0
+   |   OVERLAP `chassis` 7.38 mm (allowed 0.08)
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+4. [proxy.sweep] joint `flip_arm_r`: `flip_arm_r` hits `chassis` 7.38 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flip_arm_r` lists the closest approach to every part.
+   | flip_arm_r: x -30.00..-8.00  y 10.00..95.00  z -12.00..12.00  size 22.00 x 85.00 x 24.00 mm
+   |   centre (-19.00, 52.50, 0.00), volume 24860.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 10, 8.0] range 0..80 default 0
+   |   OVERLAP `chassis` 7.38 mm (allowed 0.08)
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+5. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 30.50..39.50  y -22.00..2.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (35.00, -10.00, 0.00), volume 4071.5 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 78000.0 mm3
+6. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -39.50..-30.50  y -22.00..2.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-35.00, -10.00, 0.00), volume 4071.5 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 78000.0 mm3
+7. [connection.floating] `top_arm` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 4.3 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | top_arm: x -15.00..15.00  y 10.63..69.37  z 8.79..27.21  size 30.00 x 58.73 x 18.43 mm
+   |   centre (0.00, 40.00, 18.00), volume 5400.0 mm3
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 78000.0 mm3
+   |   OVERLAP `flip_arm_l` 7.38 mm (allowed 0.08)
+8. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+9. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+10. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+11. [power.weapon_motor] `flip_arm_l` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | flip_arm_l: x 8.00..30.00  y 10.00..95.00  z -12.00..12.00  size 22.00 x 85.00 x 24.00 mm
+   |   centre (19.00, 52.50, 0.00), volume 24860.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 10, 8.0] range 0..80 default 0
+   |   OVERLAP `chassis` 7.38 mm (allowed 0.08)
+12. [power.weapon_motor] `flip_arm_r` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | flip_arm_r: x -30.00..-8.00  y 10.00..95.00  z -12.00..12.00  size 22.00 x 85.00 x 24.00 mm
+   |   centre (-19.00, 52.50, 0.00), volume 24860.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 10, 8.0] range 0..80 default 0
+   |   OVERLAP `chassis` 7.38 mm (allowed 0.08)
+... 13 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 136.2 g of 150 g (+13.8 g margin)
+    chassis                    74.26 g  fills 100% of its box  <- solid block? a tub should be a shell
+    flip_arm_l                 23.67 g  fills 55% of its box  <- solid block? a tub should be a shell
+    flip_arm_r                 23.67 g  fills 55% of its box  <- solid block? a tub should be a shell
+    top_arm                     5.14 g  fills 17% of its box
+    wheel_l0                    4.15 g  fills 79% of its box
+    wheel_r0                    4.15 g  fills 79% of its box
+    mass.may_be_over: 136.2 g (range 108.6 to 163.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 6 hit / 0 miss, likeness 1 hit / 0 miss, min_gap 45 hit / 0 miss, overlap 89 hit / 0 miss, part_check 1 hit / 0 miss, part_geom 6 hit / 0 miss, ray 30 hit / 0 miss

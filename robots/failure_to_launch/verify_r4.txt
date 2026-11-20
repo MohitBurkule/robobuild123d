@@ -1,0 +1,65 @@
+BLOCKERS: 5
+  [ran] integrity 0.12s
+  [proxy] wiring 2.96s
+  [ran] mass 0.01s
+  [proxy] interference 20.29s
+  [ran] connections 2.67s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.64s
+  [ran] dynamics 0.00s
+  [ran] strength 0.01s
+  [ran] printability 1.52s
+  [ran] process 0.00s
+  [ran] electrical 5.85s
+  [ran] combat 0.13s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.11s
+  [ran] bom 0.01s
+  [ran] wire_review 1.42s
+  [ran] fastener_record 0.00s
+  [ran] likeness 28.40s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.01s
+  [ran] geom 0.66s
+  [ran] dfm 0.35s
+  [ran] realworld 2.61s
+failure to launch: ok=False 5 blockers in 5 root causes, mass 126.1/150 g
+1. [proxy.wiring] Wire `w_lesc_bat` (`el_switch.out` to `el_lesc.bat`): the baseline route is now blocked by `chassis` (12 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 34565.5 mm3
+   |   overlap allowed `flip_arm_l` 1.92 mm (allowed inf)
+   |   overlap allowed `flip_arm_r` 1.64 mm (allowed inf)
+   |   overlap allowed `dt_strut_top_arm` 0.02 mm (allowed 0.08)
+2. [proxy.interference] `top_arm` and `dt_strut_top_arm` overlap by 0.78 mm (allowed 0.08).
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+3. [proxy.sweep] joint `top_arm`: `top_arm` hits `dt_strut_top_arm` 0.78 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint top_arm` lists the closest approach to every part.
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+4. [retention.loose] `el_act_top_arm` can move more than 0.5 mm toward +x, -x, +y, -y, +z, -z without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | el_act_top_arm: x 16.51..26.51  y 4.47..34.57  z -8.99..3.01  size 10.00 x 30.10 x 12.00 mm
+   |   centre (21.51, 19.52, -2.99), volume 2404.7 mm3
+   |   port terminals: (21.51, 4.17, -2.99)
+   |   gap to `chassis` 0.50 mm
+   |   gap to `flip_arm_l` 0.50 mm
+5. [likeness.silhouette] `reference/ftl.webp`: best silhouette IoU 0.68 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.74). Regions (photo frame, left third first) 0.47 / 0.79 / 0.69: worst = front third. Height/length 0.96 model vs 0.96 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 16 miss
