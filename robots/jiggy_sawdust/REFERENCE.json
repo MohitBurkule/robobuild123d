@@ -1,0 +1,18 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "saw",
+  "axis": "x"
+ },
+ "photos": [
+  "jiggy_sawdust.aws63.webp"
+ ],
+ "mask_mode": {},
+ "view": {
+  "jiggy_sawdust.aws63.webp": "front_right_iso"
+ },
+ "elevation": {
+  "jiggy_sawdust.aws63.webp": 45
+ }
+}

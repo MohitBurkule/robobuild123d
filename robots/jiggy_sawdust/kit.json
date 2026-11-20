@@ -1,0 +1,91 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 70,
+  "width": 70,
+  "height": 55,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 14,
+  "width": 8,
+  "y": [
+   -18
+  ]
+ },
+ "colors": {
+  "body": "#d9dde0",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  1
+ ],
+ "textured": [
+  2
+ ],
+ "name": "jiggy sawdust",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    80,
+    3,
+    30
+   ],
+   "at": [
+    0,
+    42,
+    14
+   ],
+   "kind": "wedge",
+   "id": "front_plate",
+   "color": "#9a9da2",
+   "rot": [
+    -35,
+    0,
+    0
+   ]
+  },
+  {
+   "box": [
+    2,
+    80,
+    9
+   ],
+   "at": [
+    10,
+    62,
+    38
+   ],
+   "weapon": "saw",
+   "pivot": [
+    30,
+    38
+   ],
+   "id": "saw_blade",
+   "color": "#2a2a2e",
+   "material": "steel",
+   "process": "laser"
+  },
+  {
+   "box": [
+    14,
+    30,
+    16
+   ],
+   "at": [
+    10,
+    22,
+    40
+   ],
+   "id": "saw_body",
+   "color": "#3a3d44"
+  }
+ ]
+}

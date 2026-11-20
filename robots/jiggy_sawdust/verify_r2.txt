@@ -1,0 +1,104 @@
+BLOCKERS: 20
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.05s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.02s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.45s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.07s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 1.39s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.01s
+  [ran] geom 0.03s
+  [ran] dfm 0.00s
+  [ran] realworld 0.01s
+jiggy sawdust: ok=False 20 blockers in 20 root causes, mass 276.7/150 g
+1. [mass.over] 276.7 g (range 221.0 to 332.4 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `front_plate` overlap by 1.04 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -35.00..35.00  z -12.00..43.00  size 70.00 x 70.00 x 55.00 mm
+   |   centre (-0.00, -0.00, 15.50), volume 269500.0 mm3
+   |   OVERLAP `saw_blade` 1.39 mm (allowed 0.08)
+   |   OVERLAP `front_plate` 1.04 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.50 mm
+3. [proxy.interference] `chassis` and `saw_blade` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -35.00..35.00  z -12.00..43.00  size 70.00 x 70.00 x 55.00 mm
+   |   centre (-0.00, -0.00, 15.50), volume 269500.0 mm3
+   |   OVERLAP `saw_blade` 1.39 mm (allowed 0.08)
+   |   OVERLAP `front_plate` 1.04 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.50 mm
+4. [proxy.sweep] joint `saw_blade`: `saw_blade` hits `chassis` 1.39 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint saw_blade` lists the closest approach to every part.
+   | saw_blade: x -1.50..1.50  y -80.00..-10.00  z 21.00..31.00  size 3.00 x 70.00 x 10.00 mm
+   |   centre (0.00, -45.00, 26.00), volume 2100.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 26.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   | chassis: x -35.00..35.00  y -35.00..35.00  z -12.00..43.00  size 70.00 x 70.00 x 55.00 mm
+5. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 35.50..43.50  y -24.00..4.00  z -14.00..14.00  size 8.00 x 27.99 x 28.00 mm
+   |   centre (39.50, -10.00, 0.00), volume 4926.0 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -35.00..35.00  z -12.00..43.00  size 70.00 x 70.00 x 55.00 mm
+   |   centre (-0.00, -0.00, 15.50), volume 269500.0 mm3
+6. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -43.50..-35.50  y -24.00..4.00  z -14.00..14.00  size 8.00 x 27.99 x 28.00 mm
+   |   centre (-39.50, -10.00, 0.00), volume 4926.0 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -35.00..35.00  z -12.00..43.00  size 70.00 x 70.00 x 55.00 mm
+   |   centre (-0.00, -0.00, 15.50), volume 269500.0 mm3
+7. [connection.floating] `front_plate` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | front_plate: x -40.00..40.00  y 32.17..51.83  z -13.15..13.15  size 80.00 x 19.66 x 26.30 mm
+   |   centre (0.00, 42.00, 0.00), volume 7200.0 mm3
+   |   OVERLAP `chassis` 1.04 mm (allowed 0.08)
+   | chassis: x -35.00..35.00  y -35.00..35.00  z -12.00..43.00  size 70.00 x 70.00 x 55.00 mm
+   |   centre (-0.00, -0.00, 15.50), volume 269500.0 mm3
+8. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+9. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+10. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+11. [power.weapon_motor] `saw_blade` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | saw_blade: x -1.50..1.50  y -80.00..-10.00  z 21.00..31.00  size 3.00 x 70.00 x 10.00 mm
+   |   centre (0.00, -45.00, 26.00), volume 2100.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 26.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+12. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 35.50..43.50  y -24.00..4.00  z -14.00..14.00  size 8.00 x 27.99 x 28.00 mm
+   |   centre (39.50, -10.00, 0.00), volume 4926.0 mm3
+   |   gap to `chassis` 0.50 mm
+... 8 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 276.7 g of 150 g (-126.7 g margin)
+    chassis                   256.56 g  fills 100% of its box  <- solid block? a tub should be a shell
+    front_plate                 6.85 g  fills 17% of its box
+    wheel_l0                    5.02 g  fills 79% of its box
+    wheel_r0                    5.02 g  fills 79% of its box
+    saw_blade                   2.00 g  fills 100% of its box
+    mass.over: 276.7 g (range 221.0 to 332.4 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 5 hit / 0 miss, likeness 1 hit / 0 miss, min_gap 25 hit / 0 miss, overlap 29 hit / 0 miss, part_check 1 hit / 0 miss, part_geom 5 hit / 0 miss, ray 25 hit / 0 miss
