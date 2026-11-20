@@ -1,0 +1,17 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "whopper.aws76.webp"
+ ],
+ "view": {
+  "whopper.aws76.webp": "front_left_iso"
+ },
+ "view_source": {
+  "whopper.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
+}

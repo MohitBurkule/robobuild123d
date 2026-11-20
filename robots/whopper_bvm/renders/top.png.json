@@ -1,0 +1,31 @@
+{
+ "spec": "/tmp/work10_whopper_bvm/robots/whopper_bvm/spec.json",
+ "rendered_at": 1795038136.4307866,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "arm",
+  "side_fin",
+  "outer_fork_l",
+  "outer_fork_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_mount_fork_0",
+  "dt_bolt_fork_0",
+  "dt_mount_fork_1",
+  "dt_bolt_fork_1"
+ ],
+ "wires": {}
+}

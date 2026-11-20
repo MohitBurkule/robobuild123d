@@ -1,0 +1,116 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 60,
+  "width": 112,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -12
+  ],
+  "outside": false
+ },
+ "forks": {
+  "n": 2,
+  "length": 34,
+  "width": 6,
+  "spread": 26,
+  "tilt_deg": 14,
+  "taper": true
+ },
+ "colors": {
+  "body": "#1c1d20",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "name": "whopper bvm",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    30,
+    40,
+    8
+   ],
+   "at": [
+    0,
+    5,
+    30
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -15,
+    28
+   ],
+   "id": "arm",
+   "color": "#1c1d20"
+  },
+  {
+   "side": [
+    [
+     -30,
+     2
+    ],
+    [
+     62,
+     2
+    ],
+    [
+     40,
+     14
+    ],
+    [
+     10,
+     42
+    ],
+    [
+     -30,
+     42
+    ]
+   ],
+   "x": [
+    56,
+    60
+   ],
+   "kind": "armor",
+   "id": "side_fin",
+   "color": "#1c1d20"
+  },
+  {
+   "top": [
+    [
+     42,
+     20
+    ],
+    [
+     58,
+     20
+    ],
+    [
+     64,
+     72
+    ],
+    [
+     58,
+     74
+    ]
+   ],
+   "z": [
+    0,
+    10
+   ],
+   "color": "#1c1d20",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "outer_fork"
+  }
+ ]
+}
