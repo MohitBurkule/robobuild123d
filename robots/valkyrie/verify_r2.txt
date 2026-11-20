@@ -1,0 +1,127 @@
+BLOCKERS: 41
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.14s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.02s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.42s
+  [ran] process 0.01s
+  [ran] electrical 0.00s
+  [ran] combat 0.06s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.02s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.05s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+valkyrie: ok=False 41 blockers in 38 root causes, mass 179.8/150 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `hub_l`. (+1 consequences)
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 9197.4 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `hub_r`. (+1 consequences)
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 9197.4 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+3. [connection.floating] `weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `hub_l`, 0.0 mm away. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 9197.4 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+4. [mass.over] 179.8 g (range 150.0 to 209.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+5. [proxy.interference] `weapon` and `hub_l` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 9197.4 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+6. [proxy.interference] `weapon` and `hub_r` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 9197.4 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+7. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 2.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 40.00..51.00  y -21.00..5.00  z -13.00..13.00  size 11.00 x 25.99 x 26.00 mm
+   |   centre (45.50, -8.00, 0.00), volume 5840.2 mm3
+   |   gap to `chassis` 2.00 mm
+   |   gap to `top_plate` 2.00 mm
+   | chassis: x -52.00..52.00  y -50.00..25.00  z -11.00..8.00  size 104.00 x 75.00 x 19.00 mm
+8. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 2.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -51.00..-40.00  y -21.00..5.00  z -13.00..13.00  size 11.00 x 25.99 x 26.00 mm
+   |   centre (-45.50, -8.00, 0.00), volume 5840.2 mm3
+   |   gap to `chassis` 2.00 mm
+   |   gap to `top_plate` 2.00 mm
+   | chassis: x -52.00..52.00  y -50.00..25.00  z -11.00..8.00  size 104.00 x 75.00 x 19.00 mm
+9. [connection.floating] `cheek_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | cheek_l: x 45.00..52.00  y 25.00..56.00  z -12.00..8.00  size 7.00 x 31.00 x 20.00 mm
+   |   centre (48.50, 40.50, -2.00), volume 3990.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `hub_l` 1.00 mm
+   | chassis: x -52.00..52.00  y -50.00..25.00  z -11.00..8.00  size 104.00 x 75.00 x 19.00 mm
+10. [connection.floating] `window_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `top_plate`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | window_l: x 13.00..27.00  y -12.00..2.00  z 9.50..10.50  size 14.00 x 14.00 x 1.00 mm
+   |   centre (20.00, -5.00, 10.00), volume 196.0 mm3
+   |   gap to `top_plate` 0.00 mm (touching)
+   |   gap to `chassis` 1.50 mm
+   | top_plate: x -52.00..52.00  y -50.00..22.00  z 8.00..9.50  size 104.00 x 72.00 x 1.50 mm
+11. [connection.floating] `cheek_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | cheek_r: x -52.00..-45.00  y 25.00..56.00  z -12.00..8.00  size 7.00 x 31.00 x 20.00 mm
+   |   centre (-48.50, 40.50, -2.00), volume 3990.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `hub_r` 1.00 mm
+   | chassis: x -52.00..52.00  y -50.00..25.00  z -11.00..8.00  size 104.00 x 75.00 x 19.00 mm
+12. [connection.floating] `hub_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `weapon`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | hub_r: x -44.00..-37.00  y 35.50..48.50  z -10.50..2.50  size 7.00 x 13.00 x 13.00 mm
+   |   centre (-40.50, 42.00, -4.00), volume 929.1 mm3
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+   |   gap to `cheek_r` 1.00 mm
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+... 26 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 179.8 g of 150 g (-29.8 g margin)
+    chassis                   117.72 g  fills 83% of its box  <- solid block? a tub should be a shell
+    weapon                     24.83 g  fills 91% of its box  <- solid block? a tub should be a shell
+    top_plate                  11.15 g  fills 83% of its box
+    wheel_l0                    5.96 g  fills 79% of its box
+    wheel_r0                    5.96 g  fills 79% of its box
+    cheek_l                     3.80 g  fills 92% of its box
+    cheek_r                     3.80 g  fills 92% of its box
+    hub_l                       2.51 g  fills 79% of its box
+    hub_r                       2.51 g  fills 79% of its box
+    window_l                    0.19 g  fills 100% of its box
+    window_r                    0.19 g  fills 100% of its box
+    mass.over: 179.8 g (range 150.0 to 209.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 2 hit / 0 miss, group 0 hit / 31 miss, inside 9 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 127 hit / 0 miss, overlap 119 hit / 0 miss, part_check 4 hit / 0 miss, part_geom 11 hit / 0 miss, ray 47 hit / 0 miss

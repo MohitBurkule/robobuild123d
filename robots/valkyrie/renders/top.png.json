@@ -1,0 +1,81 @@
+{
+ "spec": "/tmp/work10_valkyrie/robots/valkyrie/spec.json",
+ "rendered_at": 1795087840.5412369,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "cheek_l",
+  "hub_l",
+  "window_l",
+  "cheek_r",
+  "hub_r",
+  "window_r",
+  "top_plate",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_shaft_weapon",
+  "dt_arm_weapon_0",
+  "dt_arm_weapon_1",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "fs_top_plate_0",
+  "fs_top_plate_1"
+ ],
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    3.5,
+    -34.5,
+    -4.0
+   ],
+   "to": [
+    -12.5,
+    -24.0,
+    -4.5
+   ]
+  },
+  "w_wm": {
+   "from": [
+    -12.5,
+    -1.0,
+    -1.5
+   ],
+   "to": [
+    18.5,
+    5.5,
+    5.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    13.5,
+    -15.5,
+    -1.5
+   ],
+   "to": [
+    14.0,
+    -8.0,
+    0.0
+   ]
+  },
+  "w_sig_wesc": {
+   "from": [
+    25.5,
+    -15.5,
+    -1.5
+   ],
+   "to": [
+    -12.5,
+    -24.0,
+    1.5
+   ]
+  }
+ }
+}

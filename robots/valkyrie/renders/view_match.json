@@ -1,0 +1,14 @@
+{
+ "valkyrie.aws71.webp": {
+  "view": "60,35!",
+  "azimuth": 60.0,
+  "elevation": 35.0,
+  "iou": 0.804
+ },
+ "valkyrie.aws74.webp": {
+  "view": "70,50",
+  "azimuth": 60.0,
+  "elevation": 42.0,
+  "iou": 0.697
+ }
+}

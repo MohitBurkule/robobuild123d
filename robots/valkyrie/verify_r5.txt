@@ -1,0 +1,128 @@
+  [ran] integrity 0.20s
+  [proxy] wiring 0.21s
+  [ran] mass 0.00s
+  [proxy] interference 0.38s
+  [ran] connections 0.16s
+  [ran] legal 0.03s
+  [ran] fasteners 0.03s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.05s
+  [ran] shape 1.25s
+  [ran] dynamics 0.00s
+  [ran] strength 0.05s
+  [ran] printability 2.58s
+  [ran] process 0.05s
+  [ran] electrical 0.01s
+  [ran] combat 0.23s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.25s
+  [ran] bom 0.01s
+  [ran] wire_review 0.05s
+  [ran] fastener_record 0.00s
+  [ran] likeness 10.16s
+  [ran] drive_recess 0.01s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.32s
+  [ran] dfm 0.09s
+  [ran] realworld 0.24s
+valkyrie: ok=False 26 blockers in 23 root causes, mass 148.2/150 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `hub_l`. (+1 consequences)
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 6343.9 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `hub_r`. (+1 consequences)
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 6343.9 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+3. [mfg.layer_load] `dt_arm_weapon_0` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Print it lying flat so the spin axis is the build direction, or make it a cut metal plate.
+   | dt_arm_weapon_0: x -45.00..-42.00  y 19.00..47.00  z -9.00..1.00  size 3.00 x 28.00 x 10.00 mm
+   |   centre (-43.50, 33.00, -4.00), volume 802.3 mm3
+   |   overlap allowed `chassis` 1.39 mm (allowed inf)
+   |   gap to `hub_r` 0.00 mm (touching)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+4. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+5. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+6. [proxy.wiring] Wire `w_m2` (`el_esc.m2` to `dm_wheel_r0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+7. [proxy.interference] `weapon` and `hub_l` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 6343.9 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+8. [proxy.interference] `weapon` and `hub_r` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
+   |   centre (0.00, 42.00, -4.00), volume 6343.9 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 42.0, -4.0] range 0..360 default 0
+   |   OVERLAP `hub_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `hub_r` 1.39 mm (allowed 0.08)
+9. [proxy.interference] `dm_wheel_r0` and `el_wesc` overlap by 0.14 mm (allowed 0.08).
+   | dm_wheel_r0: x -49.50..-14.00  y -14.00..-2.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
+   |   centre (-31.75, -8.00, 0.00), volume 2702.4 mm3
+   |   port terminals: (-14.00, -8.00, 0.00)
+   |   OVERLAP `el_wesc` 0.14 mm (allowed 0.08)
+   |   gap to `wheel_r0` 0.00 mm (touching)
+10. [proxy.interference] `el_wesc` and `fs_top_plate_1` overlap by 0.34 mm (allowed 0.08).
+   | el_wesc: x -14.50..-10.50  y -24.00..-1.00  z -7.50..4.50  size 4.00 x 23.00 x 12.00 mm
+   |   centre (-12.50, -12.50, -1.50), volume 1040.0 mm3
+   |   port bat: (-12.50, -24.00, -4.50)
+   |   port motor: (-12.50, -1.00, -1.50)
+   |   port rx: (-12.50, -24.00, 1.50)
+11. [connection.floating] `window_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `top_plate`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | window_l: x 13.00..27.00  y -12.00..2.00  z 9.50..10.50  size 14.00 x 14.00 x 1.00 mm
+   |   centre (20.00, -5.00, 10.00), volume 196.0 mm3
+   |   gap to `top_plate` 0.00 mm (touching)
+   |   gap to `chassis` 1.50 mm
+   |   gap to `fs_top_plate_0` 1.86 mm
+12. [connection.floating] `window_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `top_plate`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | window_r: x -27.00..-13.00  y -2.00..12.00  z 9.50..10.50  size 14.00 x 14.00 x 1.00 mm
+   |   centre (-20.00, 5.00, 10.00), volume 196.0 mm3
+   |   gap to `top_plate` 0.00 mm (touching)
+   | top_plate: x -55.00..55.00  y -50.00..22.00  z 8.00..9.50  size 110.00 x 72.00 x 1.50 mm
+   |   centre (0.00, -14.00, 8.75), volume 9819.7 mm3
+... 11 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 148.2 g of 150 g (+1.8 g margin)
+    chassis                    29.27 g  fills 20% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon                     17.13 g  fills 63% of its box  <- solid block? a tub should be a shell
+    top_plate                  11.78 g  fills 83% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    weapon_motor                8.60 g  fills 53% of its box
+    wheel_l0                    5.91 g  fills 68% of its box
+    wheel_r0                    5.91 g  fills 68% of its box
+    dt_shaft_weapon             5.01 g  fills 79% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    cheek_r                     2.63 g  fills 60% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    cheek_l                     2.25 g  fills 50% of its box
+    hub_l                       1.76 g  fills 55% of its box
+    hub_r                       1.76 g  fills 55% of its box
+    dt_hub_wheel_r0             1.71 g  fills 75% of its box
+    dt_hub_wheel_l0             1.71 g  fills 75% of its box
+    dt_arm_weapon_0             0.76 g  fills 96% of its box
+    dt_arm_weapon_1             0.76 g  fills 96% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fs_top_plate_0              0.24 g  fills 20% of its box
+    fs_top_plate_1              0.24 g  fills 20% of its box
+    window_l                    0.19 g  fills 100% of its box
+    window_r                    0.19 g  fills 100% of its box
+    mass.may_be_over: 148.2 g (range 128.9 to 167.5 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 4 miss, group 0 hit / 31 miss, inside 11 hit / 13 miss, likeness 2 hit / 0 miss, min_gap 82 hit / 27 miss, overlap 337 hit / 19 miss, part_check 13 hit / 2 miss, part_geom 25 hit / 0 miss, ray 11 hit / 160 miss
