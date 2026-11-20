@@ -1,0 +1,58 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 95,
+  "width": 66,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 10,
+  "y": [
+   -32,
+   30
+  ]
+ },
+ "forks": {
+  "n": 3,
+  "length": 46,
+  "width": 5,
+  "spread": 60,
+  "tilt_deg": 8,
+  "taper": true
+ },
+ "colors": {
+  "body": "#16171a",
+  "wheel": "#2a2c30",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "name": "diplomatic embargo",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    86,
+    3,
+    26
+   ],
+   "at": [
+    0,
+    49,
+    15
+   ],
+   "kind": "armor",
+   "id": "front_plate",
+   "color": "#e02a1c",
+   "rot": [
+    -12,
+    0,
+    0
+   ]
+  }
+ ]
+}

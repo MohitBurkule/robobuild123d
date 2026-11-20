@@ -1,0 +1,19 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "diplomatic_embargo.aws72.webp",
+  "diplomatic_embargo.aws76.webp"
+ ],
+ "view": {
+  "diplomatic_embargo.aws72.webp": "front_right_iso",
+  "diplomatic_embargo.aws76.webp": "front_left_iso"
+ },
+ "view_source": {
+  "diplomatic_embargo.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "diplomatic_embargo.aws76.webp": "user camera pick (azimuth 135, elevation 35); replaces the automatic label"
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "spec": "/tmp/work10_diplomatic_embargo/robots/diplomatic_embargo/spec.json",
+ "rendered_at": 1795041663.4305203,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "front_plate",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.013,
+    10.517,
+    -1.017
+   ],
+   "to": [
+    -4.0,
+    -20.134,
+    -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -20.134,
+    -3.0
+   ],
+   "to": [
+    -11.987,
+    -4.483,
+    8.483
+   ]
+  },
+  "w_m1": {
+   "from": [
+    11.013,
+    3.517,
+    8.483
+   ],
+   "to": [
+    4.600000000000001,
+    -32.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    3.517,
+    8.483
+   ],
+   "to": [
+    -4.600000000000001,
+    -32.0,
+    0.0
+   ]
+  },
+  "w_m3": {
+   "from": [
+    11.013,
+    3.517,
+    8.483
+   ],
+   "to": [
+    4.600000000000001,
+    30.0,
+    0.0
+   ]
+  },
+  "w_m4": {
+   "from": [
+    -11.987,
+    3.517,
+    8.483
+   ],
+   "to": [
+    -4.600000000000001,
+    30.0,
+    0.0
+   ]
+  }
+ }
+}
