@@ -1,0 +1,20 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "pingu.aws72.webp"
+ ],
+ "view": {
+  "pingu.aws72.webp": "front_left_iso"
+ },
+ "view_source": {
+  "pingu.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ },
+ "mask_thr": {
+  "pingu.aws72.webp": 15
+ },
+ "mask_thr_note": "default thr 40 drops the white lid against the white background; thr 15 keeps it"
+}
