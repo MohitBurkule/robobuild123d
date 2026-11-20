@@ -1,0 +1,24 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "look_what_you_ve_done_to_our_breakfast.aws71.webp",
+  "look_what_you_ve_done_to_our_breakfast.aws74.webp"
+ ],
+ "view": {
+  "look_what_you_ve_done_to_our_breakfast.aws68.webp": "front",
+  "look_what_you_ve_done_to_our_breakfast.aws71.webp": "front_right_iso",
+  "look_what_you_ve_done_to_our_breakfast.aws74.webp": "front_left_iso"
+ },
+ "elevation": {
+  "look_what_you_ve_done_to_our_breakfast.aws68.webp": 25,
+  "look_what_you_ve_done_to_our_breakfast.aws74.webp": 45
+ },
+ "view_source": {
+  "look_what_you_ve_done_to_our_breakfast.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "look_what_you_ve_done_to_our_breakfast.aws74.webp": "camera audit 2026-11: front_left_iso, el 45, read from the photo (see CAMERA_AUDIT.md), not from likeness score"
+ }
+}
