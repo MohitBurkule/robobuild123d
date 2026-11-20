@@ -725,3 +725,9 @@ floor, weapon must lead), `spinner.mass_share`, `shape.weapon_leads`, `archetype
 `combat`/`coverage` groups then drop from BLOCKER to WARNING and are listed under `copy_mode` in the report. Buildability
 (interference, assembly, mass, fit, fasteners, wiring) is never relaxed. Our own robots (no `reference_copy`) keep every rule.
 Code: `robot/checks/copymode.py`.
+
+## Photo pose (`robot pose-photo SPEC`)
+Monocular depth (Depth Anything V2 small, ONNX CPU, auto-downloaded) + silhouette fit of the CAD through a pinhole camera.
+Writes `<robot>/pose/<photo>.pose.json` (camera az/el/roll, distance, fx/fy/cx/cy, robot-in-camera 4x4, scores, runner-ups,
+`confidence`), `.depth.png` and a side-by-side `.overlay.png`. `view_string` ("az,el!") feeds `robot render --view`.
+Evidence is photo mask + depth only; the declared REFERENCE.json view is reported, not used. Robot assumed flat on floor.
