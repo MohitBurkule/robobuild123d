@@ -1,0 +1,71 @@
+{
+ "spec": "/tmp/work10_orion/robots/orion/spec.json",
+ "rendered_at": 1795053120.0742593,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "flipper",
+  "spring_l",
+  "spring_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_strut_spring_l",
+  "dt_strut_spring_r",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    10.5,
+    -1.5
+   ],
+   "to": [
+    -4.5,
+    -16.5,
+    -2.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -16.5,
+    -2.0
+   ],
+   "to": [
+    -16.5,
+    -12.5,
+    10.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    15.5,
+    -0.5,
+    10.5
+   ],
+   "to": [
+    8.5,
+    -35.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    -0.5,
+    10.5
+   ],
+   "to": [
+    -8.5,
+    -35.0,
+    0.0
+   ]
+  }
+ }
+}
