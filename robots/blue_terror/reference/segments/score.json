@@ -1,8 +1,8 @@
 {
  "aggregate": {
   "photos": 1,
-  "area_weighted_iou": 0.184,
-  "mean_iou": 0.113
+  "area_weighted_iou": 0.294,
+  "mean_iou": 0.068
  },
  "photos": [
   {
@@ -11,157 +11,364 @@
     "azimuth": 60.0,
     "elevation": 35.0
    },
-   "silhouette_iou": 0.788,
-   "mean_iou": 0.113,
-   "area_weighted_iou": 0.184,
-   "f1_at_0.5": 0.0,
+   "silhouette_iou": 0.782,
+   "mean_iou": 0.068,
+   "area_weighted_iou": 0.294,
+   "f1_at_0.5": 0.031,
    "segments": [
     {
      "id": "p06",
-     "label": "right front wheel",
-     "area": 1445,
+     "label": "right wheel front",
+     "area": 1825,
+     "best_part": "wheel_r2",
+     "iou": 0.0
+    },
+    {
+     "id": "p18",
+     "label": "lid screw 4",
+     "area": 101,
      "best_part": null,
      "iou": 0.0
     },
     {
+     "id": "p35",
+     "label": "auto_12",
+     "area": 84,
+     "best_part": "wheel_l2",
+     "iou": 0.001
+    },
+    {
+     "id": "p24",
+     "label": "auto_1",
+     "area": 51,
+     "best_part": "wheel_l0",
+     "iou": 0.001
+    },
+    {
+     "id": "p41",
+     "label": "auto_20",
+     "area": 69,
+     "best_part": "lid",
+     "iou": 0.002
+    },
+    {
+     "id": "p42",
+     "label": "auto_23",
+     "area": 69,
+     "best_part": "lid",
+     "iou": 0.002
+    },
+    {
+     "id": "p49",
+     "label": "auto_37",
+     "area": 47,
+     "best_part": "lid",
+     "iou": 0.002
+    },
+    {
+     "id": "p38",
+     "label": "auto_15",
+     "area": 45,
+     "best_part": "lid",
+     "iou": 0.002
+    },
+    {
+     "id": "p47",
+     "label": "auto_35",
+     "area": 95,
+     "best_part": "lid",
+     "iou": 0.003
+    },
+    {
+     "id": "p15",
+     "label": "lid screw 1",
+     "area": 91,
+     "best_part": "lid",
+     "iou": 0.003
+    },
+    {
      "id": "p16",
-     "label": "left rear corner bracket",
-     "area": 333,
-     "best_part": "chassis",
-     "iou": 0.008
-    },
-    {
-     "id": "p18",
-     "label": "lid screws",
-     "area": 653,
-     "best_part": "wheel_r0",
-     "iou": 0.011
-    },
-    {
-     "id": "p14",
-     "label": "blue left front post",
-     "area": 692,
-     "best_part": "chassis",
-     "iou": 0.017
-    },
-    {
-     "id": "p05",
-     "label": "right middle wheel",
-     "area": 1504,
-     "best_part": "wheel_r1",
-     "iou": 0.023
-    },
-    {
-     "id": "p09",
-     "label": "red wires",
-     "area": 1246,
-     "best_part": "chassis",
-     "iou": 0.032
-    },
-    {
-     "id": "p11",
-     "label": "blue battery box",
-     "area": 1500,
-     "best_part": "chassis",
-     "iou": 0.038
-    },
-    {
-     "id": "p12",
-     "label": "battery warning sticker",
-     "area": 1702,
-     "best_part": "chassis",
-     "iou": 0.043
-    },
-    {
-     "id": "p10",
-     "label": "inner electronics left of battery",
-     "area": 2811,
-     "best_part": "chassis",
-     "iou": 0.071
+     "label": "lid screw 2",
+     "area": 86,
+     "best_part": "lid",
+     "iou": 0.003
     },
     {
      "id": "p19",
-     "label": "rail screws",
-     "area": 515,
+     "label": "lid screw 5",
+     "area": 83,
+     "best_part": "lid",
+     "iou": 0.003
+    },
+    {
+     "id": "p45",
+     "label": "auto_31",
+     "area": 75,
+     "best_part": "lid",
+     "iou": 0.003
+    },
+    {
+     "id": "p36",
+     "label": "auto_13",
+     "area": 163,
+     "best_part": "lid",
+     "iou": 0.005
+    },
+    {
+     "id": "p39",
+     "label": "auto_18",
+     "area": 111,
+     "best_part": "chassis",
+     "iou": 0.005
+    },
+    {
+     "id": "p23",
+     "label": "rail screw 4",
+     "area": 124,
+     "best_part": "scoop",
+     "iou": 0.006
+    },
+    {
+     "id": "p50",
+     "label": "auto_41",
+     "area": 97,
+     "best_part": "fs_lid_2",
+     "iou": 0.006
+    },
+    {
+     "id": "p21",
+     "label": "rail screw 2",
+     "area": 144,
+     "best_part": "scoop",
+     "iou": 0.007
+    },
+    {
+     "id": "p28",
+     "label": "auto_5",
+     "area": 76,
+     "best_part": "wheel_l1",
+     "iou": 0.01
+    },
+    {
+     "id": "p44",
+     "label": "auto_29",
+     "area": 148,
+     "best_part": "chassis",
+     "iou": 0.012
+    },
+    {
+     "id": "p43",
+     "label": "auto_27",
+     "area": 420,
+     "best_part": "lid",
+     "iou": 0.014
+    },
+    {
+     "id": "p20",
+     "label": "rail screw 1",
+     "area": 143,
+     "best_part": "chassis",
+     "iou": 0.014
+    },
+    {
+     "id": "p29",
+     "label": "auto_6",
+     "area": 75,
+     "best_part": "fs_lid_0",
+     "iou": 0.015
+    },
+    {
+     "id": "p17",
+     "label": "lid screw 3",
+     "area": 55,
+     "best_part": "wheel_r0",
+     "iou": 0.018
+    },
+    {
+     "id": "p37",
+     "label": "auto_14",
+     "area": 170,
      "best_part": "wheel_r2",
-     "iou": 0.08
+     "iou": 0.02
+    },
+    {
+     "id": "p25",
+     "label": "auto_2",
+     "area": 691,
+     "best_part": "lid",
+     "iou": 0.023
+    },
+    {
+     "id": "p31",
+     "label": "auto_8",
+     "area": 182,
+     "best_part": "wheel_r2",
+     "iou": 0.023
+    },
+    {
+     "id": "p46",
+     "label": "auto_34",
+     "area": 115,
+     "best_part": "dm_wheel_l2",
+     "iou": 0.025
+    },
+    {
+     "id": "p12",
+     "label": "blue right front post",
+     "area": 264,
+     "best_part": "wheel_r2",
+     "iou": 0.029
+    },
+    {
+     "id": "p34",
+     "label": "auto_11",
+     "area": 65,
+     "best_part": "wheel_r0",
+     "iou": 0.034
+    },
+    {
+     "id": "p05",
+     "label": "right wheel middle",
+     "area": 1747,
+     "best_part": "wheel_r1",
+     "iou": 0.037
+    },
+    {
+     "id": "p33",
+     "label": "auto_10",
+     "area": 1131,
+     "best_part": "lid",
+     "iou": 0.038
+    },
+    {
+     "id": "p32",
+     "label": "auto_9",
+     "area": 113,
+     "best_part": "wheel_r1",
+     "iou": 0.039
+    },
+    {
+     "id": "p48",
+     "label": "auto_36",
+     "area": 187,
+     "best_part": "wheel_r2",
+     "iou": 0.048
+    },
+    {
+     "id": "p26",
+     "label": "auto_3",
+     "area": 441,
+     "best_part": "wheel_l2",
+     "iou": 0.05
+    },
+    {
+     "id": "p10",
+     "label": "battery warning sticker",
+     "area": 1861,
+     "best_part": "lid",
+     "iou": 0.062
+    },
+    {
+     "id": "p30",
+     "label": "auto_7",
+     "area": 377,
+     "best_part": "fs_lid_5",
+     "iou": 0.073
+    },
+    {
+     "id": "p27",
+     "label": "auto_4",
+     "area": 558,
+     "best_part": "fs_lid_4",
+     "iou": 0.081
     },
     {
      "id": "p08",
      "label": "BLUE TERROR label card",
-     "area": 5646,
+     "area": 3237,
+     "best_part": "lid",
+     "iou": 0.098
+    },
+    {
+     "id": "p40",
+     "label": "auto_19",
+     "area": 185,
+     "best_part": "fs_lid_0",
+     "iou": 0.1
+    },
+    {
+     "id": "p09",
+     "label": "red wires",
+     "area": 3234,
+     "best_part": "lid",
+     "iou": 0.104
+    },
+    {
+     "id": "p11",
+     "label": "blue left front post",
+     "area": 3315,
      "best_part": "chassis",
-     "iou": 0.14
+     "iou": 0.106
     },
     {
-     "id": "p01",
-     "label": "left back wheel",
-     "area": 3546,
-     "best_part": "wheel_l0",
-     "iou": 0.167
+     "id": "p22",
+     "label": "rail screw 3",
+     "area": 128,
+     "best_part": "wheel_r2",
+     "iou": 0.124
     },
     {
-     "id": "p13",
-     "label": "blue lower body front panel",
-     "area": 10228,
-     "best_part": "scoop",
-     "iou": 0.169
-    },
-    {
-     "id": "p02",
-     "label": "left middle wheel",
-     "area": 4149,
-     "best_part": "wheel_l1",
-     "iou": 0.173
+     "id": "p04",
+     "label": "right wheel back",
+     "area": 1592,
+     "best_part": "wheel_r0",
+     "iou": 0.182
     },
     {
      "id": "p03",
-     "label": "left front wheel",
-     "area": 3869,
-     "best_part": "wheel_l1",
-     "iou": 0.173
+     "label": "left wheel front",
+     "area": 3619,
+     "best_part": "wheel_l2",
+     "iou": 0.223
     },
     {
-     "id": "p15",
-     "label": "blue right front post",
-     "area": 9453,
-     "best_part": "scoop",
-     "iou": 0.182
+     "id": "p01",
+     "label": "left wheel back",
+     "area": 3395,
+     "best_part": "wheel_l0",
+     "iou": 0.231
+    },
+    {
+     "id": "p02",
+     "label": "left wheel middle",
+     "area": 3961,
+     "best_part": "wheel_l1",
+     "iou": 0.269
+    },
+    {
+     "id": "p13",
+     "label": "blue lower body between posts",
+     "area": 7572,
+     "best_part": "chassis",
+     "iou": 0.289
     },
     {
      "id": "p07",
      "label": "clear blue top lid",
-     "area": 11079,
-     "best_part": "chassis",
-     "iou": 0.229
+     "area": 14064,
+     "best_part": "lid",
+     "iou": 0.411
     },
     {
-     "id": "p04",
-     "label": "right back wheel",
-     "area": 2069,
-     "best_part": "wheel_r0",
-     "iou": 0.247
-    },
-    {
-     "id": "p17",
+     "id": "p14",
      "label": "front green wedge plate",
-     "area": 11247,
+     "area": 17206,
      "best_part": "scoop",
-     "iou": 0.343
+     "iou": 0.544
     }
    ],
    "unmatched_model_parts": [
-    "wheel_l2",
-    "dt_hub_wheel_l0",
-    "dt_nut_wheel_l0",
-    "dt_hub_wheel_l1",
-    "dt_nut_wheel_l1",
-    "dt_hub_wheel_l2",
-    "dt_axle_wheel_l2",
-    "dt_nut_wheel_l2",
-    "dt_screw_2",
-    "dt_screw_3",
-    "dt_screw_5"
+    "fs_lid_3"
    ]
   }
  ]
