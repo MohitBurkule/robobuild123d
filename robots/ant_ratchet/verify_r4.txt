@@ -1,0 +1,105 @@
+BLOCKERS: 11
+  [ran] integrity 0.06s
+  [proxy] wiring 0.68s
+  [ran] mass 0.00s
+  [proxy] interference 12.01s
+  [ran] connections 0.02s
+  [ran] legal 0.03s
+  [ran] fasteners 0.02s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.24s
+  [ran] dynamics 0.00s
+  [ran] strength 0.02s
+  [ran] printability 1.30s
+  [ran] process 0.00s
+  [ran] electrical 1.16s
+  [ran] combat 0.16s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.05s
+  [ran] bom 0.00s
+  [ran] wire_review 0.64s
+  [ran] fastener_record 0.00s
+  [ran] likeness 6.97s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.14s
+  [ran] dfm 0.04s
+  [ran] realworld 1.12s
+ant ratchet: ok=False 9 blockers in 9 root causes, mass 299.2/150 g
+1. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+2. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (10 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -42.00..42.00  y -50.00..50.00  z -14.00..18.00  size 84.00 x 100.00 x 32.00 mm
+   |   centre (0.00, 0.00, 2.00), volume 197759.1 mm3
+   |   overlap allowed `dt_strut_lifter` 1.17 mm (allowed inf)
+   |   overlap allowed `skirt_l` 0.98 mm (allowed inf)
+   |   overlap allowed `skirt_r` 0.97 mm (allowed inf)
+3. [proxy.wiring] Wire `w_wpn` (`el_esc.wpn` to `wa_act.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [mass.over] 299.2 g (range 243.7 to 354.6 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+5. [proxy.sweep] joint `lifter`: `lifter` hits `dt_strut_lifter` 0.14 mm deep at 7.0 (declared range 0..70; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
+   | lifter: x -37.00..37.00  y 11.40..52.60  z -10.37..19.37  size 74.00 x 41.20 x 29.74 mm
+   |   centre (0.00, 32.00, 4.50), volume 10656.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 8, 18] range 0..70 default 0
+   |   gap to `dt_strut_lifter` 0.00 mm (touching)
+   |   gap to `chassis` 1.03 mm
+6. [connection.cover_fasteners] `skirt_l` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | skirt_l: x 39.89..46.00  y -12.00..30.00  z -14.00..8.00  size 6.11 x 42.00 x 22.00 mm
+   |   centre (42.94, 9.00, -3.00), volume 3056.5 mm3
+   |   overlap allowed `chassis` 0.98 mm (allowed inf)
+   |   overlap allowed `fork_1` 0.46 mm (allowed inf)
+   |   gap to `dt_mount_fork_1` 0.00 mm (touching)
+7. [connection.cover_fasteners] `skirt_r` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | skirt_r: x -46.00..-39.91  y -12.00..30.00  z -14.00..8.00  size 6.09 x 42.00 x 22.00 mm
+   |   centre (-42.95, 9.00, -3.00), volume 3056.4 mm3
+   |   overlap allowed `chassis` 0.97 mm (allowed inf)
+   |   overlap allowed `fork_0` 0.46 mm (allowed inf)
+   |   gap to `dt_mount_fork_0` 0.00 mm (touching)
+8. [wire.render_wires] 2 of 2 robot render(s) do not draw all 5 wires: renders/iso.png: wire `w_bat_sw` not drawn (+1); renders/top.png: wire `w_bat_sw` not drawn (+1)
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+9. [wire.render_count] iso.png: 3 routes vs 5 spec wires (missing ['w_bat_sw', 'w_wpn']); top.png: 3 routes vs 5 spec wires (missing ['w_bat_sw', 'w_wpn'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+MASS BUDGET:
+  mass 299.2 g of 150 g (-149.2 g margin)
+    chassis                   188.27 g  fills 74% of its box  <- solid block? a tub should be a shell
+    wheel_l0                   13.76 g  fills 69% of its box
+    wheel_r0                   13.76 g  fills 69% of its box
+    lifter                     12.79 g  fills 12% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    wa_act                      7.50 g  fills 67% of its box
+    dt_hub_wheel_r0             3.93 g  fills 75% of its box
+    dt_hub_wheel_l0             3.93 g  fills 75% of its box
+    fork_1                      3.14 g  fills 32% of its box
+    fork_0                      3.14 g  fills 32% of its box
+    skirt_l                     2.91 g  fills 54% of its box
+    skirt_r                     2.91 g  fills 54% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    lifter_lip                  2.13 g  fills 40% of its box
+    dt_mount_fork_0             1.23 g  fills 100% of its box
+    dt_mount_fork_1             1.23 g  fills 100% of its box
+    wheel_guard_l               0.89 g  fills 8% of its box
+    wheel_guard_r               0.89 g  fills 8% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fs_look_chassis_0           0.23 g  fills 29% of its box
+    fs_look_chassis_1           0.23 g  fills 29% of its box
+    dt_strut_lifter             0.06 g  fills 29% of its box
+    mass.over: 299.2 g (range 243.7 to 354.6 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 5 hit / 6 miss, group 0 hit / 31 miss, inside 15 hit / 11 miss, likeness 2 hit / 0 miss, min_gap 16 hit / 14 miss, overlap 147 hit / 76 miss, part_check 15 hit / 1 miss, part_geom 28 hit / 0 miss, ray 119 hit / 52 miss
+
+FULL WIRING GROUP (tier full, --only wiring): 2 blocker(s) counted in the total above
+[BLOCKER] wiring.route - Wire `w_bat_sw` (22 AWG, 1.9 mm thick) from `el_battery.xt30` to `el_switch.in` has no clear path; it gets within 6.7 mm of the end at (-0.3, -2.5, -0.3) and `el_battery` blocks it. parts: el_battery.xt30, el_switch.in at (-0.3, -2.5, -0.3)
+[BLOCKER] wiring.route - Wire `w_wpn` (26 AWG, 1.3 mm thick) from `el_esc.wpn` to `wa_act.terminals` has no clear path; it gets within 54.1 mm of the end at (13.5, -4.3, 3.3) and `el_esc` blocks it. parts: el_esc.wpn, wa_act.terminals at (13.5, -4.3, 3.3)

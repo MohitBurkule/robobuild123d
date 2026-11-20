@@ -1,0 +1,22 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x",
+  "position": "front",
+  "width_frac": 0.62
+ },
+ "photos": [
+  "ant_ratchet.aws72.webp",
+  "ant_ratchet.aws76.webp"
+ ],
+ "view": {
+  "ant_ratchet.aws72.webp": "front_right_iso",
+  "ant_ratchet.aws76.webp": "front_left_iso"
+ },
+ "view_source": {
+  "ant_ratchet.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "ant_ratchet.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
+}

@@ -1,0 +1,28 @@
+{
+ "name": "ant ratchet",
+ "robot_type": "lifter",
+ "body": {
+  "length": 100,
+  "width": 84,
+  "height": 32,
+  "ramp": 45,
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "none"
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 16,
+  "width": 12,
+  "y": [
+   -28
+  ]
+ },
+ "forks": {
+  "n": 2,
+  "length": 22,
+  "width": 12,
+  "spread": 104
+ }
+}

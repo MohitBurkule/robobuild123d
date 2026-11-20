@@ -1,0 +1,128 @@
+BLOCKERS: 33
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.07s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.02s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.44s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.08s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.86s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.04s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+ant ratchet: ok=False 33 blockers in 32 root causes, mass 270.2/150 g
+1. [process.print_orientation] `fork_0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | fork_0: x -59.00..-45.00  y 18.00..64.00  z -16.00..0.00  size 14.00 x 46.00 x 16.00 mm
+   |   centre (-52.00, 41.00, -8.00), volume 6174.0 mm3
+   |   OVERLAP `skirt_r` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_guard_r` 2.00 mm
+   | fork_1: x 45.00..59.00  y 18.00..64.00  z -16.00..0.00  size 14.00 x 46.00 x 16.00 mm
+2. [mass.over] 270.2 g (range 218.6 to 321.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+3. [proxy.interference] `chassis` and `lifter_lip` overlap by 0.70 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -50.00..50.00  z -14.00..18.00  size 84.00 x 100.00 x 32.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 216044.0 mm3
+   |   OVERLAP `lifter_lip` 0.70 mm (allowed 0.08)
+   |   gap to `skirt_l` 0.00 mm (touching)
+   |   gap to `skirt_r` 0.00 mm (touching)
+4. [proxy.interference] `fork_0` and `skirt_r` overlap by 0.46 mm (allowed 0.08).
+   | fork_0: x -59.00..-45.00  y 18.00..64.00  z -16.00..0.00  size 14.00 x 46.00 x 16.00 mm
+   |   centre (-52.00, 41.00, -8.00), volume 6174.0 mm3
+   |   OVERLAP `skirt_r` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_guard_r` 2.00 mm
+   | skirt_r: x -46.00..-42.00  y -12.00..30.00  z -14.00..8.00  size 4.00 x 42.00 x 22.00 mm
+5. [proxy.interference] `fork_1` and `skirt_l` overlap by 0.46 mm (allowed 0.08).
+   | fork_1: x 45.00..59.00  y 18.00..64.00  z -16.00..0.00  size 14.00 x 46.00 x 16.00 mm
+   |   centre (52.00, 41.00, -8.00), volume 6174.0 mm3
+   |   OVERLAP `skirt_l` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_guard_l` 2.00 mm
+   | skirt_l: x 42.00..46.00  y -12.00..30.00  z -14.00..8.00  size 4.00 x 42.00 x 22.00 mm
+6. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `skirt_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 46.00..58.00  y -46.99..-9.01  z -16.00..22.00  size 12.00 x 37.99 x 38.00 mm
+   |   centre (52.00, -28.00, 3.00), volume 13609.4 mm3
+   |   gap to `skirt_l` 0.00 mm (touching)
+   |   gap to `wheel_guard_l` 1.00 mm
+   | skirt_l: x 42.00..46.00  y -12.00..30.00  z -14.00..8.00  size 4.00 x 42.00 x 22.00 mm
+7. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `skirt_r`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -58.00..-46.00  y -46.99..-9.01  z -16.00..22.00  size 12.00 x 37.99 x 38.00 mm
+   |   centre (-52.00, -28.00, 3.00), volume 13609.4 mm3
+   |   gap to `skirt_r` 0.00 mm (touching)
+   |   gap to `wheel_guard_r` 1.00 mm
+   | skirt_r: x -46.00..-42.00  y -12.00..30.00  z -14.00..8.00  size 4.00 x 42.00 x 22.00 mm
+8. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `skirt_r`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -59.00..-45.00  y 18.00..64.00  z -16.00..0.00  size 14.00 x 46.00 x 16.00 mm
+   |   centre (-52.00, 41.00, -8.00), volume 6174.0 mm3
+   |   OVERLAP `skirt_r` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_guard_r` 2.00 mm
+   | skirt_r: x -46.00..-42.00  y -12.00..30.00  z -14.00..8.00  size 4.00 x 42.00 x 22.00 mm
+9. [connection.floating] `fork_1` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `skirt_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_1: x 45.00..59.00  y 18.00..64.00  z -16.00..0.00  size 14.00 x 46.00 x 16.00 mm
+   |   centre (52.00, 41.00, -8.00), volume 6174.0 mm3
+   |   OVERLAP `skirt_l` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_guard_l` 2.00 mm
+   | skirt_l: x 42.00..46.00  y -12.00..30.00  z -14.00..8.00  size 4.00 x 42.00 x 22.00 mm
+10. [connection.floating] `lifter` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 1.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | lifter: x -37.00..37.00  y 11.40..52.60  z -10.37..19.37  size 74.00 x 41.20 x 29.74 mm
+   |   centre (0.00, 32.00, 4.50), volume 10656.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 8, 18] range 0..70 default 0
+   |   gap to `chassis` 1.03 mm
+   |   gap to `lifter_lip` 1.64 mm
+11. [connection.floating] `lifter_lip` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | lifter_lip: x -37.00..37.00  y 47.97..64.03  z -15.36..-11.64  size 74.00 x 16.05 x 3.71 mm
+   |   centre (0.00, 56.00, -13.50), volume 1776.0 mm3
+   |   OVERLAP `chassis` 0.70 mm (allowed 0.08)
+   |   gap to `lifter` 1.64 mm
+   | chassis: x -42.00..42.00  y -50.00..50.00  z -14.00..18.00  size 84.00 x 100.00 x 32.00 mm
+12. [connection.floating] `skirt_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | skirt_l: x 42.00..46.00  y -12.00..30.00  z -14.00..8.00  size 4.00 x 42.00 x 22.00 mm
+   |   centre (44.00, 9.00, -3.00), volume 3312.0 mm3
+   |   OVERLAP `fork_1` 0.46 mm (allowed 0.08)
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `wheel_l0` 0.00 mm (touching)
+... 20 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 270.2 g of 150 g (-120.2 g margin)
+    chassis                   205.67 g  fills 80% of its box  <- solid block? a tub should be a shell
+    wheel_l0                   13.88 g  fills 79% of its box
+    wheel_r0                   13.88 g  fills 79% of its box
+    lifter                     12.79 g  fills 12% of its box
+    fork_0                      5.88 g  fills 60% of its box
+    fork_1                      5.88 g  fills 60% of its box
+    skirt_l                     3.15 g  fills 90% of its box
+    skirt_r                     3.15 g  fills 90% of its box
+    lifter_lip                  2.13 g  fills 40% of its box
+    wheel_guard_l               1.30 g  fills 9% of its box
+    wheel_guard_r               1.30 g  fills 9% of its box
+    mass.over: 270.2 g (range 218.6 to 321.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 3 hit / 0 miss, group 0 hit / 31 miss, inside 11 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 125 hit / 0 miss, overlap 93 hit / 0 miss, part_check 5 hit / 0 miss, part_geom 11 hit / 0 miss, ray 55 hit / 0 miss
