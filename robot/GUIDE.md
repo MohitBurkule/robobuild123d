@@ -102,6 +102,38 @@ robot's own motion or when inverted.
   edge of a static printed part's box: front corners in plan (`+y+x`, `+y-x`: a taper), top edges (`+z+x`), the nose
   (`+y+z`). A hollow part keeps a `--wall` skin behind the new face, so the cavity never opens. It refuses when the cut
   or the skin would meet another part. A corner that is already empty removes nothing.
+- Side and plan profiles from 2-3 numbers, with the same skin and refusal rules:
+  - `--round A [B]`: a rounded corner (a quarter circle, or a quarter ellipse with B). Use it for a soft rear or a
+    rounded end cap.
+  - `--stairs A B --n 3`: equal steps inside the corner, for a stepped flank.
+  - Face cuts: the first face of `--edge` is cut, and the second face only names the axis the cut runs along.
+    - `--notch DEPTH WIDTH [--at C]`: a square slot or channel.
+    - `--vnotch DEPTH WIDTH`: a V slot, such as cat ears or a slot for an arm.
+    - `--arc SAG [--along=LO,HI]`: the edge becomes an arc. `+SAG` drops both ends for a bowed top. `--arc=-SAG` sinks
+      the middle for a concave side.
+  - These cut only static parts, never a jointed weapon. On a big hollow chassis a run takes 1-2 minutes.
+- **Photo graphics (eyes, stripes, emblems, the robot's name):** use
+  `robot decal spec.json HOST --face +z --shape circle|ellipse|almond|star|ring|rect|stripe|poly|text --size W [H]
+  [--at U,V] [--angle DEG] [--pair D] [--text STR] --color #hex`.
+  - Each graphic becomes its own coloured part, flush with HOST's face, so it shows in renders and the outline does
+    not change.
+  - How it is built: HOST gets a pocket `--depth` deep (default 0.8 mm), and the graphic fills the pocket, running
+    0.25 mm deeper than the pocket floor.
+  - On a printed HOST the graphic is `fused_with` HOST (a multi-colour print) and follows HOST's joint.
+  - HOST must be printed. A pocket in a cut or machined plate is a blind feature (`process.geometry`), so give sheet
+    plates their photo colour with `robot colors` instead.
+  - A graphic placed over an earlier one on the same face replaces the earlier one there and takes its depth. Build
+    layers this way, for example an iris on an eye, or a head and beak on a disc.
+  - Several pieces in one call (`--pair`, or the letters of a text) are joined into one solid by a hidden web inside
+    HOST.
+  - It refuses when:
+    - the face under the graphic is not one plane;
+    - the graphic would not lie inside HOST with 0.15 mm of HOST left under it.
+  - Text takes `--size H [W]`. On a top face, `--angle 180` makes it read from the front.
+  - To sample the colour from the photo instead, leave out `--color` and run
+    `robot colors spec.json --parts ID --force`.
+  - Check `robot verify` (groups `geom`, `integrity`, `interference`) after each robot. A pocket that clips a screw
+    hole can make HOST an invalid solid; move the graphic.
 - `robot window spec.json PART --over el_battery [--face +z] [--lip 2]` opens a see-through window over a battery, ESC
   or PCB where the photo shows the electronics, keeping a rim so the component stays captive. It refuses when anything
   but wires lies between the component and the outside.
@@ -174,6 +206,14 @@ GENERATOR INTENT KEEPS YOUR ADDITIONS: put `reference`, `robot_type`, and hand-m
 LOOKS FIRST: `robot kit kit.json spec.json` builds a shape draft from named numbers (body box / twin pods with a centre
 slot + front ramp, weapon disc/drum/bar size+position+axis+teeth, 2 or 4 wheels anywhere, forks); see `robot/kit.py` doc.
 Only `likeness` judges it; iterate kit numbers with `robot likeness` until the photos match, then do the full build.
+FORKS: do not hand-roll tines. Use the shared fork set (`robot/modules/forks.py`): kit.json `"forks": {"style": "plate"
+| "sheet", "n", "length", "width", "taper", "thick", "pitch" | "spread", "tilt_deg", "tab", "holes", "hole_d", "x",
+"mirror", "hinge": {"pin_d", "range": [min, max]}, "lift": {"servo"}}` (no `style` = the old plain tines), or
+`{"part": "fork_set", ...}` in `use` (robot/KITPARTS.md). plate = one laser plate per tine with its own screw tab;
+sheet = one comb. `hinge` adds a knuckle tube on a pin (`kind: pin`, the axle), static lugs + a screw tab, a joint
+limited to `range`; `lift` adds a catalog servo coaxial with the hinge and a horn link. `mirror` + `x` makes a pair
+either side of a centre disc. Hinged forks are kind `other` with no `weapon`, so `kin.*` sweeps only the joint range:
+never model hinged forks as `kind: weapon` on a spinner, the verifier then sweeps them a full turn (long forks block).
 WHAT TO CHANGE: `robot diff-photo spec.json` writes renders/diff_<photo>.png = photo | model from the matching camera |
 overlay, and (with ANTHROPIC_API_KEY) a Haiku-written list of concrete differences. Read the sheet every loop.
 CLUSTERBOTS: model ONE bot and set top-level `"cluster": N` in the spec: the mass limit becomes 150/N g per bot
@@ -677,3 +717,19 @@ model is all grey". Fix them with these tools instead of reshaping, then re-run 
 - Part does not fit: `robot probe --place PART` for the free box, then `robot catalog --kind KIND --fits LxWxH`.
 - Overlap of a few tenths of a mm: the `fit.interference` message gives the measured move; apply it, don't guess.
 - Generate spec.json from the CAD masters (`make_spec.py`); never hand-patch coordinates that a master drives.
+
+## Copying a real robot (`reference_copy`)
+A copy must look and work like the original, so our own combat-effectiveness taste must not force it to change. Add
+`"reference_copy": {"robot": "Baphomet", "source": "AWS wiki photos aws74-77"}` to the spec: `spinner.reach` (rim must reach the
+floor, weapon must lead), `spinner.mass_share`, `shape.weapon_leads`, `archetype.blade_lead`, `archetype.wedgelets_flank` and the
+`combat`/`coverage` groups then drop from BLOCKER to WARNING and are listed under `copy_mode` in the report. Buildability
+(interference, assembly, mass, fit, fasteners, wiring) is never relaxed. Our own robots (no `reference_copy`) keep every rule.
+Code: `robot/checks/copymode.py`.
+
+## Photo pose (`robot pose-photo SPEC`)
+Monocular depth (Depth Anything V2 small, ONNX CPU, auto-downloaded) + silhouette fit of the CAD through a pinhole camera.
+Writes `<robot>/pose/<photo>.pose.json` (camera az/el/roll, distance, fx/fy/cx/cy, robot-in-camera 4x4, scores, runner-ups,
+`confidence`), `.depth.png` and a side-by-side `.overlay.png`. `view_string` ("az,el!") feeds `robot render --view`.
+Evidence is photo mask + depth only; the declared REFERENCE.json view is reported, not used. Robot assumed flat on floor.
+`robot part-pose SPEC [SEGDIR]`: per partseg part, median metric depth, 3D centroid / normal / extent in the robot frame and
+pairwise offsets (`part_pose.json` in the segments folder). Needs pose-photo + partseg export; trust only if `calibration.r` is high.

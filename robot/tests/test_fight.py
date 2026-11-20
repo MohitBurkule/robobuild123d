@@ -188,7 +188,7 @@ def test_debris_collides_with_own_robot_after_breaking():
     sim.add_fighter(_model(), profile.build(sp), Placement("A", (0, 0), 90))
     sim.compile()
     hz = hazards.Hazards(sim, {"A": sp})
-    lid = [g for g, o in hz.owner.items() if o[2] == "lid"]
+    lid = list(sim.welds[0].ghosts)  # the free part; its rigid chassis copy switches off on the break
     assert all(sim.m.geom_contype[g] != hazards.DEBRIS_BIT for g in lid)
     sim.d.qvel[:] = 0
     for k in range(6000):
