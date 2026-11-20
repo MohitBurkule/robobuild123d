@@ -1,0 +1,58 @@
+{
+ "spec": "/tmp/work10_my_first_bot/robots/my_first_bot/spec.json",
+ "rendered_at": 1795042049.3564339,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "eye_l",
+  "eye_r",
+  "post",
+  "post_top",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.013,
+    10.517,
+    -0.989
+   ],
+   "to": [
+    -4.0,
+    -31.5,
+    -2.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -31.5,
+    -2.0
+   ],
+   "to": [
+    -42.986999999999995,
+    -4.483,
+    -3.489
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -42.986999999999995,
+    3.517,
+    -3.489
+   ],
+   "to": [
+    -12.600000000000001,
+    -35.0,
+    0.0
+   ]
+  }
+ }
+}
