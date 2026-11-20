@@ -1,0 +1,110 @@
+BLOCKERS: 10
+  [ran] integrity 0.18s
+  [ran] mass 0.00s
+  [proxy] interference 30.78s
+  [ran] connections 2.14s
+  [ran] legal 0.05s
+  [ran] fasteners 0.01s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.04s
+  [ran] shape 1.81s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 1.87s
+  [ran] process 0.05s
+  [ran] electrical 0.02s
+  [ran] combat 0.37s
+  [ran] physics 0.01s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.19s
+  [ran] bom 0.01s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 19.19s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.38s
+  [ran] dfm 0.28s
+  [ran] realworld 0.17s
+burning tiger: ok=False 10 blockers in 9 root causes, mass 149.0/150 g
+1. [process.geometry] `fork_0` (laser): 1 face(s) (17 mm2) are neither the two plate faces nor walls perpendicular to them: 3D features (bumps, drum surfaces, raised teeth) cannot be laser/waterjet cut. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | fork_0: x -54.00..-32.00  y 33.60..66.40  z -13.91..-1.98  size 22.00 x 32.80 x 11.93 mm
+   |   centre (-43.00, 50.00, -7.95), volume 1107.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `dt_mount_fork_0` 0.00 mm (touching)
+   |   gap to `wheel_r1` 1.00 mm
+2. [proxy.sweep] joint `arm`: `arm` hits `chassis` 1.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm` lists the closest approach to every part.
+   | arm: x -9.00..9.00  y -27.50..42.00  z -2.00..22.00  size 18.00 x 69.50 x 24.00 mm
+   |   centre (0.00, 7.25, 10.00), volume 7497.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `lid` 0.00 mm (touching)
+3. [power.weapon_motor] `arm` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | arm: x -9.00..9.00  y -27.50..42.00  z -2.00..22.00  size 18.00 x 69.50 x 24.00 mm
+   |   centre (0.00, 7.25, 10.00), volume 7497.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `lid` 0.00 mm (touching)
+4. [process.weapon_printed] Weapon `arm` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | arm: x -9.00..9.00  y -27.50..42.00  z -2.00..22.00  size 18.00 x 69.50 x 24.00 mm
+   |   centre (0.00, 7.25, 10.00), volume 7497.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `lid` 0.00 mm (touching)
+5. [electrical.battery_weapon_gap] Battery is -2.5 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+   fix: Move the battery >= 3 mm from the swept volume.
+6. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `arm` rotor (arm) at [-0.5, 10.5, -4.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | arm: x -9.00..9.00  y -27.50..42.00  z -2.00..22.00  size 18.00 x 69.50 x 24.00 mm
+   |   centre (0.00, 7.25, 10.00), volume 7497.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `lid` 0.00 mm (touching)
+7. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `arm` rotor (arm) at [3.5, -13.5, -5.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | arm: x -9.00..9.00  y -27.50..42.00  z -2.00..22.00  size 18.00 x 69.50 x 24.00 mm
+   |   centre (0.00, 7.25, 10.00), volume 7497.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `lid` 0.00 mm (touching)
+8. [likeness.silhouette] `reference/burning_tiger.aws74.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.72). Regions (photo frame, left third first) 0.56 / 0.71 / 0.66: worst = front third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+9. [likeness.silhouette] `reference/burning_tiger.aws76.webp`: best silhouette IoU 0.65 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.69). Regions (photo frame, left third first) 0.74 / 0.70 / 0.45: worst = rear third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 149.0 g of 150 g (+1.0 g margin)
+    chassis                    47.06 g  fills 37% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l1                 9.50 g  fills 63% of its box
+    dm_wheel_r1                 9.50 g  fills 63% of its box
+    lid                         9.08 g  fills 83% of its box
+    arm                         7.14 g  fills 25% of its box
+    wheel_l1                    5.62 g  fills 66% of its box
+    wheel_r1                    5.62 g  fills 66% of its box
+    wheel_l0                    5.59 g  fills 78% of its box
+    wheel_r0                    5.59 g  fills 78% of its box
+    fork_1                      4.97 g  fills 13% of its box
+    fork_2                      4.90 g  fills 13% of its box
+    fork_0                      4.90 g  fills 13% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_l1             1.68 g  fills 76% of its box
+    dt_hub_wheel_r1             1.68 g  fills 76% of its box
+    dt_mount_fork_1             1.67 g  fills 94% of its box
+    dt_hub_wheel_l0             1.66 g  fills 75% of its box
+    dt_hub_wheel_r0             1.66 g  fills 75% of its box
+    dt_axle_wheel_r0            1.09 g  fills 79% of its box
+    dt_axle_wheel_l0            1.09 g  fills 79% of its box
+    dt_mount_fork_0             1.05 g  fills 59% of its box
+    dt_mount_fork_2             1.05 g  fills 59% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 149.0 g (range 123.5 to 174.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 24 miss

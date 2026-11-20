@@ -1,0 +1,20 @@
+{
+ "robot_type": "lifter",
+ "wheels": 4,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "burning_tiger.aws74.webp",
+  "burning_tiger.aws76.webp"
+ ],
+ "view": {
+  "burning_tiger.aws74.webp": "front_left_iso",
+  "burning_tiger.aws76.webp": "front_right_iso"
+ },
+ "view_source": {
+  "burning_tiger.aws74.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "burning_tiger.aws76.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
+ }
+}
