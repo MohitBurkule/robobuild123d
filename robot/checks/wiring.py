@@ -61,7 +61,11 @@ def tube_dist(points, P):
 
 
 class Router:
-    def __init__(self, world):
+    def __init__(self, world, sweeps=None):
+        """sweeps: {body id: arm_sweep.ArcSweep} for the bodies of a hinged weapon on a limited joint. Those block the
+        volume they sweep over the joint range (padded by one cell), not their box; other wheels / weapons / pulleys /
+        belts (spinners) block their padded AABB."""
+        sweeps = sweeps or {}
         bl = world.bounds()
         self.min = bl[0] - 2.0
         size = (bl[1] + 2.0) - self.min
@@ -76,8 +80,15 @@ class Router:
             hi = np.max([s[1] for s in structs], 0) - 0.4
             inside = [(c[k] >= lo[k]) & (c[k] <= hi[k]) for k in range(3)]
             solid = ~(inside[0][:, None, None] & inside[1][None, :, None] & inside[2][None, None, :])
+        from scipy.ndimage import binary_dilation
+
+        for sw in {id(v): v for v in sweeps.values()}.values():
+            occ = sw.occupancy(self.min, CELL, self.n)
+            solid |= binary_dilation(occ, np.ones((3, 3, 3), bool)) if occ.any() else occ
         for b in world.bodies:
             lo, hi = b.aabb
+            if b.id in sweeps:
+                continue
             if b.kind in ("wheel", "weapon", "pulley", "belt"):
                 lo, hi = lo - 0.6, hi + 0.6
                 m = [(c[k] >= lo[k]) & (c[k] <= hi[k]) for k in range(3)]
@@ -248,7 +259,9 @@ def run(ctx):
         out.append(note("wiring.none", G, "No wires declared",
                         "The spec lists no wires, so nothing is routed or counted for mass."))
         return out
-    router = Router(world)
+    from .arm_sweep import arm_sweeps
+
+    router = Router(world, arm_sweeps(r.spec, world))
     total_len = total_g = 0.0
     nok = 0
     order = sorted(r.spec.wires, key=lambda w: -wire_od(w.awg if w.awg is not None else default_awg(w.kind)))
