@@ -1,0 +1,125 @@
+{
+ "spec": "/tmp/work10_refined_for_the_roboteers_plea/robots/refined_for_the_roboteers_plea/spec.json",
+ "rendered_at": 1795086127.5728402,
+ "bodies": [
+  "chassis",
+  "lid",
+  "plough",
+  "arm",
+  "weapon",
+  "lock_pin",
+  "wheel_l0",
+  "wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "ins_lid0",
+  "ins_lid1",
+  "ins_lid2",
+  "ins_lid3",
+  "ins_pll0",
+  "ins_plr0",
+  "nut_ax0",
+  "nut_ax1",
+  "bolt_lid0",
+  "bolt_lid1",
+  "bolt_lid2",
+  "bolt_lid3",
+  "bolt_pll0",
+  "bolt_plr0",
+  "bolt_wm0",
+  "bolt_wm1",
+  "bolt_ax0",
+  "bolt_ax1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.0,
+    -8.8,
+    -2.45
+   ],
+   "to": [
+    -4.0,
+    -41.55,
+    -3.45
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -41.55,
+    -3.45
+   ],
+   "to": [
+    -16.0,
+    -25.3,
+    4.3999999999999995
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    4.0,
+    -41.55,
+    -3.45
+   ],
+   "to": [
+    23.0,
+    -9.6,
+    -5.95
+   ]
+  },
+  "w_wm": {
+   "from": [
+    20.0,
+    12.4,
+    -5.95
+   ],
+   "to": [
+    5.0,
+    -7.0,
+    92.0
+   ]
+  },
+  "w_m1": {
+   "from": [
+    16.0,
+    -13.3,
+    4.3999999999999995
+   ],
+   "to": [
+    8.5,
+    -36.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.0,
+    -13.3,
+    4.3999999999999995
+   ],
+   "to": [
+    -8.5,
+    -36.0,
+    0.0
+   ]
+  },
+  "w_sig_wesc": {
+   "from": [
+    16.0,
+    -25.3,
+    4.3999999999999995
+   ],
+   "to": [
+    17.0,
+    -9.6,
+    -5.95
+   ]
+  }
+ }
+}
