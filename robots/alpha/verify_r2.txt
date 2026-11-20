@@ -1,0 +1,103 @@
+BLOCKERS: 23
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.05s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.01s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.79s
+  [ran] process 0.01s
+  [ran] electrical 0.00s
+  [ran] combat 0.08s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.33s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+alpha: ok=False 23 blockers in 23 root causes, mass 248.7/150 g
+1. [mass.over] 248.7 g (range 198.6 to 298.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `wheel_l0` overlap by 4.38 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -42.50..42.50  z -10.00..20.00  size 92.00 x 85.00 x 30.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 234600.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `scoop` 0.91 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `wheel_r0` overlap by 4.38 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -42.50..42.50  z -10.00..20.00  size 92.00 x 85.00 x 30.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 234600.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `scoop` 0.91 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `scoop` overlap by 0.91 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -42.50..42.50  z -10.00..20.00  size 92.00 x 85.00 x 30.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 234600.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `scoop` 0.91 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `link_l` overlap by 0.46 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -42.50..42.50  z -10.00..20.00  size 92.00 x 85.00 x 30.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 234600.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `scoop` 0.91 mm (allowed 0.08)
+6. [proxy.interference] `chassis` and `link_r` overlap by 0.46 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -42.50..42.50  z -10.00..20.00  size 92.00 x 85.00 x 30.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 234600.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `scoop` 0.91 mm (allowed 0.08)
+7. [proxy.interference] `scoop` and `link_l` overlap by 0.93 mm (allowed 0.08).
+   | scoop: x -46.00..46.00  y 24.16..79.84  z -9.44..21.44  size 92.00 x 55.68 x 30.87 mm
+   |   centre (0.00, 52.00, 6.00), volume 11408.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 20, 22.0] range 0..80 default 0
+   |   OVERLAP `link_l` 0.93 mm (allowed 0.08)
+   |   OVERLAP `link_r` 0.93 mm (allowed 0.08)
+8. [proxy.interference] `scoop` and `link_r` overlap by 0.93 mm (allowed 0.08).
+   | scoop: x -46.00..46.00  y 24.16..79.84  z -9.44..21.44  size 92.00 x 55.68 x 30.87 mm
+   |   centre (0.00, 52.00, 6.00), volume 11408.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 20, 22.0] range 0..80 default 0
+   |   OVERLAP `link_l` 0.93 mm (allowed 0.08)
+   |   OVERLAP `link_r` 0.93 mm (allowed 0.08)
+9. [proxy.sweep] joint `scoop`: `scoop` hits `chassis` 0.91 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
+   | scoop: x -46.00..46.00  y 24.16..79.84  z -9.44..21.44  size 92.00 x 55.68 x 30.87 mm
+   |   centre (0.00, 52.00, 6.00), volume 11408.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 20, 22.0] range 0..80 default 0
+   |   OVERLAP `link_l` 0.93 mm (allowed 0.08)
+   |   OVERLAP `link_r` 0.93 mm (allowed 0.08)
+10. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+11. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+12. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+... 11 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 248.7 g of 150 g (-98.7 g margin)
+    chassis                   223.34 g  fills 100% of its box  <- solid block? a tub should be a shell
+    scoop                      10.86 g  fills 7% of its box
+    wheel_l0                    4.61 g  fills 79% of its box
+    wheel_r0                    4.61 g  fills 79% of its box
+    link_l                      2.06 g  fills 100% of its box
+    link_r                      2.06 g  fills 100% of its box
+    mass.over: 248.7 g (range 198.6 to 298.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 6 hit / 0 miss, likeness 1 hit / 0 miss, overlap 115 hit / 0 miss, part_check 1 hit / 0 miss, part_geom 6 hit / 0 miss, ray 30 hit / 0 miss

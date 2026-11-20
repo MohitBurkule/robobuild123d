@@ -1,0 +1,446 @@
+{
+ "aggregate": {
+  "photos": 1,
+  "area_weighted_iou": 0.348,
+  "mean_iou": 0.047
+ },
+ "photos": [
+  {
+   "photo": "alpha.aws72.webp",
+   "camera": {
+    "azimuth": 105.0,
+    "elevation": 45.0
+   },
+   "silhouette_iou": 0.807,
+   "mean_iou": 0.047,
+   "area_weighted_iou": 0.348,
+   "f1_at_0.5": 0.029,
+   "segments": [
+    {
+     "id": "p01",
+     "label": "left wheel",
+     "area": 1130,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p38",
+     "label": "auto_11",
+     "area": 636,
+     "best_part": "scoop",
+     "iou": 0.0
+    },
+    {
+     "id": "p09",
+     "label": "top shaft cap",
+     "area": 385,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p11",
+     "label": "right axle pin",
+     "area": 119,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p25",
+     "label": "screw 5",
+     "area": 97,
+     "best_part": "chassis",
+     "iou": 0.0
+    },
+    {
+     "id": "p12",
+     "label": "left side frame",
+     "area": 93,
+     "best_part": "scoop",
+     "iou": 0.0
+    },
+    {
+     "id": "p22",
+     "label": "screw 2",
+     "area": 12,
+     "best_part": "chassis",
+     "iou": 0.0
+    },
+    {
+     "id": "p07",
+     "label": "red battery lead",
+     "area": 11,
+     "best_part": "chassis",
+     "iou": 0.0
+    },
+    {
+     "id": "p03",
+     "label": "left upper arm plate",
+     "area": 5,
+     "best_part": "chassis",
+     "iou": 0.0
+    },
+    {
+     "id": "p21",
+     "label": "screw 1",
+     "area": 0,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p31",
+     "label": "auto_2",
+     "area": 2091,
+     "best_part": "chassis",
+     "iou": 0.001
+    },
+    {
+     "id": "p36",
+     "label": "auto_7",
+     "area": 1547,
+     "best_part": "chassis",
+     "iou": 0.001
+    },
+    {
+     "id": "p52",
+     "label": "auto_26",
+     "area": 188,
+     "best_part": "chassis",
+     "iou": 0.001
+    },
+    {
+     "id": "p51",
+     "label": "auto_25",
+     "area": 102,
+     "best_part": "link_l",
+     "iou": 0.001
+    },
+    {
+     "id": "p54",
+     "label": "auto_32",
+     "area": 79,
+     "best_part": "chassis",
+     "iou": 0.001
+    },
+    {
+     "id": "p58",
+     "label": "auto_41",
+     "area": 129,
+     "best_part": "chassis",
+     "iou": 0.002
+    },
+    {
+     "id": "p50",
+     "label": "auto_24",
+     "area": 125,
+     "best_part": "chassis",
+     "iou": 0.002
+    },
+    {
+     "id": "p59",
+     "label": "auto_44",
+     "area": 97,
+     "best_part": "chassis",
+     "iou": 0.002
+    },
+    {
+     "id": "p27",
+     "label": "screw 7",
+     "area": 94,
+     "best_part": "chassis",
+     "iou": 0.002
+    },
+    {
+     "id": "p24",
+     "label": "screw 4",
+     "area": 84,
+     "best_part": "chassis",
+     "iou": 0.002
+    },
+    {
+     "id": "p49",
+     "label": "auto_23",
+     "area": 843,
+     "best_part": "chassis",
+     "iou": 0.004
+    },
+    {
+     "id": "p32",
+     "label": "auto_3",
+     "area": 447,
+     "best_part": "scoop",
+     "iou": 0.004
+    },
+    {
+     "id": "p55",
+     "label": "auto_33",
+     "area": 296,
+     "best_part": "chassis",
+     "iou": 0.004
+    },
+    {
+     "id": "p44",
+     "label": "auto_18",
+     "area": 205,
+     "best_part": "chassis",
+     "iou": 0.004
+    },
+    {
+     "id": "p13",
+     "label": "right side frame",
+     "area": 3123,
+     "best_part": "chassis",
+     "iou": 0.005
+    },
+    {
+     "id": "p29",
+     "label": "left lower side armor strip",
+     "area": 2661,
+     "best_part": "scoop",
+     "iou": 0.005
+    },
+    {
+     "id": "p23",
+     "label": "screw 3",
+     "area": 81,
+     "best_part": "link_l",
+     "iou": 0.005
+    },
+    {
+     "id": "p08",
+     "label": "black and white wires",
+     "area": 345,
+     "best_part": "chassis",
+     "iou": 0.006
+    },
+    {
+     "id": "p43",
+     "label": "auto_17",
+     "area": 2440,
+     "best_part": "wheel_l0",
+     "iou": 0.007
+    },
+    {
+     "id": "p46",
+     "label": "auto_20",
+     "area": 635,
+     "best_part": "chassis",
+     "iou": 0.007
+    },
+    {
+     "id": "p57",
+     "label": "auto_39",
+     "area": 1076,
+     "best_part": "chassis",
+     "iou": 0.008
+    },
+    {
+     "id": "p30",
+     "label": "auto_1",
+     "area": 964,
+     "best_part": "chassis",
+     "iou": 0.009
+    },
+    {
+     "id": "p41",
+     "label": "auto_15",
+     "area": 553,
+     "best_part": "chassis",
+     "iou": 0.009
+    },
+    {
+     "id": "p26",
+     "label": "screw 6",
+     "area": 117,
+     "best_part": "wheel_r0",
+     "iou": 0.013
+    },
+    {
+     "id": "p10",
+     "label": "central vertical post",
+     "area": 1213,
+     "best_part": "chassis",
+     "iou": 0.015
+    },
+    {
+     "id": "p16",
+     "label": "top black frame bar",
+     "area": 262,
+     "best_part": "link_l",
+     "iou": 0.015
+    },
+    {
+     "id": "p47",
+     "label": "auto_21",
+     "area": 1220,
+     "best_part": "chassis",
+     "iou": 0.017
+    },
+    {
+     "id": "p14",
+     "label": "front armor plate",
+     "area": 878,
+     "best_part": "link_l",
+     "iou": 0.017
+    },
+    {
+     "id": "p48",
+     "label": "auto_22",
+     "area": 949,
+     "best_part": "chassis",
+     "iou": 0.018
+    },
+    {
+     "id": "p45",
+     "label": "auto_19",
+     "area": 926,
+     "best_part": "scoop",
+     "iou": 0.018
+    },
+    {
+     "id": "p37",
+     "label": "auto_8",
+     "area": 158,
+     "best_part": "wheel_r0",
+     "iou": 0.018
+    },
+    {
+     "id": "p34",
+     "label": "auto_5",
+     "area": 516,
+     "best_part": "link_l",
+     "iou": 0.019
+    },
+    {
+     "id": "p02",
+     "label": "right wheel",
+     "area": 1241,
+     "best_part": "chassis",
+     "iou": 0.023
+    },
+    {
+     "id": "p19",
+     "label": "center wire bundle base",
+     "area": 1319,
+     "best_part": "chassis",
+     "iou": 0.024
+    },
+    {
+     "id": "p42",
+     "label": "auto_16",
+     "area": 1581,
+     "best_part": "chassis",
+     "iou": 0.025
+    },
+    {
+     "id": "p35",
+     "label": "auto_6",
+     "area": 482,
+     "best_part": "link_r",
+     "iou": 0.025
+    },
+    {
+     "id": "p15",
+     "label": "lower center housing",
+     "area": 360,
+     "best_part": "el_esc",
+     "iou": 0.026
+    },
+    {
+     "id": "p18",
+     "label": "right inner bracket",
+     "area": 176,
+     "best_part": "link_r",
+     "iou": 0.031
+    },
+    {
+     "id": "p33",
+     "label": "auto_4",
+     "area": 1343,
+     "best_part": "el_esc",
+     "iou": 0.036
+    },
+    {
+     "id": "p40",
+     "label": "auto_13",
+     "area": 668,
+     "best_part": "el_esc",
+     "iou": 0.073
+    },
+    {
+     "id": "p17",
+     "label": "left inner dark bracket",
+     "area": 8117,
+     "best_part": "chassis",
+     "iou": 0.109
+    },
+    {
+     "id": "p60",
+     "label": "auto_45",
+     "area": 337,
+     "best_part": "wheel_l0",
+     "iou": 0.11
+    },
+    {
+     "id": "p06",
+     "label": "center right plate",
+     "area": 6523,
+     "best_part": "chassis",
+     "iou": 0.118
+    },
+    {
+     "id": "p53",
+     "label": "auto_28",
+     "area": 1208,
+     "best_part": "wa_act",
+     "iou": 0.126
+    },
+    {
+     "id": "p56",
+     "label": "auto_37",
+     "area": 876,
+     "best_part": "el_esc",
+     "iou": 0.17
+    },
+    {
+     "id": "p39",
+     "label": "auto_12",
+     "area": 1765,
+     "best_part": "wheel_r0",
+     "iou": 0.198
+    },
+    {
+     "id": "p04",
+     "label": "right upper arm plate",
+     "area": 5053,
+     "best_part": "link_r",
+     "iou": 0.264
+    },
+    {
+     "id": "p20",
+     "label": "right side armor below arm",
+     "area": 3749,
+     "best_part": "wheel_r0",
+     "iou": 0.299
+    },
+    {
+     "id": "p05",
+     "label": "center top plate",
+     "area": 2251,
+     "best_part": "link_l",
+     "iou": 0.356
+    },
+    {
+     "id": "p28",
+     "label": "front plate bottom flange",
+     "area": 71881,
+     "best_part": "scoop",
+     "iou": 0.575
+    }
+   ],
+   "unmatched_model_parts": [
+    "scoop_eyes",
+    "dt_hub_wheel_r0"
+   ]
+  }
+ ]
+}
