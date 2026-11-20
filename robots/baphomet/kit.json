@@ -1,0 +1,136 @@
+{
+ "robot_type": "drum",
+ "body": {
+  "length": 86,
+  "width": 104,
+  "height": 24,
+  "ramp": 0,
+  "plan": "pentagon",
+  "front_width": 70,
+  "nose": 18
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 17,
+  "width": 13,
+  "y": [
+   -20
+  ],
+  "outside": false,
+  "x": 40,
+  "notch": true
+ },
+ "weapon": {
+  "kind": "drum",
+  "radius": 11,
+  "width": 42,
+  "y": 62,
+  "teeth": 2,
+  "z": 13,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 2,
+  "length": 46,
+  "width": 5,
+  "spread": 86,
+  "tilt_deg": 10,
+  "taper": true,
+  "thick": 2.5
+ },
+ "colors": {
+  "body": "#1d1f22",
+  "wheel": "#2a2c30",
+  "weapon": "#3a3d42",
+  "fork": "#5a6a5a"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     30,
+     2
+    ],
+    [
+     70,
+     6
+    ],
+    [
+     70,
+     20
+    ],
+    [
+     30,
+     24
+    ]
+   ],
+   "x": [
+    26,
+    34
+   ],
+   "id": "weapon_arm",
+   "mirror": true,
+   "color": "#1d1f22"
+  },
+  {
+   "cyl": [
+    2,
+    70
+   ],
+   "at": [
+    0,
+    62,
+    13
+   ],
+   "axis": "x",
+   "id": "weapon_shaft",
+   "color": "#9aa3a8",
+   "material": "steel"
+  },
+  {
+   "cyl": [
+    12,
+    2
+   ],
+   "at": [
+    23,
+    62,
+    13
+   ],
+   "axis": "x",
+   "id": "drum_flange",
+   "color": "#c9cdd3",
+   "mirror": true
+  },
+  {
+   "box": [
+    66,
+    58,
+    2
+   ],
+   "at": [
+    0,
+    -2,
+    27
+   ],
+   "id": "top_plate",
+   "material": "carbon",
+   "color": "#3a1416"
+  },
+  {
+   "cyl": [
+    9,
+    20
+   ],
+   "at": [
+    -40,
+    62,
+    13
+   ],
+   "axis": "x",
+   "id": "weapon_motor_can",
+   "color": "#c9cdd3"
+  }
+ ],
+ "name": "baphomet"
+}
