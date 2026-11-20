@@ -1,0 +1,66 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 80,
+  "width": 112,
+  "height": 20,
+  "ramp": 22
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -26,
+   18
+  ],
+  "outside": false,
+  "notch": true
+ },
+ "colors": {
+  "body": "#d6d6d2",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "name": "p s t f u",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    4,
+    70,
+    6
+   ],
+   "at": [
+    58,
+    -5,
+    12
+   ],
+   "id": "rail",
+   "color": "#e8c020"
+  },
+  {
+   "box": [
+    112,
+    4,
+    16
+   ],
+   "at": [
+    0,
+    36,
+    12
+   ],
+   "kind": "armor",
+   "id": "front_plate",
+   "color": "#c9cdd3",
+   "rot": [
+    -30,
+    0,
+    0
+   ]
+  }
+ ]
+}
