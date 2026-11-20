@@ -1,0 +1,14 @@
+{
+ "time_for_crab_.aws67.webp": {
+  "view": "60,35!",
+  "azimuth": 60.0,
+  "elevation": 35.0,
+  "iou": 0.614
+ },
+ "time_for_crab_.aws71.webp": {
+  "view": "front",
+  "azimuth": 90,
+  "elevation": 25,
+  "iou": 0.678
+ }
+}
