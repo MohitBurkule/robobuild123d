@@ -1,0 +1,108 @@
+  [cached] integrity 0.01s
+  [proxy] wiring 0.09s
+  [cached] mass 0.00s
+  [proxy] interference 0.22s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.01s
+  [cached] dynamics 0.01s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.01s
+  [cached] electrical 0.01s
+  [cached] combat 0.02s
+  [cached] physics 0.01s
+  [cached] plausibility 0.00s
+  [cached] cots 0.01s
+  [cached] fit 0.00s
+  [cached] bom 0.01s
+  [cached] wire_review 0.01s
+  [cached] fastener_record 0.00s
+  [ran] likeness 7.90s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.03s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.01s
+  [cached] dfm 0.00s
+  [cached] realworld 0.01s
+baphomet: ok=False 9 blockers in 9 root causes, mass 146.3/150 g
+1. [proxy.wiring] Wire `w_wesc_m` (`wesc.motor` to `weapon_motor.phases`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+2. [legal.locking_bar] No 2 mm through-hole parallel to the spin axis passes through all of `upright_l`, `weapon` in the modelled pose.
+   fix: Drill one hole on a common line through the weapon and the uprights (pin parallel to the spin axis).
+   | weapon: x -28.00..28.00  y 47.50..70.50  z -7.50..15.50  size 56.00 x 22.99 x 23.00 mm
+   |   centre (0.00, 59.00, 4.00), volume 5394.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [14.1, 0, 0] range 0..360 default 0
+   |   parent weapon_motor (moves with it)
+   |   overlap allowed `wshaft` 0.93 mm (allowed 1.60)
+3. [process.geometry] `fork_r` (laser): thinnest web between cut features is 1.45 mm < 1.50 mm (0.75 x thickness 2.00 mm).
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | fork_r: x -37.50..-35.50  y 46.00..100.00  z -9.90..12.00  size 2.00 x 54.00 x 21.90 mm
+   |   centre (-36.50, 73.00, 1.05), volume 1273.7 mm3
+   |   gap to `bolt_fr1` 0.10 mm
+   |   gap to `bolt_fr0` 0.10 mm
+   |   gap to `insert_fr0` 0.70 mm
+4. [physics.runtime] ~87 s at ~5.9 A average from 180 mAh; a fight is 180 s.
+   fix: Bigger pack or less current.
+5. [wire.render_wires] 5 of 5 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_wesc_m` not drawn; renders/likeness_baphomet.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_baphomet.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_baphomet.aws77_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: wire `w_wesc_m` not drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+6. [wire.rotor_clearance] wire `w_wesc_m` passes 1.4 mm from the volume swept by the `weapon` rotor (weapon, wshaft) at [-30.1, 44.6, 0.8].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | weapon: x -28.00..28.00  y 47.50..70.50  z -7.50..15.50  size 56.00 x 22.99 x 23.00 mm
+   |   centre (0.00, 59.00, 4.00), volume 5394.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [14.1, 0, 0] range 0..360 default 0
+   |   parent weapon_motor (moves with it)
+   |   overlap allowed `wshaft` 0.93 mm (allowed 1.60)
+7. [wire.render_count] iso.png: 6 routes vs 7 spec wires (missing ['w_wesc_m']); top.png: 6 routes vs 7 spec wires (missing ['w_wesc_m'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+8. [likeness.silhouette] `reference/baphomet.aws74.webp`: best silhouette IoU 0.73 at camera elevation 45 deg, azimuth 300 deg (mirrored) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.74). Regions (photo frame, left third first) 0.60 / 0.75 / 0.81: worst = front third. Height/length 0.82 model vs 0.72 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+9. [likeness.silhouette] `reference/baphomet.aws77.webp`: best silhouette IoU 0.77 at camera elevation 45 deg, azimuth 300 deg (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.77). Regions (photo frame, left third first) 0.79 / 0.83 / 0.62: worst = rear third. Height/length 0.82 model vs 0.74 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 146.3 g of 150 g (+3.7 g margin)
+    chassis_top                23.35 g  fills 22% of its box
+    chassis_bottom             21.64 g  fills 31% of its box
+    weapon_motor               17.50 g  fills 54% of its box
+    weapon                     14.56 g  fills 18% of its box
+    battery                    12.50 g  fills 100% of its box
+    motor_l                     7.50 g  fills 67% of its box
+    motor_r                     7.50 g  fills 67% of its box
+    fork_l                      6.10 g  fills 58% of its box
+    fork_r                      5.64 g  fills 54% of its box
+    wesc                        5.00 g  fills 100% of its box
+    upright_r                   3.85 g  fills 94% of its box
+    upright_l                   3.58 g  fills 87% of its box
+    wheel_l                     3.15 g  fills 77% of its box
+    wheel_r                     3.15 g  fills 77% of its box
+    esc                         2.30 g  fills 100% of its box
+    wshaft                      1.19 g  fills 79% of its box
+    wbearing                    0.72 g  fills 62% of its box
+    power_switch                0.50 g  fills 100% of its box
+    bolt_c0                     0.46 g  fills 29% of its box
+    bolt_c1                     0.46 g  fills 29% of its box
+    bolt_c2                     0.46 g  fills 29% of its box
+    bolt_c3                     0.46 g  fills 29% of its box
+    bolt_wma                    0.41 g  fills 30% of its box
+    bolt_wmb                    0.41 g  fills 30% of its box
+    bolt_fl0                    0.19 g  fills 21% of its box
+    bolt_fl1                    0.19 g  fills 21% of its box
+    bolt_fr0                    0.19 g  fills 21% of its box
+    bolt_fr1                    0.19 g  fills 21% of its box
+    insert_c0                   0.12 g  fills 41% of its box
+    insert_c1                   0.12 g  fills 41% of its box
+    insert_c2                   0.12 g  fills 41% of its box
+    insert_c3                   0.12 g  fills 41% of its box
+    insert_fl0                  0.12 g  fills 41% of its box
+    insert_fl1                  0.12 g  fills 41% of its box
+    insert_fr0                  0.12 g  fills 41% of its box
+    insert_fr1                  0.12 g  fills 41% of its box
+    mass.may_be_over: 146.3 g (range 124.3 to 168.3 g) against the 150 g limit; 8.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 18 hit / 0 miss, group 30 hit / 1 miss, inside 20 hit / 0 miss, likeness 3 hit / 0 miss, min_gap 32 hit / 0 miss, overlap 315 hit / 0 miss, part_geom 36 hit / 0 miss
