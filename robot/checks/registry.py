@@ -69,7 +69,6 @@ REGISTRY = [
     _g("archetype", DESIGN, FULL, 14.9),
     _g("architecture", DESIGN, FULL, 100.0),
     _g("electrical", DESIGN, INNER, 1.1),
-    _g("combat", DESIGN, INNER, 2.6),
     _g("physics", DESIGN, INNER, 0.0, note="closed-form weapon/drive/power physics (robot/checks/physics), UNTESTED"),
     _g("assembly", DESIGN, FULL, 145.3, deep_only=True, proxy="assembly", note="greedy take-apart search"),
     _g("joints", DESIGN, FULL, 44.9),
@@ -82,7 +81,6 @@ REGISTRY = [
     _g("fit", DESIGN, INNER, 1.7),
     _g("contain", DESIGN, FULL, 23.7),
     _g("disasm", DESIGN, FULL, 11.2),
-    _g("coverage", DESIGN, FULL, 5.0),
     _g("bom", DESIGN, INNER, 0.9, note="lock part, O-ring stock, wire cut, switch; its reference.* findings are parity"),
     _g("support", DESIGN, FULL, 5.0),  # gravity in all 6 orientations (robot/checks/support.py)
     _g("threat", DESIGN, FULL, 311.1),  # combat failure modes CF-* (robot/checks/threat)
@@ -93,6 +91,7 @@ REGISTRY = [
     _g("wire_review", DESIGN, INNER, 0.5),  # wire.rotating_clearance, wire.render_present
     _g("fastener_record", DESIGN, INNER, 0.0),  # fastener.hole_record
     _g("likeness", DESIGN, INNER, 0.0, note="(inactive on Revron; ~8 s per edit, ~80 s first run) copy of a real robot: not a template, looks like its photos (robot/checks/likeness.py)"),
+    _g("photopose", DESIGN, INNER, 0.0, note="warnings: CAD vs reference photo camera/depth fit (robot/checks/photopose.py)"),
     _g("drive_recess", DESIGN, INNER, 0.4),  # fastener.drive_recess
     _g("belt_wrap", DESIGN, INNER, 0.3),  # cots.belt_wrap
     _g("print_orient", DESIGN, FULL, 4.7),  # print.orientation_declared
