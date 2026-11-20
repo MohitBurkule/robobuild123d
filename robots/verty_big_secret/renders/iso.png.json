@@ -1,0 +1,129 @@
+{
+ "spec": "/tmp/work10_verty_big_secret/robots/verty_big_secret/spec.json",
+ "rendered_at": 1795089956.9177516,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "upright_l",
+  "upright_r",
+  "fork_l",
+  "fork_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_shaft_weapon",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin",
+  "deck_l",
+  "deck_r",
+  "bolt_wm0",
+  "bolt_wm1",
+  "bolt_wm2",
+  "bolt_wm3",
+  "bolt_upl0",
+  "bolt_upl1",
+  "bolt_upl2",
+  "bolt_upr0",
+  "bolt_upr1",
+  "bolt_upr2",
+  "bolt_dkl0",
+  "bolt_dkl1",
+  "bolt_dkl2",
+  "bolt_dkr0",
+  "bolt_dkr1",
+  "bolt_dkr2"
+ ],
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    4.0,
+    -17.0,
+    -5.0
+   ],
+   "to": [
+    -21.0,
+    -12.0,
+    -5.449999999999999
+   ]
+  },
+  "w_wm": {
+   "from": [
+    -24.0,
+    11.0,
+    -5.449999999999999
+   ],
+   "to": [
+    -11.0,
+    16.0,
+    11.0
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    15.450000000000003,
+    -3.4999999999999996,
+    -4.949999999999999
+   ],
+   "to": [
+    -4.0,
+    -17.0,
+    -5.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -17.0,
+    -5.0
+   ],
+   "to": [
+    -18.0,
+    -21.0,
+    -9.2
+   ]
+  },
+  "w_m1": {
+   "from": [
+    -30.0,
+    11.0,
+    -9.2
+   ],
+   "to": [
+    9.0,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -30.0,
+    -21.0,
+    -9.2
+   ],
+   "to": [
+    -9.0,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_sig_wesc": {
+   "from": [
+    -18.0,
+    11.0,
+    -9.2
+   ],
+   "to": [
+    -27.0,
+    -12.0,
+    -5.449999999999999
+   ]
+  }
+ }
+}
