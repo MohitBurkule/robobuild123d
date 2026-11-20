@@ -1,0 +1,81 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 72,
+  "width": 100,
+  "height": 22,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 14,
+  "width": 10,
+  "y": [
+   -12
+  ],
+  "outside": false,
+  "x": 36,
+  "notch": true
+ },
+ "colors": {
+  "body": "#1f2a26",
+  "wheel": "#2a2c30",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0
+ ],
+ "name": "mini e",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    104,
+    3,
+    14
+   ],
+   "at": [
+    0,
+    37.5,
+    15
+   ],
+   "kind": "armor",
+   "id": "bumper",
+   "material": "aluminium",
+   "process": "laser",
+   "color": "#e8322a"
+  },
+  {
+   "side": [
+    [
+     36,
+     9
+    ],
+    [
+     39,
+     9
+    ],
+    [
+     52,
+     0.5
+    ],
+    [
+     49,
+     0.5
+    ]
+   ],
+   "x": [
+    -52,
+    52
+   ],
+   "kind": "wedge",
+   "id": "skirt",
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#e8322a"
+  }
+ ]
+}

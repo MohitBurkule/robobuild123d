@@ -1,0 +1,70 @@
+{
+ "spec": "/tmp/work10_mini_e/robots/mini_e/spec.json",
+ "rendered_at": 1795080871.009226,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "bumper",
+  "skirt",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch",
+  "fs_bumper_0",
+  "fs_bumper_1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5000000000000013,
+    -6.5,
+    -4.0
+   ],
+   "to": [
+    -4.5,
+    -19.5,
+    -4.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -19.5,
+    -4.5
+   ],
+   "to": [
+    -16.5,
+    -0.5,
+    5.0
+   ]
+  },
+  "w_m1": {
+   "from": [
+    15.5,
+    11.5,
+    5.0
+   ],
+   "to": [
+    4.0,
+    -12.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    11.5,
+    5.0
+   ],
+   "to": [
+    -4.0,
+    -12.000000000000002,
+    0.0
+   ]
+  }
+ }
+}
