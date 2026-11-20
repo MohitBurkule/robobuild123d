@@ -1,0 +1,104 @@
+  [ran] integrity 0.02s
+  [proxy] wiring 0.05s
+  [ran] mass 0.00s
+  [proxy] interference 1.15s
+  [ran] connections 0.01s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.15s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.43s
+  [ran] process 0.04s
+  [ran] electrical 0.01s
+  [ran] combat 0.07s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.01s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 5.30s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+Bolt: ok=False 20 blockers in 13 root causes, mass 229.2/225 g
+1. [proxy.interference] `chassis` and `wheel_l0` overlap by 4.38 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -50.00..50.00  y -52.00..52.00  z -9.00..17.00  size 100.00 x 104.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 4.00), volume 216500.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_l1` 4.38 mm (allowed 0.08)
+2. [proxy.interference] `chassis` and `wheel_r0` overlap by 4.38 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -50.00..50.00  y -52.00..52.00  z -9.00..17.00  size 100.00 x 104.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 4.00), volume 216500.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_l1` 4.38 mm (allowed 0.08)
+3. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.4 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -43.00..-13.00  y 50.00..70.00  z -10.95..-9.45  size 30.00 x 20.00 x 1.50 mm
+   |   centre (-28.00, 60.00, -10.20), volume 900.0 mm3
+   |   gap to `chassis` 0.45 mm
+   | chassis: x -50.00..50.00  y -52.00..52.00  z -9.00..17.00  size 100.00 x 104.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 4.00), volume 216500.0 mm3
+4. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 40.50..49.50  y -51.00..-29.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (45.00, -40.00, 0.00), volume 3421.2 mm3
+   |   OVERLAP `chassis` 4.38 mm (allowed 0.08)
+   | wheel_l1: x 40.50..49.50  y 17.00..39.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (45.00, 28.00, 0.00), volume 3421.2 mm3
+5. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -49.50..-40.50  y -51.00..-29.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (-45.00, -40.00, 0.00), volume 3421.2 mm3
+   |   OVERLAP `chassis` 4.38 mm (allowed 0.08)
+   | wheel_r1: x -49.50..-40.50  y 17.00..39.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (-45.00, 28.00, 0.00), volume 3421.2 mm3
+6. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 40.50..49.50  y -51.00..-29.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (45.00, -40.00, 0.00), volume 3421.2 mm3
+   |   OVERLAP `chassis` 4.38 mm (allowed 0.08)
+   | wheel_l1: x 40.50..49.50  y 17.00..39.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (45.00, 28.00, 0.00), volume 3421.2 mm3
+7. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -49.50..-40.50  y -51.00..-29.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (-45.00, -40.00, 0.00), volume 3421.2 mm3
+   |   OVERLAP `chassis` 4.38 mm (allowed 0.08)
+   | wheel_r1: x -49.50..-40.50  y 17.00..39.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (-45.00, 28.00, 0.00), volume 3421.2 mm3
+8. [mass.over] 229.2 g (range 184.3 to 274.2 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+9. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+10. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+11. [electrical.receiver_supply] No receiver: no part of kind `receiver` and no combined ESC/receiver.
+   fix: Wire the receiver to an ESC with a BEC.
+12. [wire.render_count] top.png: 5 routes vs 0 spec wires (extra ['w_bat_sw', 'w_esc_ml', 'w_esc_mr'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+... 1 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 229.2 g of 225 g (-4.2 g margin)
+    chassis                   206.11 g  fills 80% of its box  <- solid block? a tub should be a shell
+    fork_0                      3.99 g  fills 100% of its box
+    fork_1                      3.99 g  fills 100% of its box
+    wheel_l0                    3.49 g  fills 79% of its box
+    wheel_r0                    3.49 g  fills 79% of its box
+    wheel_l1                    3.49 g  fills 79% of its box
+    wheel_r1                    3.49 g  fills 79% of its box
+    mass.over: 229.2 g (range 184.3 to 274.2 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 2 miss, group 0 hit / 31 miss, inside 0 hit / 7 miss, likeness 2 hit / 0 miss, min_gap 4 hit / 9 miss, overlap 14 hit / 36 miss, part_check 0 hit / 3 miss, part_geom 7 hit / 0 miss, ray 0 hit / 27 miss
