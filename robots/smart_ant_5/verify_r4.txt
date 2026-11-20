@@ -1,0 +1,58 @@
+BLOCKERS: 3
+  [ran] integrity 0.06s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 5.00s
+  [ran] connections 1.60s
+  [ran] legal 0.06s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.34s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.43s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.11s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.07s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 22.37s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.15s
+  [ran] dfm 0.08s
+  [ran] realworld 0.01s
+smart ant 5: ok=False 3 blockers in 3 root causes, mass 111.7/150 g
+1. [retention.loose] `dm_wheel_l0` can move more than 0.5 mm toward -x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | dm_wheel_l0: x 10.50..46.00  y -42.00..-30.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
+   |   centre (28.25, -36.00, 0.00), volume 2702.4 mm3
+   |   port terminals: (10.50, -36.00, 0.00)
+   |   gap to `wheel_l0` 0.00 mm (touching)
+   |   gap to `dt_hub_wheel_l0` 0.00 mm (touching)
+2. [retention.loose] `dm_wheel_r0` can move more than 0.5 mm toward +x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | dm_wheel_r0: x -46.00..-10.50  y -42.00..-30.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
+   |   centre (-28.25, -36.00, 0.00), volume 2702.4 mm3
+   |   port terminals: (-10.50, -36.00, 0.00)
+   |   gap to `wheel_r0` 0.00 mm (touching)
+   |   gap to `dt_hub_wheel_r0` 0.00 mm (touching)
+3. [electrical.receiver_supply] Receiver `el_esc` has no wire to an ESC/BEC or battery.
+   fix: Wire the receiver to an ESC with a BEC.
+   | el_esc: x 34.25..36.75  y -27.50..4.50  z -10.06..8.94  size 2.50 x 32.00 x 19.00 mm
+   |   centre (35.50, -11.50, -0.56), volume 1504.4 mm3
+   |   port bat: (35.50, -27.50, -6.56)
+   |   port m1: (35.50, 4.50, 5.44)
+   |   port m2: (35.50, -27.50, 5.44)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 1 miss, group 0 hit / 31 miss, inside 10 hit / 2 miss, likeness 1 hit / 0 miss, min_gap 8 hit / 3 miss, overlap 97 hit / 51 miss, part_check 10 hit / 1 miss, part_geom 15 hit / 0 miss, ray 82 hit / 28 miss

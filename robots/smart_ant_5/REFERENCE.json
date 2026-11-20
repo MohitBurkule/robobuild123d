@@ -1,0 +1,17 @@
+{
+ "robot_type": "wedge",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "smart_ant_5_.aws61.webp"
+ ],
+ "mask_mode": {},
+ "view": {
+  "smart_ant_5_.aws61.webp": "front"
+ },
+ "view_source": {
+  "smart_ant_5_.aws61.webp": "user camera pick (azimuth 90, elevation 35); replaces the automatic label"
+ }
+}

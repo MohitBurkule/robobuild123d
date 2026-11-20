@@ -1,0 +1,22 @@
+{
+ "spec": "/tmp/work10_smart_ant_5/robots/smart_ant_5/spec.json",
+ "rendered_at": 1795086770.1294448,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "lip",
+  "battery_pack",
+  "receiver",
+  "hinge_block",
+  "hinge_pin",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_strut_lip",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_esc",
+  "el_switch"
+ ],
+ "wires": {}
+}
