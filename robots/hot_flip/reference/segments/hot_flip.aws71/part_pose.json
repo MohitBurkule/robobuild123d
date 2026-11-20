@@ -1,0 +1,1784 @@
+{
+ "photo": "hot_flip.aws71.webp",
+ "camera_from": "hot_flip.aws71.pose.json",
+ "calibration": {
+  "a": 0.00013818686852909586,
+  "b": 0.0034275224452810387,
+  "r": 0.623,
+  "n": 28070
+ },
+ "body_centroid_robot_mm": [
+  -2.8,
+  9.6,
+  6.5
+ ],
+ "parts": {
+  "top_face_back": {
+   "label": "top face back",
+   "n_px": 809,
+   "median_z_mm": 288.0,
+   "centroid_robot_mm": [
+    1.6,
+    -35.5,
+    36.5
+   ],
+   "centroid_cam_mm": [
+    -12.3,
+    -49.0,
+    287.4
+   ],
+   "normal_robot": [
+    -0.167,
+    0.105,
+    0.98
+   ],
+   "extent_mm": [
+    22.2,
+    8.0,
+    0.9
+   ],
+   "height_range_mm": [
+    33.0,
+    39.1
+   ],
+   "offset_from_body_mm": [
+    4.4,
+    -45.1,
+    30.0
+   ]
+  },
+  "front_panel_main_right": {
+   "label": "front panel main right",
+   "n_px": 45,
+   "median_z_mm": 281.6,
+   "centroid_robot_mm": [
+    -7.9,
+    52.7,
+    -25.3
+   ],
+   "centroid_cam_mm": [
+    18.8,
+    54.4,
+    281.5
+   ],
+   "normal_robot": [
+    -0.108,
+    0.709,
+    0.697
+   ],
+   "extent_mm": [
+    14.2,
+    0.1,
+    0.0
+   ],
+   "height_range_mm": [
+    -26.2,
+    -24.6
+   ],
+   "offset_from_body_mm": [
+    -5.1,
+    43.1,
+    -31.8
+   ]
+  },
+  "front_panel_top_right": {
+   "label": "front panel top right",
+   "n_px": 5765,
+   "median_z_mm": 285.4,
+   "centroid_robot_mm": [
+    4.8,
+    -32.3,
+    36.8
+   ],
+   "centroid_cam_mm": [
+    -15.0,
+    -46.0,
+    285.4
+   ],
+   "normal_robot": [
+    -0.138,
+    0.51,
+    0.849
+   ],
+   "extent_mm": [
+    18.9,
+    14.0,
+    2.6
+   ],
+   "height_range_mm": [
+    34.3,
+    39.1
+   ],
+   "offset_from_body_mm": [
+    7.6,
+    -41.9,
+    30.3
+   ]
+  },
+  "left_face_dark": {
+   "label": "left face dark",
+   "n_px": 85,
+   "median_z_mm": 286.4,
+   "centroid_robot_mm": [
+    23.7,
+    -28.6,
+    33.0
+   ],
+   "centroid_cam_mm": [
+    -32.4,
+    -37.0,
+    287.0
+   ],
+   "normal_robot": [
+    0.105,
+    0.586,
+    0.803
+   ],
+   "extent_mm": [
+    53.5,
+    11.5,
+    1.6
+   ],
+   "height_range_mm": [
+    -10.3,
+    40.3
+   ],
+   "offset_from_body_mm": [
+    26.5,
+    -38.2,
+    26.5
+   ]
+  },
+  "left_upper_face": {
+   "label": "left upper face",
+   "n_px": 480,
+   "median_z_mm": 289.7,
+   "centroid_robot_mm": [
+    36.5,
+    -27.4,
+    29.8
+   ],
+   "centroid_cam_mm": [
+    -44.2,
+    -31.6,
+    289.5
+   ],
+   "normal_robot": [
+    0.602,
+    -0.33,
+    0.727
+   ],
+   "extent_mm": [
+    20.4,
+    1.4,
+    0.8
+   ],
+   "height_range_mm": [
+    23.3,
+    36.1
+   ],
+   "offset_from_body_mm": [
+    39.3,
+    -37.0,
+    23.3
+   ]
+  },
+  "left_side_edge_plate": {
+   "label": "left side edge plate",
+   "n_px": 645,
+   "median_z_mm": 290.4,
+   "centroid_robot_mm": [
+    50.0,
+    1.9,
+    7.0
+   ],
+   "centroid_cam_mm": [
+    -49.8,
+    7.6,
+    290.3
+   ],
+   "normal_robot": [
+    0.294,
+    0.577,
+    0.762
+   ],
+   "extent_mm": [
+    28.1,
+    2.0,
+    0.2
+   ],
+   "height_range_mm": [
+    -5.6,
+    20.5
+   ],
+   "offset_from_body_mm": [
+    52.8,
+    -7.7,
+    0.5
+   ]
+  },
+  "bottom_left_face": {
+   "label": "bottom left face",
+   "n_px": 27,
+   "median_z_mm": 290.6,
+   "centroid_robot_mm": [
+    39.1,
+    -11.2,
+    17.0
+   ],
+   "centroid_cam_mm": [
+    -42.5,
+    -10.8,
+    289.8
+   ],
+   "normal_robot": [
+    0.028,
+    0.615,
+    0.788
+   ],
+   "extent_mm": [
+    65.2,
+    27.0,
+    0.8
+   ],
+   "height_range_mm": [
+    -18.8,
+    32.0
+   ],
+   "offset_from_body_mm": [
+    41.9,
+    -20.8,
+    10.5
+   ]
+  },
+  "right_side_panel": {
+   "label": "right side panel",
+   "n_px": 509,
+   "median_z_mm": 286.7,
+   "centroid_robot_mm": [
+    -50.2,
+    20.5,
+    -9.3
+   ],
+   "centroid_cam_mm": [
+    53.3,
+    11.2,
+    286.3
+   ],
+   "normal_robot": [
+    -0.172,
+    0.574,
+    0.801
+   ],
+   "extent_mm": [
+    46.4,
+    4.9,
+    1.2
+   ],
+   "height_range_mm": [
+    -26.4,
+    15.5
+   ],
+   "offset_from_body_mm": [
+    -47.4,
+    10.9,
+    -15.8
+   ]
+  },
+  "right_lower_side_panel": {
+   "label": "right lower side panel",
+   "n_px": 21794,
+   "median_z_mm": 284.4,
+   "centroid_robot_mm": [
+    -11.1,
+    -23.0,
+    29.5
+   ],
+   "centroid_cam_mm": [
+    2.9,
+    -37.7,
+    284.5
+   ],
+   "normal_robot": [
+    -0.115,
+    0.569,
+    0.814
+   ],
+   "extent_mm": [
+    47.5,
+    26.7,
+    3.3
+   ],
+   "height_range_mm": [
+    -11.0,
+    37.1
+   ],
+   "offset_from_body_mm": [
+    -8.3,
+    -32.6,
+    23.0
+   ]
+  },
+  "front_right_ridge_rail": {
+   "label": "front right ridge rail",
+   "n_px": 2767,
+   "median_z_mm": 285.8,
+   "centroid_robot_mm": [
+    23.9,
+    5.9,
+    9.0
+   ],
+   "centroid_cam_mm": [
+    -24.1,
+    4.2,
+    284.8
+   ],
+   "normal_robot": [
+    0.146,
+    0.589,
+    0.795
+   ],
+   "extent_mm": [
+    82.2,
+    17.4,
+    0.6
+   ],
+   "height_range_mm": [
+    -18.2,
+    35.4
+   ],
+   "offset_from_body_mm": [
+    26.7,
+    -3.7,
+    2.5
+   ]
+  },
+  "right_ridge_rail": {
+   "label": "right ridge rail",
+   "n_px": 269437,
+   "median_z_mm": 281.9,
+   "centroid_robot_mm": [
+    -17.3,
+    14.9,
+    2.9
+   ],
+   "centroid_cam_mm": [
+    18.4,
+    6.3,
+    282.0
+   ],
+   "normal_robot": [
+    -0.109,
+    0.604,
+    0.789
+   ],
+   "extent_mm": [
+    55.6,
+    28.6,
+    0.5
+   ],
+   "height_range_mm": [
+    -23.3,
+    29.8
+   ],
+   "offset_from_body_mm": [
+    -14.5,
+    5.3,
+    -3.6
+   ]
+  },
+  "front_bottom_edge_strip": {
+   "label": "front bottom edge strip",
+   "n_px": 183960,
+   "median_z_mm": 283.9,
+   "centroid_robot_mm": [
+    26.2,
+    7.0,
+    9.2
+   ],
+   "centroid_cam_mm": [
+    -26.2,
+    5.4,
+    284.1
+   ],
+   "normal_robot": [
+    0.161,
+    0.594,
+    0.788
+   ],
+   "extent_mm": [
+    50.7,
+    23.2,
+    1.0
+   ],
+   "height_range_mm": [
+    -15.3,
+    33.4
+   ],
+   "offset_from_body_mm": [
+    29.0,
+    -2.6,
+    2.7
+   ]
+  },
+  "top_left_corner_clip": {
+   "label": "top left corner clip",
+   "n_px": 201,
+   "median_z_mm": 286.4,
+   "centroid_robot_mm": [
+    21.0,
+    -36.0,
+    39.2
+   ],
+   "centroid_cam_mm": [
+    -31.8,
+    -46.9,
+    286.5
+   ],
+   "normal_robot": [
+    0.583,
+    0.014,
+    0.812
+   ],
+   "extent_mm": [
+    1.6,
+    1.5,
+    0.3
+   ],
+   "height_range_mm": [
+    38.3,
+    39.8
+   ],
+   "offset_from_body_mm": [
+    23.8,
+    -45.6,
+    32.7
+   ]
+  },
+  "screw_bottom_left_face": {
+   "label": "screw bottom left face",
+   "n_px": 72,
+   "median_z_mm": 281.9,
+   "centroid_robot_mm": [
+    17.5,
+    36.5,
+    -11.5
+   ],
+   "centroid_cam_mm": [
+    -10.4,
+    38.8,
+    281.9
+   ],
+   "normal_robot": [
+    0.126,
+    0.617,
+    0.777
+   ],
+   "extent_mm": [
+    4.3,
+    3.3,
+    0.0
+   ],
+   "height_range_mm": [
+    -14.3,
+    -10.3
+   ],
+   "offset_from_body_mm": [
+    20.3,
+    26.9,
+    -18.0
+   ]
+  },
+  "small_bolt_bottom_left": {
+   "label": "small bolt bottom left",
+   "n_px": 1528,
+   "median_z_mm": 281.9,
+   "centroid_robot_mm": [
+    17.4,
+    37.7,
+    -12.4
+   ],
+   "centroid_cam_mm": [
+    -10.0,
+    40.2,
+    281.8
+   ],
+   "normal_robot": [
+    0.117,
+    0.609,
+    0.785
+   ],
+   "extent_mm": [
+    3.3,
+    2.7,
+    0.1
+   ],
+   "height_range_mm": [
+    -13.9,
+    -10.8
+   ],
+   "offset_from_body_mm": [
+    20.2,
+    28.1,
+    -18.9
+   ]
+  },
+  "top_right_corner": {
+   "label": "top right corner",
+   "n_px": 2473,
+   "median_z_mm": 285.4,
+   "centroid_robot_mm": [
+    -43.9,
+    5.7,
+    3.6
+   ],
+   "centroid_cam_mm": [
+    43.0,
+    -6.7,
+    285.6
+   ],
+   "normal_robot": [
+    -0.014,
+    0.607,
+    0.794
+   ],
+   "extent_mm": [
+    57.9,
+    6.9,
+    2.0
+   ],
+   "height_range_mm": [
+    -23.9,
+    32.0
+   ],
+   "offset_from_body_mm": [
+    -41.1,
+    -3.9,
+    -2.9
+   ]
+  },
+  "lower_right_corner_tab": {
+   "label": "lower right corner tab",
+   "n_px": 30538,
+   "median_z_mm": 284.9,
+   "centroid_robot_mm": [
+    -45.5,
+    11.0,
+    0.5
+   ],
+   "centroid_cam_mm": [
+    45.8,
+    -1.1,
+    284.7
+   ],
+   "normal_robot": [
+    -0.453,
+    0.506,
+    0.734
+   ],
+   "extent_mm": [
+    48.5,
+    5.2,
+    1.0
+   ],
+   "height_range_mm": [
+    -22.9,
+    24.9
+   ],
+   "offset_from_body_mm": [
+    -42.7,
+    1.4,
+    -6.0
+   ]
+  },
+  "auto_1": {
+   "label": "auto_1",
+   "n_px": 2599,
+   "median_z_mm": 280.9,
+   "centroid_robot_mm": [
+    -3.8,
+    30.0,
+    -7.2
+   ],
+   "centroid_cam_mm": [
+    8.9,
+    26.9,
+    281.3
+   ],
+   "normal_robot": [
+    -0.121,
+    0.602,
+    0.789
+   ],
+   "extent_mm": [
+    68.5,
+    27.1,
+    0.7
+   ],
+   "height_range_mm": [
+    -27.8,
+    31.6
+   ],
+   "offset_from_body_mm": [
+    -1.0,
+    20.4,
+    -13.7
+   ]
+  },
+  "auto_3": {
+   "label": "auto_3",
+   "n_px": 929,
+   "median_z_mm": 284.4,
+   "centroid_robot_mm": [
+    24.1,
+    26.3,
+    -6.3
+   ],
+   "centroid_cam_mm": [
+    -19.1,
+    29.2,
+    284.4
+   ],
+   "normal_robot": [
+    0.144,
+    0.576,
+    0.805
+   ],
+   "extent_mm": [
+    68.0,
+    25.8,
+    1.2
+   ],
+   "height_range_mm": [
+    -22.8,
+    39.8
+   ],
+   "offset_from_body_mm": [
+    26.9,
+    16.7,
+    -12.8
+   ]
+  },
+  "auto_4": {
+   "label": "auto_4",
+   "n_px": 998,
+   "median_z_mm": 289.4,
+   "centroid_robot_mm": [
+    -10.4,
+    -34.9,
+    33.9
+   ],
+   "centroid_cam_mm": [
+    -0.0,
+    -49.4,
+    288.4
+   ],
+   "normal_robot": [
+    -0.164,
+    0.023,
+    0.986
+   ],
+   "extent_mm": [
+    38.8,
+    8.7,
+    1.6
+   ],
+   "height_range_mm": [
+    28.7,
+    39.3
+   ],
+   "offset_from_body_mm": [
+    -7.6,
+    -44.5,
+    27.4
+   ]
+  },
+  "auto_6": {
+   "label": "auto_6",
+   "n_px": 533,
+   "median_z_mm": 286.9,
+   "centroid_robot_mm": [
+    -48.7,
+    13.0,
+    -3.7
+   ],
+   "centroid_cam_mm": [
+    50.0,
+    2.4,
+    286.7
+   ],
+   "normal_robot": [
+    -0.399,
+    0.524,
+    0.753
+   ],
+   "extent_mm": [
+    61.9,
+    4.5,
+    1.1
+   ],
+   "height_range_mm": [
+    -28.1,
+    26.4
+   ],
+   "offset_from_body_mm": [
+    -45.9,
+    3.4,
+    -10.2
+   ]
+  }
+ },
+ "pairs": {
+  "top_face_back->front_panel_main_right": [
+   -9.5,
+   88.2,
+   -61.8
+  ],
+  "top_face_back->front_panel_top_right": [
+   3.2,
+   3.2,
+   0.3
+  ],
+  "top_face_back->left_face_dark": [
+   22.1,
+   6.9,
+   -3.5
+  ],
+  "top_face_back->left_upper_face": [
+   34.9,
+   8.1,
+   -6.7
+  ],
+  "top_face_back->left_side_edge_plate": [
+   48.4,
+   37.4,
+   -29.5
+  ],
+  "top_face_back->bottom_left_face": [
+   37.5,
+   24.3,
+   -19.5
+  ],
+  "top_face_back->right_side_panel": [
+   -51.8,
+   56.0,
+   -45.8
+  ],
+  "top_face_back->right_lower_side_panel": [
+   -12.7,
+   12.5,
+   -7.0
+  ],
+  "top_face_back->front_right_ridge_rail": [
+   22.3,
+   41.4,
+   -27.5
+  ],
+  "top_face_back->right_ridge_rail": [
+   -18.9,
+   50.4,
+   -33.6
+  ],
+  "top_face_back->front_bottom_edge_strip": [
+   24.6,
+   42.5,
+   -27.3
+  ],
+  "top_face_back->top_left_corner_clip": [
+   19.4,
+   -0.5,
+   2.7
+  ],
+  "top_face_back->screw_bottom_left_face": [
+   15.9,
+   72.0,
+   -48.0
+  ],
+  "top_face_back->small_bolt_bottom_left": [
+   15.8,
+   73.2,
+   -48.9
+  ],
+  "top_face_back->top_right_corner": [
+   -45.5,
+   41.2,
+   -32.9
+  ],
+  "top_face_back->lower_right_corner_tab": [
+   -47.1,
+   46.5,
+   -36.0
+  ],
+  "top_face_back->auto_1": [
+   -5.4,
+   65.5,
+   -43.7
+  ],
+  "top_face_back->auto_3": [
+   22.5,
+   61.8,
+   -42.8
+  ],
+  "top_face_back->auto_4": [
+   -12.0,
+   0.6,
+   -2.6
+  ],
+  "top_face_back->auto_6": [
+   -50.3,
+   48.5,
+   -40.2
+  ],
+  "front_panel_main_right->front_panel_top_right": [
+   12.7,
+   -85.0,
+   62.1
+  ],
+  "front_panel_main_right->left_face_dark": [
+   31.6,
+   -81.3,
+   58.3
+  ],
+  "front_panel_main_right->left_upper_face": [
+   44.4,
+   -80.1,
+   55.1
+  ],
+  "front_panel_main_right->left_side_edge_plate": [
+   57.9,
+   -50.8,
+   32.3
+  ],
+  "front_panel_main_right->bottom_left_face": [
+   47.0,
+   -63.9,
+   42.3
+  ],
+  "front_panel_main_right->right_side_panel": [
+   -42.3,
+   -32.2,
+   16.0
+  ],
+  "front_panel_main_right->right_lower_side_panel": [
+   -3.2,
+   -75.7,
+   54.8
+  ],
+  "front_panel_main_right->front_right_ridge_rail": [
+   31.8,
+   -46.8,
+   34.3
+  ],
+  "front_panel_main_right->right_ridge_rail": [
+   -9.4,
+   -37.8,
+   28.2
+  ],
+  "front_panel_main_right->front_bottom_edge_strip": [
+   34.1,
+   -45.7,
+   34.5
+  ],
+  "front_panel_main_right->top_left_corner_clip": [
+   28.9,
+   -88.7,
+   64.5
+  ],
+  "front_panel_main_right->screw_bottom_left_face": [
+   25.4,
+   -16.2,
+   13.8
+  ],
+  "front_panel_main_right->small_bolt_bottom_left": [
+   25.3,
+   -15.0,
+   12.9
+  ],
+  "front_panel_main_right->top_right_corner": [
+   -36.0,
+   -47.0,
+   28.9
+  ],
+  "front_panel_main_right->lower_right_corner_tab": [
+   -37.6,
+   -41.7,
+   25.8
+  ],
+  "front_panel_main_right->auto_1": [
+   4.1,
+   -22.7,
+   18.1
+  ],
+  "front_panel_main_right->auto_3": [
+   32.0,
+   -26.4,
+   19.0
+  ],
+  "front_panel_main_right->auto_4": [
+   -2.5,
+   -87.6,
+   59.2
+  ],
+  "front_panel_main_right->auto_6": [
+   -40.8,
+   -39.7,
+   21.6
+  ],
+  "front_panel_top_right->left_face_dark": [
+   18.9,
+   3.7,
+   -3.8
+  ],
+  "front_panel_top_right->left_upper_face": [
+   31.7,
+   4.9,
+   -7.0
+  ],
+  "front_panel_top_right->left_side_edge_plate": [
+   45.2,
+   34.2,
+   -29.8
+  ],
+  "front_panel_top_right->bottom_left_face": [
+   34.3,
+   21.1,
+   -19.8
+  ],
+  "front_panel_top_right->right_side_panel": [
+   -55.0,
+   52.8,
+   -46.1
+  ],
+  "front_panel_top_right->right_lower_side_panel": [
+   -15.9,
+   9.3,
+   -7.3
+  ],
+  "front_panel_top_right->front_right_ridge_rail": [
+   19.1,
+   38.2,
+   -27.8
+  ],
+  "front_panel_top_right->right_ridge_rail": [
+   -22.1,
+   47.2,
+   -33.9
+  ],
+  "front_panel_top_right->front_bottom_edge_strip": [
+   21.4,
+   39.3,
+   -27.6
+  ],
+  "front_panel_top_right->top_left_corner_clip": [
+   16.2,
+   -3.7,
+   2.4
+  ],
+  "front_panel_top_right->screw_bottom_left_face": [
+   12.7,
+   68.8,
+   -48.3
+  ],
+  "front_panel_top_right->small_bolt_bottom_left": [
+   12.6,
+   70.0,
+   -49.2
+  ],
+  "front_panel_top_right->top_right_corner": [
+   -48.7,
+   38.0,
+   -33.2
+  ],
+  "front_panel_top_right->lower_right_corner_tab": [
+   -50.3,
+   43.3,
+   -36.3
+  ],
+  "front_panel_top_right->auto_1": [
+   -8.6,
+   62.3,
+   -44.0
+  ],
+  "front_panel_top_right->auto_3": [
+   19.3,
+   58.6,
+   -43.1
+  ],
+  "front_panel_top_right->auto_4": [
+   -15.2,
+   -2.6,
+   -2.9
+  ],
+  "front_panel_top_right->auto_6": [
+   -53.5,
+   45.3,
+   -40.5
+  ],
+  "left_face_dark->left_upper_face": [
+   12.8,
+   1.2,
+   -3.2
+  ],
+  "left_face_dark->left_side_edge_plate": [
+   26.3,
+   30.5,
+   -26.0
+  ],
+  "left_face_dark->bottom_left_face": [
+   15.4,
+   17.4,
+   -16.0
+  ],
+  "left_face_dark->right_side_panel": [
+   -73.9,
+   49.1,
+   -42.3
+  ],
+  "left_face_dark->right_lower_side_panel": [
+   -34.8,
+   5.6,
+   -3.5
+  ],
+  "left_face_dark->front_right_ridge_rail": [
+   0.2,
+   34.5,
+   -24.0
+  ],
+  "left_face_dark->right_ridge_rail": [
+   -41.0,
+   43.5,
+   -30.1
+  ],
+  "left_face_dark->front_bottom_edge_strip": [
+   2.5,
+   35.6,
+   -23.8
+  ],
+  "left_face_dark->top_left_corner_clip": [
+   -2.7,
+   -7.4,
+   6.2
+  ],
+  "left_face_dark->screw_bottom_left_face": [
+   -6.2,
+   65.1,
+   -44.5
+  ],
+  "left_face_dark->small_bolt_bottom_left": [
+   -6.3,
+   66.3,
+   -45.4
+  ],
+  "left_face_dark->top_right_corner": [
+   -67.6,
+   34.3,
+   -29.4
+  ],
+  "left_face_dark->lower_right_corner_tab": [
+   -69.2,
+   39.6,
+   -32.5
+  ],
+  "left_face_dark->auto_1": [
+   -27.5,
+   58.6,
+   -40.2
+  ],
+  "left_face_dark->auto_3": [
+   0.4,
+   54.9,
+   -39.3
+  ],
+  "left_face_dark->auto_4": [
+   -34.1,
+   -6.3,
+   0.9
+  ],
+  "left_face_dark->auto_6": [
+   -72.4,
+   41.6,
+   -36.7
+  ],
+  "left_upper_face->left_side_edge_plate": [
+   13.5,
+   29.3,
+   -22.8
+  ],
+  "left_upper_face->bottom_left_face": [
+   2.6,
+   16.2,
+   -12.8
+  ],
+  "left_upper_face->right_side_panel": [
+   -86.7,
+   47.9,
+   -39.1
+  ],
+  "left_upper_face->right_lower_side_panel": [
+   -47.6,
+   4.4,
+   -0.3
+  ],
+  "left_upper_face->front_right_ridge_rail": [
+   -12.6,
+   33.3,
+   -20.8
+  ],
+  "left_upper_face->right_ridge_rail": [
+   -53.8,
+   42.3,
+   -26.9
+  ],
+  "left_upper_face->front_bottom_edge_strip": [
+   -10.3,
+   34.4,
+   -20.6
+  ],
+  "left_upper_face->top_left_corner_clip": [
+   -15.5,
+   -8.6,
+   9.4
+  ],
+  "left_upper_face->screw_bottom_left_face": [
+   -19.0,
+   63.9,
+   -41.3
+  ],
+  "left_upper_face->small_bolt_bottom_left": [
+   -19.1,
+   65.1,
+   -42.2
+  ],
+  "left_upper_face->top_right_corner": [
+   -80.4,
+   33.1,
+   -26.2
+  ],
+  "left_upper_face->lower_right_corner_tab": [
+   -82.0,
+   38.4,
+   -29.3
+  ],
+  "left_upper_face->auto_1": [
+   -40.3,
+   57.4,
+   -37.0
+  ],
+  "left_upper_face->auto_3": [
+   -12.4,
+   53.7,
+   -36.1
+  ],
+  "left_upper_face->auto_4": [
+   -46.9,
+   -7.5,
+   4.1
+  ],
+  "left_upper_face->auto_6": [
+   -85.2,
+   40.4,
+   -33.5
+  ],
+  "left_side_edge_plate->bottom_left_face": [
+   -10.9,
+   -13.1,
+   10.0
+  ],
+  "left_side_edge_plate->right_side_panel": [
+   -100.2,
+   18.6,
+   -16.3
+  ],
+  "left_side_edge_plate->right_lower_side_panel": [
+   -61.1,
+   -24.9,
+   22.5
+  ],
+  "left_side_edge_plate->front_right_ridge_rail": [
+   -26.1,
+   4.0,
+   2.0
+  ],
+  "left_side_edge_plate->right_ridge_rail": [
+   -67.3,
+   13.0,
+   -4.1
+  ],
+  "left_side_edge_plate->front_bottom_edge_strip": [
+   -23.8,
+   5.1,
+   2.2
+  ],
+  "left_side_edge_plate->top_left_corner_clip": [
+   -29.0,
+   -37.9,
+   32.2
+  ],
+  "left_side_edge_plate->screw_bottom_left_face": [
+   -32.5,
+   34.6,
+   -18.5
+  ],
+  "left_side_edge_plate->small_bolt_bottom_left": [
+   -32.6,
+   35.8,
+   -19.4
+  ],
+  "left_side_edge_plate->top_right_corner": [
+   -93.9,
+   3.8,
+   -3.4
+  ],
+  "left_side_edge_plate->lower_right_corner_tab": [
+   -95.5,
+   9.1,
+   -6.5
+  ],
+  "left_side_edge_plate->auto_1": [
+   -53.8,
+   28.1,
+   -14.2
+  ],
+  "left_side_edge_plate->auto_3": [
+   -25.9,
+   24.4,
+   -13.3
+  ],
+  "left_side_edge_plate->auto_4": [
+   -60.4,
+   -36.8,
+   26.9
+  ],
+  "left_side_edge_plate->auto_6": [
+   -98.7,
+   11.1,
+   -10.7
+  ],
+  "bottom_left_face->right_side_panel": [
+   -89.3,
+   31.7,
+   -26.3
+  ],
+  "bottom_left_face->right_lower_side_panel": [
+   -50.2,
+   -11.8,
+   12.5
+  ],
+  "bottom_left_face->front_right_ridge_rail": [
+   -15.2,
+   17.1,
+   -8.0
+  ],
+  "bottom_left_face->right_ridge_rail": [
+   -56.4,
+   26.1,
+   -14.1
+  ],
+  "bottom_left_face->front_bottom_edge_strip": [
+   -12.9,
+   18.2,
+   -7.8
+  ],
+  "bottom_left_face->top_left_corner_clip": [
+   -18.1,
+   -24.8,
+   22.2
+  ],
+  "bottom_left_face->screw_bottom_left_face": [
+   -21.6,
+   47.7,
+   -28.5
+  ],
+  "bottom_left_face->small_bolt_bottom_left": [
+   -21.7,
+   48.9,
+   -29.4
+  ],
+  "bottom_left_face->top_right_corner": [
+   -83.0,
+   16.9,
+   -13.4
+  ],
+  "bottom_left_face->lower_right_corner_tab": [
+   -84.6,
+   22.2,
+   -16.5
+  ],
+  "bottom_left_face->auto_1": [
+   -42.9,
+   41.2,
+   -24.2
+  ],
+  "bottom_left_face->auto_3": [
+   -15.0,
+   37.5,
+   -23.3
+  ],
+  "bottom_left_face->auto_4": [
+   -49.5,
+   -23.7,
+   16.9
+  ],
+  "bottom_left_face->auto_6": [
+   -87.8,
+   24.2,
+   -20.7
+  ],
+  "right_side_panel->right_lower_side_panel": [
+   39.1,
+   -43.5,
+   38.8
+  ],
+  "right_side_panel->front_right_ridge_rail": [
+   74.1,
+   -14.6,
+   18.3
+  ],
+  "right_side_panel->right_ridge_rail": [
+   32.9,
+   -5.6,
+   12.2
+  ],
+  "right_side_panel->front_bottom_edge_strip": [
+   76.4,
+   -13.5,
+   18.5
+  ],
+  "right_side_panel->top_left_corner_clip": [
+   71.2,
+   -56.5,
+   48.5
+  ],
+  "right_side_panel->screw_bottom_left_face": [
+   67.7,
+   16.0,
+   -2.2
+  ],
+  "right_side_panel->small_bolt_bottom_left": [
+   67.6,
+   17.2,
+   -3.1
+  ],
+  "right_side_panel->top_right_corner": [
+   6.3,
+   -14.8,
+   12.9
+  ],
+  "right_side_panel->lower_right_corner_tab": [
+   4.7,
+   -9.5,
+   9.8
+  ],
+  "right_side_panel->auto_1": [
+   46.4,
+   9.5,
+   2.1
+  ],
+  "right_side_panel->auto_3": [
+   74.3,
+   5.8,
+   3.0
+  ],
+  "right_side_panel->auto_4": [
+   39.8,
+   -55.4,
+   43.2
+  ],
+  "right_side_panel->auto_6": [
+   1.5,
+   -7.5,
+   5.6
+  ],
+  "right_lower_side_panel->front_right_ridge_rail": [
+   35.0,
+   28.9,
+   -20.5
+  ],
+  "right_lower_side_panel->right_ridge_rail": [
+   -6.2,
+   37.9,
+   -26.6
+  ],
+  "right_lower_side_panel->front_bottom_edge_strip": [
+   37.3,
+   30.0,
+   -20.3
+  ],
+  "right_lower_side_panel->top_left_corner_clip": [
+   32.1,
+   -13.0,
+   9.7
+  ],
+  "right_lower_side_panel->screw_bottom_left_face": [
+   28.6,
+   59.5,
+   -41.0
+  ],
+  "right_lower_side_panel->small_bolt_bottom_left": [
+   28.5,
+   60.7,
+   -41.9
+  ],
+  "right_lower_side_panel->top_right_corner": [
+   -32.8,
+   28.7,
+   -25.9
+  ],
+  "right_lower_side_panel->lower_right_corner_tab": [
+   -34.4,
+   34.0,
+   -29.0
+  ],
+  "right_lower_side_panel->auto_1": [
+   7.3,
+   53.0,
+   -36.7
+  ],
+  "right_lower_side_panel->auto_3": [
+   35.2,
+   49.3,
+   -35.8
+  ],
+  "right_lower_side_panel->auto_4": [
+   0.7,
+   -11.9,
+   4.4
+  ],
+  "right_lower_side_panel->auto_6": [
+   -37.6,
+   36.0,
+   -33.2
+  ],
+  "front_right_ridge_rail->right_ridge_rail": [
+   -41.2,
+   9.0,
+   -6.1
+  ],
+  "front_right_ridge_rail->front_bottom_edge_strip": [
+   2.3,
+   1.1,
+   0.2
+  ],
+  "front_right_ridge_rail->top_left_corner_clip": [
+   -2.9,
+   -41.9,
+   30.2
+  ],
+  "front_right_ridge_rail->screw_bottom_left_face": [
+   -6.4,
+   30.6,
+   -20.5
+  ],
+  "front_right_ridge_rail->small_bolt_bottom_left": [
+   -6.5,
+   31.8,
+   -21.4
+  ],
+  "front_right_ridge_rail->top_right_corner": [
+   -67.8,
+   -0.2,
+   -5.4
+  ],
+  "front_right_ridge_rail->lower_right_corner_tab": [
+   -69.4,
+   5.1,
+   -8.5
+  ],
+  "front_right_ridge_rail->auto_1": [
+   -27.7,
+   24.1,
+   -16.2
+  ],
+  "front_right_ridge_rail->auto_3": [
+   0.2,
+   20.4,
+   -15.3
+  ],
+  "front_right_ridge_rail->auto_4": [
+   -34.3,
+   -40.8,
+   24.9
+  ],
+  "front_right_ridge_rail->auto_6": [
+   -72.6,
+   7.1,
+   -12.7
+  ],
+  "right_ridge_rail->front_bottom_edge_strip": [
+   43.5,
+   -7.9,
+   6.3
+  ],
+  "right_ridge_rail->top_left_corner_clip": [
+   38.3,
+   -50.9,
+   36.3
+  ],
+  "right_ridge_rail->screw_bottom_left_face": [
+   34.8,
+   21.6,
+   -14.4
+  ],
+  "right_ridge_rail->small_bolt_bottom_left": [
+   34.7,
+   22.8,
+   -15.3
+  ],
+  "right_ridge_rail->top_right_corner": [
+   -26.6,
+   -9.2,
+   0.7
+  ],
+  "right_ridge_rail->lower_right_corner_tab": [
+   -28.2,
+   -3.9,
+   -2.4
+  ],
+  "right_ridge_rail->auto_1": [
+   13.5,
+   15.1,
+   -10.1
+  ],
+  "right_ridge_rail->auto_3": [
+   41.4,
+   11.4,
+   -9.2
+  ],
+  "right_ridge_rail->auto_4": [
+   6.9,
+   -49.8,
+   31.0
+  ],
+  "right_ridge_rail->auto_6": [
+   -31.4,
+   -1.9,
+   -6.6
+  ],
+  "front_bottom_edge_strip->top_left_corner_clip": [
+   -5.2,
+   -43.0,
+   30.0
+  ],
+  "front_bottom_edge_strip->screw_bottom_left_face": [
+   -8.7,
+   29.5,
+   -20.7
+  ],
+  "front_bottom_edge_strip->small_bolt_bottom_left": [
+   -8.8,
+   30.7,
+   -21.6
+  ],
+  "front_bottom_edge_strip->top_right_corner": [
+   -70.1,
+   -1.3,
+   -5.6
+  ],
+  "front_bottom_edge_strip->lower_right_corner_tab": [
+   -71.7,
+   4.0,
+   -8.7
+  ],
+  "front_bottom_edge_strip->auto_1": [
+   -30.0,
+   23.0,
+   -16.4
+  ],
+  "front_bottom_edge_strip->auto_3": [
+   -2.1,
+   19.3,
+   -15.5
+  ],
+  "front_bottom_edge_strip->auto_4": [
+   -36.6,
+   -41.9,
+   24.7
+  ],
+  "front_bottom_edge_strip->auto_6": [
+   -74.9,
+   6.0,
+   -12.9
+  ],
+  "top_left_corner_clip->screw_bottom_left_face": [
+   -3.5,
+   72.5,
+   -50.7
+  ],
+  "top_left_corner_clip->small_bolt_bottom_left": [
+   -3.6,
+   73.7,
+   -51.6
+  ],
+  "top_left_corner_clip->top_right_corner": [
+   -64.9,
+   41.7,
+   -35.6
+  ],
+  "top_left_corner_clip->lower_right_corner_tab": [
+   -66.5,
+   47.0,
+   -38.7
+  ],
+  "top_left_corner_clip->auto_1": [
+   -24.8,
+   66.0,
+   -46.4
+  ],
+  "top_left_corner_clip->auto_3": [
+   3.1,
+   62.3,
+   -45.5
+  ],
+  "top_left_corner_clip->auto_4": [
+   -31.4,
+   1.1,
+   -5.3
+  ],
+  "top_left_corner_clip->auto_6": [
+   -69.7,
+   49.0,
+   -42.9
+  ],
+  "screw_bottom_left_face->small_bolt_bottom_left": [
+   -0.1,
+   1.2,
+   -0.9
+  ],
+  "screw_bottom_left_face->top_right_corner": [
+   -61.4,
+   -30.8,
+   15.1
+  ],
+  "screw_bottom_left_face->lower_right_corner_tab": [
+   -63.0,
+   -25.5,
+   12.0
+  ],
+  "screw_bottom_left_face->auto_1": [
+   -21.3,
+   -6.5,
+   4.3
+  ],
+  "screw_bottom_left_face->auto_3": [
+   6.6,
+   -10.2,
+   5.2
+  ],
+  "screw_bottom_left_face->auto_4": [
+   -27.9,
+   -71.4,
+   45.4
+  ],
+  "screw_bottom_left_face->auto_6": [
+   -66.2,
+   -23.5,
+   7.8
+  ],
+  "small_bolt_bottom_left->top_right_corner": [
+   -61.3,
+   -32.0,
+   16.0
+  ],
+  "small_bolt_bottom_left->lower_right_corner_tab": [
+   -62.9,
+   -26.7,
+   12.9
+  ],
+  "small_bolt_bottom_left->auto_1": [
+   -21.2,
+   -7.7,
+   5.2
+  ],
+  "small_bolt_bottom_left->auto_3": [
+   6.7,
+   -11.4,
+   6.1
+  ],
+  "small_bolt_bottom_left->auto_4": [
+   -27.8,
+   -72.6,
+   46.3
+  ],
+  "small_bolt_bottom_left->auto_6": [
+   -66.1,
+   -24.7,
+   8.7
+  ],
+  "top_right_corner->lower_right_corner_tab": [
+   -1.6,
+   5.3,
+   -3.1
+  ],
+  "top_right_corner->auto_1": [
+   40.1,
+   24.3,
+   -10.8
+  ],
+  "top_right_corner->auto_3": [
+   68.0,
+   20.6,
+   -9.9
+  ],
+  "top_right_corner->auto_4": [
+   33.5,
+   -40.6,
+   30.3
+  ],
+  "top_right_corner->auto_6": [
+   -4.8,
+   7.3,
+   -7.3
+  ],
+  "lower_right_corner_tab->auto_1": [
+   41.7,
+   19.0,
+   -7.7
+  ],
+  "lower_right_corner_tab->auto_3": [
+   69.6,
+   15.3,
+   -6.8
+  ],
+  "lower_right_corner_tab->auto_4": [
+   35.1,
+   -45.9,
+   33.4
+  ],
+  "lower_right_corner_tab->auto_6": [
+   -3.2,
+   2.0,
+   -4.2
+  ],
+  "auto_1->auto_3": [
+   27.9,
+   -3.7,
+   0.9
+  ],
+  "auto_1->auto_4": [
+   -6.6,
+   -64.9,
+   41.1
+  ],
+  "auto_1->auto_6": [
+   -44.9,
+   -17.0,
+   3.5
+  ],
+  "auto_3->auto_4": [
+   -34.5,
+   -61.2,
+   40.2
+  ],
+  "auto_3->auto_6": [
+   -72.8,
+   -13.3,
+   2.6
+  ],
+  "auto_4->auto_6": [
+   -38.3,
+   47.9,
+   -37.6
+  ]
+ },
+ "note": "metric depth = fit of photo disparity to the model's depth; trust only when pose.json confidence/iou are good and calibration.r is high"
+}

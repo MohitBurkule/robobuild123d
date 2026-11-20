@@ -1,0 +1,54 @@
+BLOCKERS: 0
+  [ran] integrity 0.06s
+  [proxy] wiring 1.67s
+  [ran] mass 0.00s
+  [proxy] interference 12.54s
+  [ran] connections 0.00s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.54s
+  [ran] dynamics 0.00s
+  [ran] strength 0.04s
+  [ran] printability 1.20s
+  [ran] process 0.00s
+  [ran] electrical 8.27s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.07s
+  [ran] bom 0.00s
+  [ran] wire_review 0.95s
+  [ran] fastener_record 0.00s
+  [ran] likeness 38.44s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.12s
+  [ran] dfm 0.06s
+  [ran] realworld 3.90s
+hot flip: ok=True 0 blockers in 0 root causes, mass 149.5/150 g
+MASS BUDGET:
+  mass 149.5 g of 150 g (+0.5 g margin)
+    chassis                    87.89 g  fills 16% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    flipper                     9.28 g  fills 5% of its box
+    wa_act                      7.50 g  fills 67% of its box
+    wheel_l0                    3.07 g  fills 65% of its box
+    wheel_r0                    3.07 g  fills 65% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_r0             0.92 g  fills 75% of its box
+    dt_hub_wheel_l0             0.92 g  fills 75% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fs_look_chassis_0           0.21 g  fills 30% of its box
+    fs_look_chassis_1           0.21 g  fills 30% of its box
+    mass.may_be_over: 149.5 g (range 121.5 to 177.4 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 5 miss, group 0 hit / 31 miss, inside 11 hit / 9 miss, likeness 1 hit / 0 miss, min_gap 1 hit / 0 miss, overlap 100 hit / 89 miss, part_check 5 hit / 1 miss, part_geom 38 hit / 0 miss, ray 57 hit / 54 miss

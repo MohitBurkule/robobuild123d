@@ -1,0 +1,17 @@
+{
+ "robot_type": "flipper",
+ "wheels": 2,
+ "weapon": {
+  "kind": "flipper",
+  "axis": "x"
+ },
+ "photos": [
+  "hot_flip.aws71.webp"
+ ],
+ "view": {
+  "hot_flip.aws71.webp": "front_right_iso"
+ },
+ "view_source": {
+  "hot_flip.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
+ }
+}
