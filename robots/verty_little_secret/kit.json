@@ -1,0 +1,79 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 70,
+  "width": 120,
+  "height": 22,
+  "ramp": 0,
+  "style": "twin_pods",
+  "slot": 30
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -18
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 22,
+  "width": 6,
+  "y": 8,
+  "teeth": 2,
+  "z": 26,
+  "axis": "x"
+ },
+ "colors": {
+  "body": "#1c2a24",
+  "wheel": "#1c3a2c",
+  "weapon": "#8a8d92",
+  "fork": "#c9cdd3"
+ },
+ "name": "verty little secret",
+ "macros": [
+  {
+   "top": [
+    [
+     22,
+     30
+    ],
+    [
+     40,
+     30
+    ],
+    [
+     52,
+     92
+    ],
+    [
+     46,
+     94
+    ]
+   ],
+   "z": [
+    0,
+    8
+   ],
+   "color": "#1c2a24",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "fork"
+  },
+  {
+   "cyl": [
+    9,
+    24
+   ],
+   "at": [
+    0,
+    8,
+    26
+   ],
+   "axis": "x",
+   "id": "motor",
+   "color": "#b8322a"
+  }
+ ]
+}

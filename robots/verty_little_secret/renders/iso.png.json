@@ -1,0 +1,16 @@
+{
+ "spec": "/tmp/work10_verty_little_secret/robots/verty_little_secret/spec.json",
+ "rendered_at": 1795024116.5065484,
+ "bodies": [
+  "pod_l",
+  "pod_r",
+  "bridge",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_l",
+  "fork_r",
+  "motor"
+ ],
+ "wires": {}
+}
