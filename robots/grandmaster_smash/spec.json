@@ -228,6 +228,30 @@
     0
    ],
    "color": "#35c935",
+   "cut": [
+    {
+     "at": [
+      35.25,
+      40.0,
+      -5.0
+     ],
+     "note": "RVRN: foot channel; spans z -14..4 seating both feet on the bar face",
+     "rot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "shape": {
+      "size": [
+       3.4,
+       10.4,
+       18.0
+      ],
+      "type": "box"
+     },
+     "type": "place"
+    }
+   ],
    "id": "chassis",
    "kind": "structure",
    "material": "nylon",
@@ -2698,20 +2722,7 @@
    },
    "solids": 1,
    "solids_reason": "RVRN: drum shell rebuilt as one closed solid; volume baseline set to measured 9059 mm3",
-   "volume_mm3": 9059.0,
-   "weapon": {
-    "cells": 2,
-    "kind": "drum",
-    "locking_bar": "lock_pin",
-    "motor": "weapon_motor",
-    "reduction": 1.0,
-    "spin_axis": [
-     0,
-     0,
-     1
-    ],
-    "teeth": 2
-   }
+   "volume_mm3": 9059.0
   },
   {
    "at": [
@@ -2959,9 +2970,9 @@
   },
   {
    "at": [
-    0,
-    0,
-    0
+    36.0,
+    -46.36,
+    -8.25
    ],
    "color": "#9aa3a8",
    "id": "fork_0",
@@ -2971,9 +2982,9 @@
    "parent": "chassis",
    "process": "laser",
    "rot": [
-    0,
-    0,
-    0
+    0.0,
+    0.0,
+    0.0
    ],
    "secondary_ops": [
     "chamfer"
@@ -2981,11 +2992,11 @@
    "shape": {
     "at": [
      36.0,
-     -46.0,
+     46.0,
      -8.25
     ],
     "rot": [
-     12.0,
+     -12.0,
      0.0,
      0.0
     ],
@@ -3032,9 +3043,9 @@
   },
   {
    "at": [
-    0,
-    0,
-    0
+    36.0,
+    45.64,
+    -8.25
    ],
    "color": "#9aa3a8",
    "id": "fork_1",
@@ -3044,9 +3055,9 @@
    "parent": "chassis",
    "process": "laser",
    "rot": [
-    0,
-    0,
-    0
+    0.0,
+    0.0,
+    0.0
    ],
    "secondary_ops": [
     "chamfer"
@@ -3335,22 +3346,6 @@
      "at": [
       38.0,
       40.0,
-      20.0
-     ],
-     "height": 39.0,
-     "note": "RVRN: one continuous bore r4.02 through the ring seat; race band left on the shaft side",
-     "radius": 4.02,
-     "rot": [
-      0.0,
-      90.0,
-      0.0
-     ],
-     "type": "cylinder"
-    },
-    {
-     "at": [
-      38.0,
-      40.0,
       24.75
      ],
      "note": "RVRN: drum relief cut, r20.3 over the drum axis so the shell passes with 0.5 mm clearance",
@@ -3372,8 +3367,8 @@
       40.0,
       24.75
      ],
-     "height": 39.0,
-     "note": "MR85ZZ outer race seat",
+     "height": 42.0,
+     "note": "MR85ZZ bore, full height, race edge covered",
      "radius": 4.02,
      "rot": [
       0.0,
@@ -3436,7 +3431,12 @@
       "type": "place"
      }
     ],
-    "type": "subtract"
+    "size": [
+     3,
+     10,
+     42
+    ],
+    "type": "box"
    },
    "solids": 1,
    "solids_reason": "RVRN: seat band removed; one closed solid, bore continuous"
@@ -3449,22 +3449,6 @@
    ],
    "color": "#cfe8e0",
    "cuts": [
-    {
-     "at": [
-      32.5,
-      40.0,
-      20.0
-     ],
-     "height": 39.0,
-     "note": "RVRN: continuous bore r4.02; outer race seated, no knife edge",
-     "radius": 4.02,
-     "rot": [
-      0.0,
-      90.0,
-      0.0
-     ],
-     "type": "cylinder"
-    },
     {
      "at": [
       32.5,
@@ -3490,8 +3474,8 @@
       40.0,
       24.75
      ],
-     "height": 39.0,
-     "note": "MR85ZZ outer race seat",
+     "height": 42.0,
+     "note": "MR85ZZ bore, full height, race edge covered",
      "radius": 4.02,
      "rot": [
       0.0,
@@ -3621,7 +3605,12 @@
       "type": "place"
      }
     ],
-    "type": "subtract"
+    "size": [
+     3,
+     10,
+     42
+    ],
+    "type": "box"
    },
    "solids": 1,
    "solids_reason": "RVRN: bore continuous, ring intact"
@@ -4191,9 +4180,9 @@
    "parent": "weapon",
    "process": "cots",
    "rot": [
-    0,
-    0,
-    0
+    0.0,
+    90.0,
+    0.0
    ],
    "rotates_with": "rotor_weapon",
    "shaft_of": "weapon_motor_can",
@@ -4270,11 +4259,11 @@
    "catalog": "gr1507",
    "fasteners": [
     {
-     "designation": "M2x16",
+     "designation": "M2x12",
      "dir": [
-      1,
-      0,
-      0
+      1.0,
+      0.0,
+      0.0
      ],
      "qty": 2,
      "through": [
@@ -4310,7 +4299,7 @@
    "at": [
     8.0,
     40.0,
-    10.75
+    24.75
    ],
    "catalog": "gr1507_can",
    "id": "weapon_motor_can",
@@ -4318,30 +4307,54 @@
    "parent": "weapon",
    "role": "rotor",
    "rot": [
-    0,
-    0,
-    0
+    0.0,
+    0.0,
+    0.0
    ],
    "rotates_with": "rotor_weapon",
    "scale_mass_g": 7.0,
    "shape": {
     "at": [
-     0.0,
-     0.0,
-     0.0
+     8.0,
+     40.0,
+     10.75
     ],
+    "note": "RVRN: bell shell, wall 1.8 mm, open at the stator end; drain hole r2 in the crown",
     "rot": [
      0.0,
      0.0,
      0.0
     ],
     "shape": {
+     "cut": [
+      {
+       "at": [
+        0.0,
+        0.0,
+        -1.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "height": 27.0,
+        "radius": 14.5,
+        "type": "cylinder"
+       },
+       "type": "place"
+      }
+     ],
      "height": 29.0,
+     "open_end": "back",
      "radius": 16.3,
      "type": "cylinder"
     },
     "type": "place"
-   }
+   },
+   "shell_wall_mm": 1.8,
+   "volume_mm3": 4845.0
   },
   {
    "_extra": {},
@@ -4353,6 +4366,7 @@
    "catalog": "lipo_2s_350",
    "id": "el_battery",
    "kind": "battery",
+   "note": "probe free spot yaw+180, 0.7 mm travel box y -9.5..7.5",
    "parent": "chassis",
    "retained": "velcro",
    "retained_reason": "velcro pad on the pocket floor; the closed pocket (0.25 mm per side) stops it moving",
@@ -4365,8 +4379,8 @@
   },
   {
    "at": [
-    29.18,
-    0.017,
+    32.18,
+    8.02,
     -9.5
    ],
    "catalog": "malenki_nano",
@@ -4384,8 +4398,8 @@
   },
   {
    "at": [
-    -30.5,
-    0.017,
+    -30.51,
+    -8.02,
     -9.5
    ],
    "catalog": "bbb_brushless_esc_20a",
@@ -4404,8 +4418,8 @@
   {
    "at": [
     -20.4,
-    -16.788,
-    -10.5
+    -16.79,
+    -4.01
    ],
    "catalog": "switch_slide_12x4",
    "id": "el_switch",
@@ -4677,6 +4691,7 @@
   },
   {
    "awg": 22,
+   "b": "weapon_motor_stator.phases",
    "from": "el_wesc.motor",
    "id": "w_phases",
    "kind": "motor",
