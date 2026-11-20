@@ -1,0 +1,226 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 78,
+  "width": 72,
+  "height": 3,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -24,
+   16
+  ],
+  "outside": false,
+  "x": 29
+ },
+ "colors": {
+  "body": "#dfe8ee",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "textured": [],
+ "name": "push comes to shove",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     -40,
+     1
+    ],
+    [
+     46,
+     1
+    ],
+    [
+     34,
+     25
+    ],
+    [
+     -52,
+     25
+    ]
+   ],
+   "x": [
+    38,
+    40
+   ],
+   "mirror": true,
+   "id": "side_plate",
+   "clear": true,
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#dfe8ee"
+  },
+  {
+   "box": [
+    80,
+    86,
+    2
+   ],
+   "at": [
+    0,
+    -9,
+    26
+   ],
+   "id": "top_plate",
+   "clear": true,
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#dfe8ee"
+  },
+  {
+   "side": [
+    [
+     46,
+     0.5
+    ],
+    [
+     48.5,
+     0.5
+    ],
+    [
+     36,
+     27
+    ],
+    [
+     33.5,
+     27
+    ]
+   ],
+   "x": [
+    -44,
+    44
+   ],
+   "kind": "wedge",
+   "id": "front_plate",
+   "material": "aluminium",
+   "process": "laser",
+   "color": "#b9bdc2"
+  },
+  {
+   "side": [
+    [
+     -40,
+     0.5
+    ],
+    [
+     -42.5,
+     0.5
+    ],
+    [
+     -55,
+     27
+    ],
+    [
+     -52.5,
+     27
+    ]
+   ],
+   "x": [
+    -44,
+    44
+   ],
+   "kind": "armor",
+   "id": "rear_plate",
+   "material": "aluminium",
+   "process": "laser",
+   "color": "#b9bdc2"
+  },
+  {
+   "box": [
+    22,
+    12,
+    10
+   ],
+   "at": [
+    14,
+    -24,
+    9
+   ],
+   "mirror": true,
+   "id": "motor_rear",
+   "color": "#eeeeea"
+  },
+  {
+   "box": [
+    22,
+    12,
+    10
+   ],
+   "at": [
+    14,
+    16,
+    9
+   ],
+   "mirror": true,
+   "id": "motor_front",
+   "color": "#eeeeea"
+  },
+  {
+   "box": [
+    34,
+    17,
+    9
+   ],
+   "at": [
+    0,
+    -4,
+    9
+   ],
+   "id": "battery_pack",
+   "color": "#3a3d44"
+  },
+  {
+   "box": [
+    18,
+    12,
+    5
+   ],
+   "at": [
+    0,
+    -4,
+    16
+   ],
+   "id": "receiver",
+   "color": "#c22a22"
+  },
+  {
+   "cyl": [
+    2.2,
+    22
+   ],
+   "at": [
+    34,
+    -34,
+    14
+   ],
+   "axis": "z",
+   "mirror": true,
+   "id": "standoff_r",
+   "color": "#b9bdc2"
+  },
+  {
+   "cyl": [
+    2.2,
+    22
+   ],
+   "at": [
+    34,
+    30,
+    14
+   ],
+   "axis": "z",
+   "mirror": true,
+   "id": "standoff_f",
+   "color": "#b9bdc2"
+  }
+ ]
+}
