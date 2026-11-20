@@ -1,0 +1,55 @@
+BLOCKERS: 9
+  [ran] integrity 0.11s
+  [proxy] wiring 0.15s
+  [ran] mass 0.00s
+  [proxy] interference 13.08s
+  [ran] connections 2.63s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.45s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.16s
+  [ran] process 0.01s
+  [ran] electrical 0.00s
+  [ran] combat 0.17s
+  [ran] physics 0.01s
+  [ran] plausibility 0.00s
+  [ran] cots 0.01s
+  [ran] fit 0.18s
+  [ran] bom 0.01s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 7.48s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.26s
+  [ran] dfm 0.15s
+  [ran] realworld 0.13s
+do you dream of being an ambul: ok=False 9 blockers in 7 root causes, mass 121.8/150 g
+1. [proxy.wiring] Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `wiring` group to re-route it.
+2. [proxy.wiring] Wire `w_m2` (`el_rx_esc.m2` to `dm_wheel_r0.terminals`): no baseline route (run the full `wiring` group once and pass its report). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `wiring` group to re-route it.
+3. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_rx_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [proxy.interference] `el_battery` and `el_rx_esc` overlap by 2.38 mm (allowed 0.08).
+   | el_battery: x -13.99..14.01  y -9.98..8.02  z -7.99..2.01  size 28.00 x 18.00 x 10.00 mm
+   |   centre (0.01, -0.98, -2.99), volume 5040.0 mm3
+   |   port xt30: (0.01, 10.02, -2.99)
+   |   OVERLAP `el_rx_esc` 2.38 mm (allowed 0.08)
+   |   gap to `chassis` 0.25 mm
+5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 6 wires: renders/iso.png: wire `w_sw_esc` not drawn (+4); renders/top.png: wire `w_sw_esc` not drawn (+4)
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+6. [wire.render_count] iso.png: 1 routes vs 6 spec wires (missing ['w_m1', 'w_m2', 'w_m3']); top.png: 1 routes vs 6 spec wires (missing ['w_m1', 'w_m2', 'w_m3'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+7. [likeness.silhouette] `reference/do_you_dream_of_being_an_ambulance.aws71.webp`: best silhouette IoU 0.74 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.74). Regions (photo frame, left third first) 0.63 / 0.86 / 0.63: worst = front third. Height/length 0.74 model vs 0.68 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 18 miss

@@ -1,0 +1,38 @@
+{
+ "spec": "/tmp/work10_do_you_dream_of_being_an_ambul/robots/do_you_dream_of_being_an_ambul/spec.json",
+ "rendered_at": 1795076394.1424747,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "prong_l",
+  "prong_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.013,
+    10.017,
+    -2.989
+   ],
+   "to": [
+    -28.0,
+    -11.5,
+    -4.0
+   ]
+  }
+ }
+}
