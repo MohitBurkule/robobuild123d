@@ -1,0 +1,103 @@
+BLOCKERS: 8
+  [ran] integrity 0.22s
+  [proxy] wiring 2.08s
+  [ran] mass 0.00s
+  [proxy] interference 28.69s
+  [ran] connections 3.01s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.79s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.70s
+  [ran] process 0.00s
+  [ran] electrical 0.99s
+  [ran] combat 0.26s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.13s
+  [ran] bom 0.01s
+  [ran] wire_review 0.42s
+  [ran] fastener_record 0.00s
+  [ran] likeness 17.87s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.23s
+  [ran] dfm 0.17s
+  [ran] realworld 0.90s
+trappist 1: ok=False 8 blockers in 8 root causes, mass 145.5/150 g
+1. [proxy.interference] `wire_l` and `wire_x` overlap by 0.93 mm (allowed 0.08).
+   | wire_l: x 13.00..15.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+2. [proxy.interference] `wire_r` and `wire_x` overlap by 0.93 mm (allowed 0.08).
+   | wire_r: x -15.00..-13.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (-14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+3. [proxy.sweep] joint `wire_l`: `wire_l` hits `wire_x` 0.93 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint wire_l` lists the closest approach to every part.
+   | wire_l: x 13.00..15.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+4. [proxy.sweep] joint `wire_r`: `wire_r` hits `wire_x` 0.93 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint wire_r` lists the closest approach to every part.
+   | wire_r: x -15.00..-13.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (-14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+5. [power.weapon_motor] lifter `wire_r` has no actuator (`weapon.motor` / `actuated_by`).
+   fix: Add a catalog servo (e.g. `servo_cs07`) or geared motor and name it in `weapon.motor` (or `actuated_by`); a brushless motor needs `weapon.reduction` >= 10.
+   | wire_r: x -15.00..-13.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (-14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+6. [wire.rotor_clearance] wire `w_m2` passes -0.0 mm from the volume swept by the `wire_r` rotor (wire_r; 0..80 deg range) at [-15.3, -22.8, -0.2].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | wire_r: x -15.00..-13.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (-14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+7. [likeness.view] `reference/trappist_1.aws63.webp` is declared `rear` (IoU 0.00 there) but the model matches it better from front (elevation 45, azimuth 90) (IoU 0.82).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+8. [likeness.silhouette] `reference/trappist_1.aws63.webp`: best silhouette IoU 0.00 at camera none (need 0.80: >= 0.8 and no worse than the closest stock template `None` at 0.00).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 145.5 g of 150 g (+4.5 g margin)
+    chassis                    61.83 g  fills 41% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    el_servo_wire_l             9.00 g  fills 75% of its box
+    front_bar                   8.04 g  fills 70% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    1.51 g  fills 57% of its box
+    wheel_r0                    1.51 g  fills 57% of its box
+    wheel_l1                    1.51 g  fills 57% of its box
+    wheel_r1                    1.51 g  fills 57% of its box
+    dt_hub_wheel_l0             0.57 g  fills 63% of its box
+    dt_hub_wheel_r0             0.57 g  fills 63% of its box
+    dt_hub_wheel_l1             0.57 g  fills 63% of its box
+    dt_hub_wheel_r1             0.57 g  fills 63% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    wire_l                      0.23 g  fills 100% of its box
+    wire_r                      0.23 g  fills 100% of its box
+    wire_x                      0.13 g  fills 100% of its box
+    mass.may_be_over: 145.5 g (range 124.8 to 166.1 g) against the 150 g limit; 4.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 21 miss
