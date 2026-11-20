@@ -1,0 +1,247 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 46,
+  "width": 112,
+  "height": 22,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 9,
+  "y": [
+   -6
+  ],
+  "outside": false,
+  "x": 44,
+  "notch": true
+ },
+ "forks": {
+  "n": 4,
+  "length": 60,
+  "width": 4,
+  "spread": 84,
+  "tilt_deg": 8,
+  "taper": true,
+  "thick": 2
+ },
+ "colors": {
+  "body": "#35c935",
+  "wheel": "#2a2c30",
+  "weapon": "#c9cdd3",
+  "fork": "#7d868c"
+ },
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "auger the top",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    6,
+    46,
+    22
+   ],
+   "at": [
+    59,
+    0,
+    13
+   ],
+   "id": "endcap",
+   "mirror": true,
+   "color": "#35c935"
+  },
+  {
+   "cyl": [
+    7,
+    16
+   ],
+   "at": [
+    14,
+    22,
+    9
+   ],
+   "axis": "y",
+   "id": "boss_in",
+   "color": "#35c935",
+   "mirror": true
+  },
+  {
+   "cyl": [
+    7,
+    16
+   ],
+   "at": [
+    42,
+    22,
+    9
+   ],
+   "axis": "y",
+   "id": "boss_out",
+   "color": "#35c935",
+   "mirror": true
+  },
+  {
+   "box": [
+    44,
+    30,
+    12
+   ],
+   "at": [
+    0,
+    -4,
+    30
+   ],
+   "id": "servo_house",
+   "color": "#35c935"
+  },
+  {
+   "side": [
+    [
+     -14,
+     24
+    ],
+    [
+     -6,
+     34
+    ],
+    [
+     60,
+     84
+    ],
+    [
+     84,
+     84
+    ],
+    [
+     84,
+     74
+    ],
+    [
+     60,
+     70
+    ],
+    [
+     -18,
+     26
+    ]
+   ],
+   "x": [
+    -12,
+    -9
+   ],
+   "weapon": "axe",
+   "pivot": [
+    -10,
+    30
+   ],
+   "id": "arm_a",
+   "color": "#e8c020",
+   "material": "polycarbonate",
+   "process": "laser"
+  },
+  {
+   "side": [
+    [
+     -14,
+     24
+    ],
+    [
+     -6,
+     34
+    ],
+    [
+     60,
+     84
+    ],
+    [
+     84,
+     84
+    ],
+    [
+     84,
+     74
+    ],
+    [
+     60,
+     70
+    ],
+    [
+     -18,
+     26
+    ]
+   ],
+   "x": [
+    9,
+    12
+   ],
+   "id": "arm_b",
+   "color": "#e8c020",
+   "material": "polycarbonate",
+   "process": "laser"
+  },
+  {
+   "cyl": [
+    2,
+    26
+   ],
+   "at": [
+    0,
+    -10,
+    30
+   ],
+   "axis": "x",
+   "id": "arm_pivot_pin",
+   "color": "#30343a",
+   "material": "steel"
+  },
+  {
+   "box": [
+    24,
+    26,
+    6
+   ],
+   "at": [
+    0,
+    72,
+    81
+   ],
+   "id": "head_block",
+   "color": "#35c935"
+  },
+  {
+   "cyl": [
+    10,
+    14
+   ],
+   "at": [
+    0,
+    74,
+    71
+   ],
+   "axis": "z",
+   "id": "auger_motor",
+   "color": "#2c4fa8"
+  },
+  {
+   "cyl": [
+    1.6,
+    46
+   ],
+   "at": [
+    0,
+    74,
+    41
+   ],
+   "axis": "z",
+   "id": "auger_bit",
+   "color": "#8a6a3a",
+   "material": "steel"
+  }
+ ]
+}

@@ -1,0 +1,134 @@
+BLOCKERS: 19
+  [ran] integrity 0.09s
+  [proxy] wiring 1.25s
+  [ran] mass 0.00s
+  [proxy] interference 15.95s
+  [ran] connections 1.17s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.53s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.78s
+  [ran] process 0.04s
+  [ran] electrical 0.53s
+  [ran] combat 0.15s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
+  [ran] bom 0.01s
+  [ran] wire_review 0.31s
+  [ran] fastener_record 0.00s
+  [ran] likeness 11.59s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.26s
+  [ran] dfm 0.14s
+  [ran] realworld 0.47s
+auger the top: ok=False 19 blockers in 19 root causes, mass 157.2/150 g
+1. [integrity.solids] `arm_a` has 2 closed solid(s) and 0 open/invalid shell(s), expected 1 (2440 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | arm_a: x -12.00..-9.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
+   |   centre (-10.50, 33.00, 42.00), volume 2440.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+2. [integrity.volume] `arm_a` volume 2440 mm3 vs previous 5370 (-55%)
+   fix: The solid lost most of its material: check the last boolean/fillet.
+   | arm_a: x -12.00..-9.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
+   |   centre (-10.50, 33.00, 42.00), volume 2440.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+3. [integrity.solids] `arm_b` has 2 closed solid(s) and 0 open/invalid shell(s), expected 1 (2440 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | arm_b: x 9.00..12.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
+   |   centre (10.50, 33.00, 42.00), volume 2440.3 mm3
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 0.67 mm (allowed 0.08)
+   |   OVERLAP `auger_motor` 0.46 mm (allowed 0.08)
+4. [integrity.volume] `arm_b` volume 2440 mm3 vs previous 5370 (-55%)
+   fix: The solid lost most of its material: check the last boolean/fillet.
+   | arm_b: x 9.00..12.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
+   |   centre (10.50, 33.00, 42.00), volume 2440.3 mm3
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 0.67 mm (allowed 0.08)
+   |   OVERLAP `auger_motor` 0.46 mm (allowed 0.08)
+5. [proxy.wiring] Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+6. [proxy.wiring] Wire `w_lesc_sig` (`el_rx_esc.wpn` to `el_lesc.rx`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+7. [mass.over] 157.2 g (range 131.8 to 182.6 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+8. [proxy.interference] `servo_house` and `arm_a` overlap by 1.39 mm (allowed 0.08).
+   | servo_house: x -22.00..22.00  y -19.00..11.00  z 10.50..24.00  size 44.00 x 30.00 x 13.50 mm
+   |   centre (0.00, -4.00, 17.25), volume 13327.7 mm3
+   |   OVERLAP `arm_a` 1.39 mm (allowed 0.08)
+   |   overlap allowed `chassis` 0.70 mm (allowed inf)
+   |   overlap allowed `arm_pivot_pin` 0.00 mm (allowed 0.08)
+9. [proxy.interference] `arm_a` and `arm_pivot_pin` overlap by 0.67 mm (allowed 0.08).
+   | arm_a: x -12.00..-9.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
+   |   centre (-10.50, 33.00, 42.00), volume 2440.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+10. [proxy.interference] `arm_a` and `head_block` overlap by 1.39 mm (allowed 0.08).
+   | arm_a: x -12.00..-9.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
+   |   centre (-10.50, 33.00, 42.00), volume 2440.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+11. [proxy.interference] `arm_a` and `auger_motor` overlap by 0.46 mm (allowed 0.08).
+   | arm_a: x -12.00..-9.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
+   |   centre (-10.50, 33.00, 42.00), volume 2440.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+12. [proxy.interference] `arm_b` and `arm_pivot_pin` overlap by 0.67 mm (allowed 0.08).
+   | arm_b: x 9.00..12.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
+   |   centre (10.50, 33.00, 42.00), volume 2440.3 mm3
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 0.67 mm (allowed 0.08)
+   |   OVERLAP `auger_motor` 0.46 mm (allowed 0.08)
+... 7 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 157.2 g of 150 g (-7.2 g margin)
+    chassis                    44.24 g  fills 41% of its box
+    servo_house                12.69 g  fills 75% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_act_arm_a                7.50 g  fills 67% of its box
+    endcap_l                    5.79 g  fills 80% of its box
+    endcap_r                    5.79 g  fills 80% of its box
+    auger_motor                 4.19 g  fills 79% of its box
+    head_block                  3.56 g  fills 100% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    3.03 g  fills 57% of its box
+    wheel_r0                    3.03 g  fills 57% of its box
+    el_lesc                     3.00 g  fills 100% of its box
+    arm_a                       2.93 g  fills 13% of its box
+    arm_b                       2.93 g  fills 13% of its box
+    auger_bit                   2.48 g  fills 79% of its box
+    boss_out_l                  2.27 g  fills 76% of its box
+    boss_out_r                  2.20 g  fills 74% of its box
+    arm_pivot_pin               2.19 g  fills 79% of its box
+    boss_in_r                   2.18 g  fills 73% of its box
+    boss_in_l                   1.70 g  fills 57% of its box
+    fork_0                      1.33 g  fills 12% of its box
+    fork_1                      1.33 g  fills 12% of its box
+    fork_2                      1.33 g  fills 12% of its box
+    fork_3                      1.33 g  fills 12% of its box
+    dt_hub_wheel_l0             1.15 g  fills 66% of its box
+    dt_hub_wheel_r0             1.15 g  fills 66% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 157.2 g (range 131.8 to 182.6 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 29 miss
