@@ -29,6 +29,8 @@ class Weld:
     break_n: float
     broken_at: float | None = None
     peak_n: float = 0.0
+    copies: tuple = ()  # rigid collision copies on the chassis (live until the break)
+    ghosts: tuple = ()  # the free part's own geoms (collide only after the break)
 
 
 class FightSim(Sim):
@@ -146,6 +148,11 @@ class FightSim(Sim):
                         self._add_part_geom(b, pre, g, piece, i * 100 + k)
                 else:
                     self._add_part_geom(b, pre, g, p, i)
+                    if loose:  # a gram-scale part on a soft weld jitters and tips the robot: while attached it is a rigid
+                        # copy on the chassis; the welded free twin only carries its mass and takes over on the break
+                        src = self.spec.geom(f"{pre}{p.id}_g{i}")
+                        chassis.add_geom(name=f"{pre}{p.id}_c{i}", type=src.type, meshname=src.meshname, size=list(src.size),
+                                         pos=list(src.pos), mass=0.0, friction=list(src.friction), rgba=list(src.rgba))
         if self.fixed_motors:  # hazards mode uses contype/conaffinity bits instead, so debris can hit its own robot
             for i in range(len(names)):
                 for j in range(i + 1, len(names)):
@@ -219,16 +226,35 @@ class FightSim(Sim):
                 if any(g.name.startswith(pre + p.id + "_") for p in wg.parts):
                     g.solref = [btc, g.solref[1]]
         super().compile()
+        self.welds = [self._mk_weld(r, p, n, bn) for r, p, n, bn in self._weld_spec]
+        ghost_ids = {g for w in self.welds for g in w.ghosts}
         if not self.fixed_motors:  # own-robot geoms never collide; robots hit the world, each other and (later) debris
             bits = {r: 1 << (i + 1) for i, r in enumerate(self.robots)}
             for gi in range(self.m.ngeom):
                 r = self.m.geom(gi).name.split("/")[0]
                 if r in bits:
                     self.m.geom_contype[gi], self.m.geom_conaffinity[gi] = bits[r], 0xFFFF & ~bits[r]
+                    if gi in ghost_ids:
+                        self.m.geom_contype[gi] = self.m.geom_conaffinity[gi] = 0
                 else:
                     self.m.geom_contype[gi], self.m.geom_conaffinity[gi] = 1, 0xFFFF
-        self.welds = [Weld(r, p, self.m.equality(n).id, bn) for r, p, n, bn in self._weld_spec]
         return self
+
+    def _mk_weld(self, r, part, eq, bn):
+        grp = next(g for g in self.robots[r].groups if g.name == part)
+        ids = {self.m.geom(i).name: i for i in range(self.m.ngeom)}
+        pick = lambda tag: tuple(i for n, i in ids.items() for p in grp.parts if n.startswith(f"{r}/{p.id}_{tag}"))
+        return Weld(r, part, self.m.equality(eq).id, bn, copies=pick("c"), ghosts=pick("g"))
+
+    def detach(self, w):
+        """Fasteners let go: the rigid copy vanishes, the welded twin (same pose and velocity) is now the free part."""
+        m = self.m
+        self.d.eq_active[w.eq] = 0
+        b = 1 << (list(self.robots).index(w.robot) + 1)
+        for g in w.copies:
+            m.geom_contype[g] = m.geom_conaffinity[g] = 0
+        for g in w.ghosts:
+            m.geom_contype[g], m.geom_conaffinity[g] = b, 0xFFFF & ~b
 
     # ---- control ------------------------------------------------------
     def drive(self, robot, left, right, forward=None):
@@ -291,23 +317,31 @@ class FightSim(Sim):
         d = self.d
         if not self.welds:
             return []
+        load = {}  # contact normal force on each attached part's rigid copy = the load its fasteners carry
+        copy_of = self._copy_of if hasattr(self, "_copy_of") else self.__dict__.setdefault(
+            "_copy_of", {g: w for w in self.welds for g in w.copies})
         eqf = {}
-        typ = d.efc_type[: d.nefc]
-        sel = np.nonzero(typ == mujoco.mjtConstraint.mjCNSTR_EQUALITY)[0]
-        for i in sel:
-            k = int(d.efc_id[i])
-            eqf.setdefault(k, []).append(float(d.efc_force[i]))
+        for i in np.nonzero(d.efc_type[: d.nefc] == mujoco.mjtConstraint.mjCNSTR_EQUALITY)[0]:
+            eqf.setdefault(int(d.efc_id[i]), []).append(float(d.efc_force[i]))
+        n = d.ncon
+        if n and copy_of:
+            ct = d.contact
+            g1, g2, ea = ct.geom1[:n], ct.geom2[:n], ct.efc_address[:n]
+            for k in range(n):
+                w = copy_of.get(int(g1[k])) or copy_of.get(int(g2[k]))
+                if w is not None and ea[k] >= 0:
+                    load[w.eq] = load.get(w.eq, 0.0) + abs(float(d.efc_force[ea[k]]))
         broke = []
         for w in self.welds:
             if w.broken_at is not None:
                 continue
-            f = eqf.get(w.eq)
-            if not f:
+            f = eqf.get(w.eq)  # + the twin's own weight and inertia carried by the fasteners
+            fn = load.get(w.eq, 0.0) + (float(np.linalg.norm(f[:3])) if f else 0.0)
+            if not fn:
                 continue
-            fn = float(np.linalg.norm(f[:3]))
             w.peak_n = max(w.peak_n, fn)
             if fn > w.break_n:
-                d.eq_active[w.eq] = 0
+                self.detach(w)
                 w.broken_at = float(d.time)
                 broke.append(w)
                 self.events.append((float(d.time), "break", w.robot, w.part, round(fn, 1)))
