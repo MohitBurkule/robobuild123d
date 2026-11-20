@@ -1,0 +1,32 @@
+{
+ "spec": "/tmp/work10_vanquish/robots/vanquish/spec.json",
+ "rendered_at": 1795038129.0853374,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "motor",
+  "upright",
+  "fork_l",
+  "fork_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_shaft_weapon",
+  "dt_mount_fork_l",
+  "dt_bolt_fork_l",
+  "dt_mount_fork_r",
+  "dt_bolt_fork_r"
+ ],
+ "wires": {}
+}
