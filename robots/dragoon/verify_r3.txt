@@ -1,0 +1,156 @@
+BLOCKERS: 142
+  [ran] integrity 0.06s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 8.73s
+  [ran] connections 0.13s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.66s
+  [ran] dynamics 0.03s
+  [ran] strength 0.00s
+  [ran] printability 0.71s
+  [ran] process 0.01s
+  [ran] electrical 0.00s
+  [ran] combat 0.14s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.10s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.11s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+dragoon: ok=False 142 blockers in 94 root causes, mass 371.7/150 g
+1. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.65 mm (allowed 0.08). Same problem on all 5 parts of this pattern: fix the pattern once. (+4 consequences)
+   | chassis: x -54.00..54.00  y -46.00..38.00  z -13.00..15.00  size 108.00 x 84.00 x 28.00 mm
+   |   centre (0.00, -4.00, 1.00), volume 220080.0 mm3
+   |   OVERLAP `dt_mount_fork_0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_3` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_l` 3.88 mm (allowed 0.08)
+2. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 5 parts of this pattern: fix the pattern once. (+4 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -48.90..-45.10  y -40.90..-37.10  z 12.60..14.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-47.00, -39.00, 13.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.65 mm (allowed 0.08)
+   | dt_screw_1: x 45.10..48.90  y -40.90..-37.10  z 12.60..14.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (47.00, -39.00, 13.30), volume 15.9 mm3
+3. [proxy.interference] `chassis` and `fork_0` overlap by 1.88 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis: x -54.00..54.00  y -46.00..38.00  z -13.00..15.00  size 108.00 x 84.00 x 28.00 mm
+   |   centre (0.00, -4.00, 1.00), volume 220080.0 mm3
+   |   OVERLAP `dt_mount_fork_0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_3` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_l` 3.88 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `dt_mount_fork_0` overlap by 3.88 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis: x -54.00..54.00  y -46.00..38.00  z -13.00..15.00  size 108.00 x 84.00 x 28.00 mm
+   |   centre (0.00, -4.00, 1.00), volume 220080.0 mm3
+   |   OVERLAP `dt_mount_fork_0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_3` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_l` 3.88 mm (allowed 0.08)
+5. [proxy.interference] `fork_0` and `dt_mount_fork_0` overlap by 0.70 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | fork_0: x -47.00..-39.00  y 34.00..90.00  z -15.00..-3.00  size 8.00 x 56.00 x 12.00 mm
+   |   centre (-43.00, 62.00, -9.00), volume 2632.0 mm3
+   |   OVERLAP `fork_block_r` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_r` 2.12 mm (allowed 0.08)
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+6. [proxy.interference] `dt_mount_fork_0` and `dt_bolt_fork_0` overlap by 0.09 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | dt_mount_fork_0: x -49.00..-37.00  y 26.50..35.50  z -11.00..-3.00  size 12.00 x 9.00 x 8.00 mm
+   |   centre (-43.00, 31.00, -7.00), volume 864.0 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_r` 2.88 mm (allowed 0.08)
+   |   OVERLAP `fork_0` 0.70 mm (allowed 0.08)
+7. [process.print_orientation] `fork_0` (fdm) has no `print_orientation`. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | fork_0: x -47.00..-39.00  y 34.00..90.00  z -15.00..-3.00  size 8.00 x 56.00 x 12.00 mm
+   |   centre (-43.00, 62.00, -9.00), volume 2632.0 mm3
+   |   OVERLAP `fork_block_r` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_r` 2.12 mm (allowed 0.08)
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+8. [process.print_orientation] `dt_mount_fork_0` (fdm) has no `print_orientation`. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | dt_mount_fork_0: x -49.00..-37.00  y 26.50..35.50  z -11.00..-3.00  size 12.00 x 9.00 x 8.00 mm
+   |   centre (-43.00, 31.00, -7.00), volume 864.0 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_r` 2.88 mm (allowed 0.08)
+   |   OVERLAP `fork_0` 0.70 mm (allowed 0.08)
+9. [mfg.stock] `dt_bolt_fork_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_bolt_fork_0: x -44.70..-41.30  y 29.30..32.70  z -3.20..-1.80  size 3.40 x 3.40 x 1.40 mm
+   |   centre (-43.00, 31.00, -2.50), volume 12.7 mm3
+   |   OVERLAP `chassis` 0.65 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_r` 0.56 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_0` 0.09 mm (allowed 0.08)
+10. [proxy.interference] `chassis` and `dt_bolt_fork_0` overlap by 0.65 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   | chassis: x -54.00..54.00  y -46.00..38.00  z -13.00..15.00  size 108.00 x 84.00 x 28.00 mm
+   |   centre (0.00, -4.00, 1.00), volume 220080.0 mm3
+   |   OVERLAP `dt_mount_fork_0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_3` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_l` 3.88 mm (allowed 0.08)
+11. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -47.00..-39.00  y 34.00..90.00  z -15.00..-3.00  size 8.00 x 56.00 x 12.00 mm
+   |   centre (-43.00, 62.00, -9.00), volume 2632.0 mm3
+   |   OVERLAP `fork_block_r` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_r` 2.12 mm (allowed 0.08)
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+12. [proxy.interference] `fork_0` and `fork_block_r` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | fork_0: x -47.00..-39.00  y 34.00..90.00  z -15.00..-3.00  size 8.00 x 56.00 x 12.00 mm
+   |   centre (-43.00, 62.00, -9.00), volume 2632.0 mm3
+   |   OVERLAP `fork_block_r` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_block_r` 2.12 mm (allowed 0.08)
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+... 82 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 371.7 g of 150 g (-221.7 g margin)
+    chassis                   209.52 g  fills 87% of its box  <- solid block? a tub should be a shell
+    weapon                     65.61 g  fills 38% of its box
+    motor_pod                  24.50 g  fills 79% of its box  <- solid block? a tub should be a shell
+    pod_base                   11.09 g  fills 100% of its box
+    wheel_l0                    8.31 g  fills 79% of its box
+    wheel_r0                    8.31 g  fills 79% of its box
+    fork_block_l                5.33 g  fills 100% of its box
+    fork_block_r                5.33 g  fills 100% of its box
+    dt_mount_fork_block_l       3.02 g  fills 100% of its box
+    dt_mount_fork_block_r       3.02 g  fills 100% of its box
+    fork_0                      2.51 g  fills 49% of its box
+    fork_1                      2.51 g  fills 49% of its box
+    fork_2                      2.51 g  fills 49% of its box
+    fork_3                      2.51 g  fills 49% of its box
+    dt_hub_wheel_l0             2.41 g  fills 79% of its box
+    dt_hub_wheel_r0             2.41 g  fills 79% of its box
+    side_plate_l                1.58 g  fills 100% of its box
+    side_plate_r                1.58 g  fills 100% of its box
+    dt_shaft_weapon             1.29 g  fills 79% of its box
+    dt_axle_wheel_r0            1.04 g  fills 79% of its box
+    dt_axle_wheel_l0            1.04 g  fills 79% of its box
+    dt_mount_fork_0             0.82 g  fills 100% of its box
+    dt_mount_fork_1             0.82 g  fills 100% of its box
+    dt_mount_fork_2             0.82 g  fills 100% of its box
+    dt_mount_fork_3             0.82 g  fills 100% of its box
+    dt_nut_wheel_l0             0.27 g  fills 79% of its box
+    dt_nut_wheel_r0             0.27 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    dt_screw_4                  0.13 g  fills 79% of its box
+    dt_bolt_fork_1              0.10 g  fills 79% of its box
+    dt_bolt_fork_2              0.10 g  fills 79% of its box
+    dt_bolt_fork_0              0.10 g  fills 79% of its box
+    dt_bolt_fork_3              0.10 g  fills 79% of its box
+    dt_bolt_fork_block_l        0.10 g  fills 79% of its box
+    dt_bolt_fork_block_r        0.10 g  fills 79% of its box
+    mass.over: 371.7 g (range 308.8 to 434.5 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 10 hit / 8 miss, group 0 hit / 31 miss, inside 14 hit / 24 miss, likeness 3 hit / 0 miss, min_gap 87 hit / 90 miss, overlap 223 hit / 397 miss, part_check 4 hit / 0 miss, part_geom 38 hit / 0 miss, ray 0 hit / 190 miss
