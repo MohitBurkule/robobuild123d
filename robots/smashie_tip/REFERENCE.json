@@ -1,0 +1,44 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "smashie_1.aws73.webp",
+  "smashie_1.aws74.webp",
+  "smashie_1.aws76.webp"
+ ],
+ "crop": {
+  "smashie_1.aws73.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "smashie_1.aws74.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "smashie_1.aws76.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ },
+ "view": {
+  "smashie_1.aws73.webp": "rear_right_iso",
+  "smashie_1.aws74.webp": "rear_right_iso",
+  "smashie_1.aws76.webp": "front_right_iso"
+ },
+ "elevation": {
+  "smashie_1.aws73.webp": 25,
+  "smashie_1.aws74.webp": 25,
+  "smashie_1.aws76.webp": 45
+ }
+}

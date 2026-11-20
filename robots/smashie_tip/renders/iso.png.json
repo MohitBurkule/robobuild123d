@@ -1,0 +1,25 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/smashie_tip/spec.json",
+ "rendered_at": 1795042993.8895636,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "disc_post_a",
+  "disc_post_b",
+  "base_plate",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_shaft_weapon",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_wesc",
+  "lock_pin"
+ ],
+ "wires": {}
+}
