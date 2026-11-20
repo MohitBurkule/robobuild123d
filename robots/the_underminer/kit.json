@@ -1,0 +1,84 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 80,
+  "width": 70,
+  "height": 22,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 10,
+  "width": 8,
+  "y": [
+   -28,
+   18
+  ]
+ },
+ "colors": {
+  "body": "#1c1d20",
+  "wheel": "#2a3fd0",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "the underminer",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    58,
+    36,
+    28
+   ],
+   "at": [
+    0,
+    56,
+    15
+   ],
+   "kind": "wedge",
+   "id": "scoop",
+   "color": "#f08a6a"
+  },
+  {
+   "box": [
+    22,
+    28,
+    24
+   ],
+   "at": [
+    44,
+    56,
+    13
+   ],
+   "mirror": true,
+   "kind": "wedge",
+   "id": "pod",
+   "color": "#f08a6a"
+  },
+  {
+   "box": [
+    30,
+    45,
+    8
+   ],
+   "at": [
+    12,
+    -10,
+    28
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -30,
+    26
+   ],
+   "id": "lid",
+   "color": "#1c1d20"
+  }
+ ]
+}

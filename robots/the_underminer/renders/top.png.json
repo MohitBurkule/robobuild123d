@@ -1,0 +1,122 @@
+{
+ "spec": "/tmp/work10_the_underminer/robots/the_underminer/spec.json",
+ "rendered_at": 1795078516.9487548,
+ "bodies": [
+  "chassis",
+  "top_plate",
+  "name_miner",
+  "name_under",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "scoop",
+  "pod_l",
+  "pod_r",
+  "lid",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_strut_pod_l",
+  "dt_strut_pod_r",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_rx_esc",
+  "el_servo_lid",
+  "el_switch",
+  "fs_look_top_plate_0",
+  "fs_look_top_plate_1",
+  "fs_look_top_plate_2",
+  "fs_look_top_plate_3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.012999999999998652,
+    28.017000000000003,
+    -0.989
+   ],
+   "to": [
+    -31.5,
+    -11.4,
+    -2.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -23.5,
+    -11.4,
+    -2.0
+   ],
+   "to": [
+    -11.987,
+    33.017,
+    8.511
+   ]
+  },
+  "w_m1": {
+   "from": [
+    11.013,
+    41.017,
+    8.511
+   ],
+   "to": [
+    6.600000000000001,
+    -28.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    41.017,
+    8.511
+   ],
+   "to": [
+    -6.600000000000001,
+    -28.0,
+    0.0
+   ]
+  },
+  "w_m3": {
+   "from": [
+    11.013,
+    41.017,
+    8.511
+   ],
+   "to": [
+    6.600000000000001,
+    18.0,
+    0.0
+   ]
+  },
+  "w_m4": {
+   "from": [
+    -11.987,
+    41.017,
+    8.511
+   ],
+   "to": [
+    -6.600000000000001,
+    18.0,
+    0.0
+   ]
+  },
+  "w_sig_lid": {
+   "from": [
+    11.013,
+    33.017,
+    8.511
+   ],
+   "to": [
+    -11.487,
+    -8.483,
+    0.011
+   ]
+  }
+ }
+}
