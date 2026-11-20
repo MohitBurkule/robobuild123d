@@ -1,0 +1,106 @@
+BLOCKERS: 12
+  [ran] integrity 0.17s
+  [ran] mass 0.00s
+  [proxy] interference 28.85s
+  [ran] connections 4.42s
+  [ran] legal 0.03s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 1.14s
+  [ran] dynamics 0.00s
+  [ran] strength 0.01s
+  [ran] printability 1.35s
+  [ran] process 0.05s
+  [ran] electrical 0.01s
+  [ran] combat 0.13s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.21s
+  [ran] bom 0.03s
+  [ran] wire_review 0.08s
+  [ran] fastener_record 0.00s
+  [ran] likeness 27.82s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.45s
+  [ran] dfm 0.23s
+  [ran] realworld 0.13s
+vampire: ok=False 12 blockers in 11 root causes, mass 189.9/150 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_hubw_weapon`. (+1 consequences)
+   | weapon: x -72.00..72.00  y -6.50..6.50  z 24.50..27.50  size 144.00 x 13.00 x 3.00 mm
+   |   centre (0.00, 0.00, 26.00), volume 5416.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 0.0, 26.0] range 0..360 default 0
+   |   OVERLAP `dt_hubw_weapon` 1.39 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+2. [mass.unknown] `deck`: material `carbon` is not a known material id (did you mean `carbon_fibre`, `polycarbonate`, `velcro`?); known: 304, abs, aluminium, aluminum, asa, brass, carbon_fibre, cf_filament, cf_plate, copper, double_sided_tape, duct_tape, foam_tape, fr4, g10, hardox, hdpe, heat_shrink, kapton, lego_tyre, nylon, pa12, pa_cf, pc, petg, petg_cf, pla, pla_cf, pla_st, polycarbonate, polypropylene, pp, resin, rubber, silicone, stainless, steel, tape, taulman910, titanium, tpu, tpu_85a, tpu_95a, uhmw, velcro.
+   fix: Set `material` (and `process`), or `slicer_mass_g` / `scale_mass_g`.
+   | deck: x -30.00..30.00  y -25.00..25.00  z 9.75..11.25  size 60.00 x 50.00 x 1.50 mm
+   |   centre (0.00, 0.00, 10.50), volume 4470.5 mm3
+   |   OVERLAP `hub` 0.70 mm (allowed 0.08)
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+3. [mass.over] 189.9 g (range 164.7 to 215.1 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+4. [proxy.interference] `weapon` and `dt_hubw_weapon` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -72.00..72.00  y -6.50..6.50  z 24.50..27.50  size 144.00 x 13.00 x 3.00 mm
+   |   centre (0.00, 0.00, 26.00), volume 5416.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 0.0, 26.0] range 0..360 default 0
+   |   OVERLAP `dt_hubw_weapon` 1.39 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+5. [proxy.interference] `hub` and `deck` overlap by 0.70 mm (allowed 0.08).
+   | hub: x -13.00..13.00  y -13.00..13.00  z 5.50..12.50  size 26.00 x 26.00 x 7.00 mm
+   |   centre (0.00, -0.00, 9.00), volume 3393.7 mm3
+   |   overlap allowed `chassis` 2.12 mm (allowed inf)
+   |   OVERLAP `deck` 0.70 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+6. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | weapon: x -72.00..72.00  y -6.50..6.50  z 24.50..27.50  size 144.00 x 13.00 x 3.00 mm
+   |   centre (0.00, 0.00, 26.00), volume 5416.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 0.0, 26.0] range 0..360 default 0
+   |   OVERLAP `dt_hubw_weapon` 1.39 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+7. [likeness.silhouette] `reference/vampire.aws71.webp`: best silhouette IoU 0.63 at camera front_right_iso (elevation 25, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.69). Regions (photo frame, left third first) 0.76 / 0.77 / 0.30: worst = rear third. Height/length 0.61 model vs 0.57 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+8. [likeness.silhouette] `reference/vampire.aws74.webp`: best silhouette IoU 0.67 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.70). Regions (photo frame, left third first) 0.38 / 0.78 / 0.83: worst = front third. Height/length 0.74 model vs 0.57 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+9. [likeness.view] `reference/vampire.aws76.webp` is declared `left` (IoU 0.40 there) but the model matches it better from rear (elevation 25, azimuth 270) (IoU 0.61).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+10. [likeness.silhouette] `reference/vampire.aws76.webp`: best silhouette IoU 0.40 at camera left (elevation 25, azimuth 180) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.57). Regions (photo frame, left third first) 0.59 / 0.49 / 0.10: worst = rear third. Height/length 0.87 model vs 0.45 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+11. [geom.tiny_edge] `chassis`: 14 edge(s) shorter than 0.05 mm, shortest 0.0005 mm. World mm: [1.32, -5.28, 6.64] 0.0005 mm; [-14.68, 21.58, -5.15] 0.0034 mm; [-9.7, 28.32, -3.03] 0.0046 mm; [-14.69, 21.58, -5.15] 0.0069 mm; [-14.68, 21.58, -5.15] 0.0076 mm (+9 more).
+   fix: Two feature boundaries miss each other by the edge length at each listed point. Drive both from ONE parameter or the same face / plane (not two numbers that should be equal), or extend the cutting / added body clear past the wall before the boolean, so the boundaries coincide or clearly cross.
+   | chassis: x -56.00..56.00  y -50.00..50.00  z -10.00..10.00  size 112.00 x 100.00 x 20.00 mm
+   |   centre (0.00, 0.00, 0.00), volume 69009.3 mm3
+   |   overlap allowed `hub` 2.12 mm (allowed inf)
+   |   overlap allowed `green_wall` 1.38 mm (allowed inf)
+   |   gap to `deck` 0.00 mm (touching)
+MASS BUDGET:
+  mass 189.9 g of 150 g (-39.9 g margin)
+    chassis                    65.70 g  fills 31% of its box
+    weapon                     42.79 g  fills 96% of its box  <- solid block? a tub should be a shell
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    green_wall                 12.18 g  fills 18% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    dt_shaft_weapon             3.49 g  fills 79% of its box
+    hub                         3.23 g  fills 72% of its box
+    wheel_l0                    3.03 g  fills 57% of its box
+    wheel_r0                    3.03 g  fills 57% of its box
+    dt_hubw_weapon              1.83 g  fills 67% of its box
+    dt_hub_wheel_l0             1.15 g  fills 66% of its box
+    dt_hub_wheel_r0             1.15 g  fills 66% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    lock_pin                    0.39 g  fills 79% of its box
+    mass.unknown: `deck`: material `carbon` is not a known material id (did you mean `carbon_fibre`, `polycarbonate`, `velcro`?); known: 304, abs, aluminium, aluminum, asa, brass, carbon_fibre, cf_filament, cf_plate, copper, double_sided_tape, duct_tape, foam_tape, fr4, g10, hardox, hdpe, heat_shrink, kapton, lego_tyre, nylon, pa12, pa_cf, pc, petg, petg_cf, pla, pla_cf, pla_st, polycarbonate, polypropylene, pp, resin, rubber, silicone, stainless, steel, tape, taulman910, titanium, tpu, tpu_85a, tpu_95a, uhmw, velcro.
+    mass.over: 189.9 g (range 164.7 to 215.1 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 18 miss

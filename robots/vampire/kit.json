@@ -1,0 +1,145 @@
+{
+ "robot_type": "horizontal_spinner",
+ "body": {
+  "length": 100,
+  "width": 112,
+  "height": 20,
+  "ramp": 0,
+  "top": [
+   [
+    -56,
+    -25
+   ],
+   [
+    -30,
+    -50
+   ],
+   [
+    30,
+    -50
+   ],
+   [
+    56,
+    -25
+   ],
+   [
+    56,
+    25
+   ],
+   [
+    30,
+    50
+   ],
+   [
+    -30,
+    50
+   ],
+   [
+    -56,
+    25
+   ]
+  ]
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 9,
+  "y": [
+   0
+  ],
+  "outside": false,
+  "notch": true,
+  "x": 40
+ },
+ "weapon": {
+  "kind": "bar",
+  "radius": 72,
+  "width": 3,
+  "y": 0,
+  "teeth": 2,
+  "bar_width": 13,
+  "z": 26,
+  "axis": "z"
+ },
+ "colors": {
+  "body": "#cfd6d8",
+  "wheel": "#202226",
+  "weapon": "#b9bdc2",
+  "fork": "#c9cdd3"
+ },
+ "name": "vampire",
+ "macros": [
+  {
+   "cyl": [
+    13,
+    7
+   ],
+   "at": [
+    0,
+    0,
+    21
+   ],
+   "axis": "z",
+   "id": "hub",
+   "color": "#1c1c1f"
+  },
+  {
+   "box": [
+    60,
+    50,
+    1.5
+   ],
+   "at": [
+    0,
+    0,
+    22.5
+   ],
+   "id": "deck",
+   "material": "carbon",
+   "process": "laser",
+   "color": "#2a2c30"
+  },
+  {
+   "top": [
+    [
+     -58,
+     26
+    ],
+    [
+     -31,
+     52
+    ],
+    [
+     31,
+     52
+    ],
+    [
+     58,
+     26
+    ],
+    [
+     53,
+     24
+    ],
+    [
+     29,
+     47
+    ],
+    [
+     -29,
+     47
+    ],
+    [
+     -53,
+     24
+    ]
+   ],
+   "z": [
+    1.5,
+    23.5
+   ],
+   "color": "#2f9f72",
+   "id": "green_wall"
+  }
+ ]
+}

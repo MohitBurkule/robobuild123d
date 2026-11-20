@@ -1,0 +1,25 @@
+{
+ "robot_type": "horizontal_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "bar",
+  "axis": "z"
+ },
+ "photos": [
+  "vampire.aws71.webp",
+  "vampire.aws74.webp",
+  "vampire.aws76.webp"
+ ],
+ "view": {
+  "vampire.aws71.webp": "front_right_iso",
+  "vampire.aws74.webp": "front_left_iso",
+  "vampire.aws76.webp": "left"
+ },
+ "elevation": {
+  "vampire.aws76.webp": 25
+ },
+ "view_source": {
+  "vampire.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "vampire.aws74.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
+}

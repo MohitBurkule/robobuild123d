@@ -1,0 +1,103 @@
+BLOCKERS: 14
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.71s
+  [ran] connections 1.28s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.01s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [ran] strength 0.01s
+  [ran] printability 2.18s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.01s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [ran] likeness 13.97s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.01s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.01s
+vampire: ok=False 14 blockers in 13 root causes, mass 180.9/150 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_hubw_weapon`. (+1 consequences)
+   | weapon: x -72.00..72.00  y -6.50..6.50  z 24.50..27.50  size 144.00 x 13.00 x 3.00 mm
+   |   centre (0.00, 0.00, 26.00), volume 5416.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 0.0, 26.0] range 0..360 default 0
+   |   OVERLAP `dt_hubw_weapon` 1.39 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+2. [mass.unknown] `deck`: material `carbon` is not a known material id (did you mean `carbon_fibre`, `polycarbonate`, `velcro`?); known: 304, abs, aluminium, aluminum, asa, brass, carbon_fibre, cf_filament, cf_plate, copper, double_sided_tape, duct_tape, foam_tape, fr4, g10, hardox, hdpe, heat_shrink, kapton, lego_tyre, nylon, pa12, pa_cf, pc, petg, petg_cf, pla, pla_cf, pla_st, polycarbonate, polypropylene, pp, resin, rubber, silicone, stainless, steel, tape, taulman910, titanium, tpu, tpu_85a, tpu_95a, uhmw, velcro.
+   fix: Set `material` (and `process`), or `slicer_mass_g` / `scale_mass_g`.
+   | deck: x -30.00..30.00  y -25.00..25.00  z 9.75..11.25  size 60.00 x 50.00 x 1.50 mm
+   |   centre (0.00, 0.00, 10.50), volume 4470.5 mm3
+   |   OVERLAP `hub` 0.70 mm (allowed 0.08)
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+3. [mass.over] 180.9 g (range 157.4 to 204.3 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+4. [proxy.interference] `weapon` and `dt_hubw_weapon` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -72.00..72.00  y -6.50..6.50  z 24.50..27.50  size 144.00 x 13.00 x 3.00 mm
+   |   centre (0.00, 0.00, 26.00), volume 5416.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 0.0, 26.0] range 0..360 default 0
+   |   OVERLAP `dt_hubw_weapon` 1.39 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+5. [proxy.interference] `hub` and `deck` overlap by 0.70 mm (allowed 0.08).
+   | hub: x -13.00..13.00  y -13.00..13.00  z 5.50..12.50  size 26.00 x 25.99 x 7.00 mm
+   |   centre (0.00, -0.00, 9.00), volume 3608.5 mm3
+   |   overlap allowed `chassis` 2.12 mm (allowed inf)
+   |   OVERLAP `deck` 0.70 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+6. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | weapon: x -72.00..72.00  y -6.50..6.50  z 24.50..27.50  size 144.00 x 13.00 x 3.00 mm
+   |   centre (0.00, 0.00, 26.00), volume 5416.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 0.0, 26.0] range 0..360 default 0
+   |   OVERLAP `dt_hubw_weapon` 1.39 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+7. [wire.render_wires] 17 of 17 robot render(s) do not draw all 6 wires: renders/diff_vampire.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_vampire.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_vampire.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_vampire.aws71_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_vampire.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_vampire.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_vampire.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+8. [likeness.view] `reference/vampire.aws71.webp` is declared `top` (IoU 0.51 there) but the model matches it better from front_left_iso (elevation 25, azimuth 120) (IoU 0.65).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+9. [likeness.silhouette] `reference/vampire.aws71.webp`: best silhouette IoU 0.51 at camera top (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.38). Regions (photo frame, left third first) 0.61 / 0.61 / 0.22: worst = rear third. Height/length 0.69 model vs 0.57 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+10. [likeness.view] `reference/vampire.aws74.webp` is declared `front_right_iso` (IoU 0.53 there) but the model matches it better from front_right_iso (elevation 25, azimuth 30) (IoU 0.69).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+11. [likeness.silhouette] `reference/vampire.aws74.webp`: best silhouette IoU 0.53 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.64). Regions (photo frame, left third first) 0.30 / 0.64 / 0.58: worst = front third. Height/length 0.76 model vs 0.57 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+12. [likeness.view] `reference/vampire.aws76.webp` is declared `left` (IoU 0.40 there) but the model matches it better from front (elevation 25, azimuth 90) (IoU 0.60).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+... 1 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 180.9 g of 150 g (-30.9 g margin)
+    chassis                    68.66 g  fills 32% of its box
+    weapon                     42.79 g  fills 96% of its box  <- solid block? a tub should be a shell
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    dt_shaft_weapon             3.49 g  fills 79% of its box
+    hub                         3.44 g  fills 76% of its box
+    wheel_l0                    3.03 g  fills 57% of its box
+    wheel_r0                    3.03 g  fills 57% of its box
+    dt_hubw_weapon              1.83 g  fills 67% of its box
+    dt_hub_wheel_l0             1.15 g  fills 66% of its box
+    dt_hub_wheel_r0             1.15 g  fills 66% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    lock_pin                    0.39 g  fills 79% of its box
+    mass.unknown: `deck`: material `carbon` is not a known material id (did you mean `carbon_fibre`, `polycarbonate`, `velcro`?); known: 304, abs, aluminium, aluminum, asa, brass, carbon_fibre, cf_filament, cf_plate, copper, double_sided_tape, duct_tape, foam_tape, fr4, g10, hardox, hdpe, heat_shrink, kapton, lego_tyre, nylon, pa12, pa_cf, pc, petg, petg_cf, pla, pla_cf, pla_st, polycarbonate, polypropylene, pp, resin, rubber, silicone, stainless, steel, tape, taulman910, titanium, tpu, tpu_85a, tpu_95a, uhmw, velcro.
+    mass.over: 180.9 g (range 157.4 to 204.3 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 1 miss, group 27 hit / 4 miss, inside 11 hit / 2 miss, likeness 3 hit / 0 miss, min_gap 22 hit / 0 miss, overlap 266 hit / 1 miss, part_geom 17 hit / 0 miss
