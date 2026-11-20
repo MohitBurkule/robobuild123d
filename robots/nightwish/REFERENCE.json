@@ -1,0 +1,22 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "nightwish.aws63.webp",
+  "nightwish_aws62.webp"
+ ],
+ "mask_mode": {
+  "nightwish.aws63.webp": "textured",
+  "nightwish_aws62.webp": "textured"
+ },
+ "view": {
+  "nightwish.aws63.webp": "left"
+ },
+ "view_source": {
+  "nightwish.aws63.webp": "user camera pick (azimuth 180, elevation 35); replaces the automatic label"
+ }
+}
