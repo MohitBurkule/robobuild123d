@@ -1,0 +1,74 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/grandmaster_smash/spec.json",
+ "rendered_at": 1795130156.7249131,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "endcap_l",
+  "endcap_r",
+  "flywheel",
+  "upright_a",
+  "upright_b",
+  "weapon_rail",
+  "end_wedge_l",
+  "end_wedge_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_shaft_weapon",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "weapon_motor_stator",
+  "weapon_motor_can",
+  "el_battery",
+  "el_rx_esc",
+  "el_wesc",
+  "el_switch",
+  "lock_pin",
+  "wbear_l",
+  "wbear_r",
+  "uf_stator_chassis",
+  "uf_upright_a_chassis"
+ ],
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    -16.4,
+    -16.788,
+    -8.0
+   ],
+   "to": [
+    -42.0,
+    -2.983,
+    -9.5
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    -0.5000000000000013,
+    -11.5,
+    -6.489
+   ],
+   "to": [
+    -24.4,
+    -16.788,
+    -8.0
+   ]
+  },
+  "w_wesc_sig": {
+   "from": [
+    40.68,
+    -3.983,
+    -9.5
+   ],
+   "to": [
+    -42.0,
+    3.017,
+    -9.5
+   ]
+  }
+ }
+}

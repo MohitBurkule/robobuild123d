@@ -1,0 +1,23 @@
+{
+ "robot_type": "drum",
+ "wheels": 2,
+ "weapon": {
+  "kind": "drum",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "grandmaster_smash.aws72.webp",
+  "grandmaster_smash.aws73.webp"
+ ],
+ "view": {
+  "grandmaster_smash.aws72.webp": "front_right_iso",
+  "grandmaster_smash.aws73.webp": "front_left_iso"
+ },
+ "elevation": {
+  "grandmaster_smash.aws73.webp": 45
+ },
+ "view_source": {
+  "grandmaster_smash.aws72.webp": "user camera pick (azimuth 45, elevation 35); replaces the automatic label"
+ }
+}

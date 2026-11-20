@@ -1,0 +1,4726 @@
+{
+ "allow_overlap": [
+  {
+   "a": "weapon_motor_stator",
+   "b": "weapon_motor_can",
+   "reason": "stator stack and windings sit inside the hollow bell"
+  }
+ ],
+ "catalog": {
+  "weapon_motor": {
+   "id": "weapon_motor",
+   "kind": "weapon_motor",
+   "kv": 2300,
+   "mass_g": 8.5,
+   "name": "weapon_motor",
+   "ports": {
+    "phases": [
+     19.0,
+     40.0,
+     20.0
+    ]
+   },
+   "rotor_part": "weapon_motor_can",
+   "stator_part": "weapon_motor_stator",
+   "type": "outrunner"
+  }
+ },
+ "connections": [
+  {
+   "a": "dm_wheel_l0",
+   "b": "chassis",
+   "interference_mm": 0.1,
+   "method": "press_fit",
+   "reason": "N20 gearbox pressed into a 0.25 mm-per-side printed pocket in the side wall; the pocket closes round it on every face"
+  },
+  {
+   "a": "dm_wheel_r0",
+   "b": "chassis",
+   "interference_mm": 0.1,
+   "method": "press_fit",
+   "reason": "N20 gearbox pressed into a 0.25 mm-per-side printed pocket in the side wall; the pocket closes round it on every face"
+  },
+  {
+   "a": "el_battery",
+   "b": "chassis",
+   "method": "velcro",
+   "reason": "battery held by a velcro pad on the floor of its closed printed pocket, 0.25 mm per side"
+  },
+  {
+   "a": "el_rx_esc",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "board captured in a closed printed pocket with 0.25 mm per side; the pocket walls stop it in every direction"
+  },
+  {
+   "a": "el_wesc",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "board captured in a closed printed pocket with 0.25 mm per side; the pocket walls stop it in every direction"
+  },
+  {
+   "a": "el_switch",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "slide switch sits in a printed pocket 1.5 mm above the belly skin, reached through an 8 x 4 mm slot; the pocket walls hold it on every side"
+  },
+  {
+   "a": "lock_pin",
+   "b": "weapon",
+   "method": "pin",
+   "reason": "steel locking pin through a 0.1 mm clearance hole in the weapon, tethered by a lanyard to the frame; fitted before handling"
+  },
+  {
+   "a": "wheel_l0",
+   "b": "dt_hub_wheel_l0",
+   "interference_mm": 0.1,
+   "method": "press_fit",
+   "reason": "TPU tyre stretched over the printed hub rim, 0.1 mm interference; the hub flanges stop it walking off"
+  },
+  {
+   "a": "wheel_r0",
+   "b": "dt_hub_wheel_r0",
+   "interference_mm": 0.1,
+   "method": "press_fit",
+   "reason": "TPU tyre stretched over the printed hub rim, 0.1 mm interference; the hub flanges stop it walking off"
+  },
+  {
+   "a": "fork_0",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "plate root sits in a slot cut to its own outline in the printed chassis, keyed on five faces and clamped by the print round it"
+  },
+  {
+   "a": "fork_1",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "plate root sits in a slot cut to its own outline in the printed chassis, keyed on five faces and clamped by the print round it"
+  },
+  {
+   "a": "flywheel",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "printed part seated in a recess cut to its own outline in the chassis print, keyed on the recess walls"
+  },
+  {
+   "a": "upright_b",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "printed part seated in a recess cut to its own outline in the chassis print, keyed on the recess walls"
+  },
+  {
+   "a": "dt_hub_wheel_l0",
+   "b": "dm_wheel_l0",
+   "interference_mm": 0.1,
+   "method": "press_fit",
+   "reason": "hub D-bore pressed on the 3 mm N20 D-shaft; the flat carries the torque, 0.1 mm interference holds it axially"
+  },
+  {
+   "a": "dt_hub_wheel_r0",
+   "b": "dm_wheel_r0",
+   "interference_mm": 0.1,
+   "method": "press_fit",
+   "reason": "hub D-bore pressed on the 3 mm N20 D-shaft; the flat carries the torque, 0.1 mm interference holds it axially"
+  },
+  {
+   "a": "dt_shaft_weapon",
+   "b": "weapon",
+   "interference_mm": 0.05,
+   "method": "press_fit",
+   "reason": "live weapon shaft pressed into the weapon bore (0.05 mm interference) and turning with it"
+  },
+  {
+   "a": "upright_a",
+   "b": "chassis",
+   "method": "screw",
+   "reason": "M3 button screws through the upright feet into pressed brass inserts in the bar top"
+  },
+  {
+   "a": "weapon",
+   "b": "weapon_motor_can",
+   "interference_mm": 0.05,
+   "method": "press_fit",
+   "reason": "bell is a shrink fit inside the drum pocket, r9.8 seat r9.85; carries all torque and side load"
+  },
+  {
+   "a": "weapon_motor_stator",
+   "b": "chassis",
+   "method": "screw",
+   "reason": "stator clamped between the drum end plate and the frame ring by M2 screws through its 12 mm cross base"
+  },
+  {
+   "a": "wbear_l",
+   "b": "dt_shaft_weapon",
+   "method": "press_fit",
+   "reason": "MR85ZZ inner race on the 5 mm shaft, 0.05 interference fit"
+  },
+  {
+   "a": "wbear_l",
+   "b": "upright_a",
+   "method": "press_fit",
+   "reason": "MR85ZZ outer race pressed into the upright r4.0 bore"
+  },
+  {
+   "a": "wbear_r",
+   "b": "dt_shaft_weapon",
+   "method": "press_fit",
+   "reason": "MR85ZZ inner race on the 5 mm shaft, 0.05 interference fit"
+  },
+  {
+   "a": "wbear_r",
+   "b": "upright_b",
+   "method": "press_fit",
+   "reason": "MR85ZZ outer race pressed into the upright r4.0 bore"
+  }
+ ],
+ "electronics": {
+  "cells": 2,
+  "failsafe": true,
+  "radio": "2.4 GHz",
+  "weapon_remote_disable": true
+ },
+ "fasteners": [
+  {
+   "designation": "M2x16",
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "id": "uf_stator_chassis",
+   "kind": "screw",
+   "note": "M2 button head into brass inserts; 3 mm min engagement both sides; dir along the bar axis",
+   "qty": 2,
+   "screw": "M2x16",
+   "threads_into": "chassis",
+   "through": [
+    "weapon_motor_stator",
+    "chassis"
+   ]
+  },
+  {
+   "designation": "M2x16",
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "id": "uf_upright_a_chassis",
+   "kind": "screw",
+   "note": "M2 button head into brass inserts; 3 mm min engagement both sides; dir along the bar axis",
+   "qty": 2,
+   "screw": "M2x16",
+   "threads_into": "chassis",
+   "through": [
+    "upright_a",
+    "chassis"
+   ]
+  }
+ ],
+ "kit_draft": true,
+ "locomotion": "roller",
+ "name": "grandmaster smash",
+ "parts": [
+  {
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#35c935",
+   "cut": [
+    {
+     "at": [
+      35.25,
+      40.0,
+      -5.0
+     ],
+     "note": "RVRN: foot channel; spans z -14..4 seating both feet on the bar face",
+     "rot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "shape": {
+      "size": [
+       3.4,
+       10.4,
+       18.0
+      ],
+      "type": "box"
+     },
+     "type": "place"
+    }
+   ],
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "notes": [
+    "RVRN: widened y 48->60 so the upright foot channel (y 34.8..45.2) sits fully inside the deck"
+   ],
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "base": {
+      "base": {
+       "items": [
+        {
+         "items": [
+          {
+           "base": {
+            "at": [
+             0.0,
+             0.0,
+             -14.0
+            ],
+            "rot": [
+             90.0,
+             0.0,
+             90.0
+            ],
+            "shape": {
+             "height": 124.0,
+             "points": [
+              [
+               -22.0,
+               0.0
+              ],
+              [
+               22.0,
+               0.0
+              ],
+              [
+               22.0,
+               1.5
+              ],
+              [
+               22.0,
+               18.0
+              ],
+              [
+               -22.0,
+               18.0
+              ]
+             ],
+             "type": "prism"
+            },
+            "type": "place"
+           },
+           "cut": [
+            {
+             "at": [
+              70.0,
+              0.0,
+              0
+             ],
+             "rot": [
+              0,
+              0,
+              0
+             ],
+             "shape": {
+              "size": [
+               52.0,
+               37.0,
+               200
+              ],
+              "type": "box"
+             },
+             "type": "place"
+            },
+            {
+             "at": [
+              -70.0,
+              0.0,
+              0
+             ],
+             "rot": [
+              0,
+              0,
+              0
+             ],
+             "shape": {
+              "size": [
+               52.0,
+               37.0,
+               200
+              ],
+              "type": "box"
+             },
+             "type": "place"
+            }
+           ],
+           "type": "subtract"
+          },
+          {
+           "at": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "shape": {
+            "at": [
+             -36.0,
+             16.0,
+             -1.81
+            ],
+            "rot": [
+             0.0,
+             0.0,
+             0.0
+            ],
+            "shape": {
+             "size": [
+              9.0,
+              9,
+              8.0
+             ],
+             "type": "box"
+            },
+            "type": "place"
+           },
+           "type": "place"
+          }
+         ],
+         "type": "union"
+        },
+        {
+         "at": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "at": [
+           36.0,
+           16.0,
+           -1.81
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "size": [
+            9.0,
+            9,
+            8.0
+           ],
+           "type": "box"
+          },
+          "type": "place"
+         },
+         "type": "place"
+        }
+       ],
+       "type": "union"
+      },
+      "cut": [
+       {
+        "at": [
+         30.85,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "items": [
+          {
+           "at": [
+            -2.4,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "shape": {
+            "size": [
+             32.25,
+             12.5,
+             10.5
+            ],
+            "type": "box"
+           },
+           "type": "place"
+          },
+          {
+           "at": [
+            17.5,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            90.0,
+            0.0
+           ],
+           "shape": {
+            "height": 12.0,
+            "radius": 2.3,
+            "type": "cylinder"
+           },
+           "type": "place"
+          }
+         ],
+         "type": "union"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         -30.85,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         180.0
+        ],
+        "shape": {
+         "items": [
+          {
+           "at": [
+            -2.4,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "shape": {
+            "size": [
+             32.25,
+             12.5,
+             10.5
+            ],
+            "type": "box"
+           },
+           "type": "place"
+          },
+          {
+           "at": [
+            17.5,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            90.0,
+            0.0
+           ],
+           "shape": {
+            "height": 12.0,
+            "radius": 2.3,
+            "type": "cylinder"
+           },
+           "type": "place"
+          }
+         ],
+         "type": "union"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         -0.487,
+         0.017,
+         -6.489
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "size": [
+          36.5,
+          17.5,
+          11.5
+         ],
+         "type": "box"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         30.5,
+         0.017,
+         -9.5
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "size": [
+          23.5,
+          16.5,
+          5.5
+         ],
+         "type": "box"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         -30.5,
+         0.017,
+         -9.5
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "size": [
+          23.5,
+          12.5,
+          4.5
+         ],
+         "type": "box"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         -20.4,
+         -16.788,
+         -10.5
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "size": [
+          12.0,
+          4.0,
+          4.2
+         ],
+         "type": "box"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         -22.5,
+         -16.788,
+         -12.75
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "size": [
+          8.0,
+          4.0,
+          4.5
+         ],
+         "type": "box"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         50.0,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         90.0,
+         0.0
+        ],
+        "shape": {
+         "height": 14.800000000000004,
+         "radius": 17.5,
+         "type": "cylinder"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         -50.0,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         90.0,
+         0.0
+        ],
+        "shape": {
+         "height": 14.79999999999999,
+         "radius": 17.5,
+         "type": "cylinder"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "at": [
+          -36.0,
+          19.0,
+          -1.8094751692989206
+         ],
+         "rot": [
+          0,
+          0,
+          0.0
+         ],
+         "shape": {
+          "at": [
+           0,
+           0,
+           0
+          ],
+          "rot": [
+           -12.0,
+           0,
+           0
+          ],
+          "shape": {
+           "height": 2.0,
+           "points": [
+            [
+             -2.5,
+             0
+            ],
+            [
+             2.5,
+             0
+            ],
+            [
+             0.625,
+             62.0
+            ],
+            [
+             -0.625,
+             62.0
+            ]
+           ],
+           "type": "prism"
+          },
+          "type": "place"
+         },
+         "type": "place"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "at": [
+          36.0,
+          19.0,
+          -1.8094751692989206
+         ],
+         "rot": [
+          0,
+          0,
+          -0.0
+         ],
+         "shape": {
+          "at": [
+           0,
+           0,
+           0
+          ],
+          "rot": [
+           -12.0,
+           0,
+           0
+          ],
+          "shape": {
+           "height": 2.0,
+           "points": [
+            [
+             -2.5,
+             0
+            ],
+            [
+             2.5,
+             0
+            ],
+            [
+             0.625,
+             62.0
+            ],
+            [
+             -0.625,
+             62.0
+            ]
+           ],
+           "type": "prism"
+          },
+          "type": "place"
+         },
+         "type": "place"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "items": [
+          {
+           "at": [
+            -17,
+            40,
+            4.0
+           ],
+           "rot": [
+            0,
+            90,
+            0
+           ],
+           "shape": {
+            "height": 2,
+            "radius": 22,
+            "type": "cylinder"
+           },
+           "type": "place"
+          },
+          {
+           "at": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "shape": {
+            "at": [
+             -16.5,
+             0.0,
+             0.0
+            ],
+            "rot": [
+             90.0,
+             0.0,
+             90.0
+            ],
+            "shape": {
+             "height": 3.0,
+             "points": [
+              [
+               16.000000000000004,
+               -5.9999999999999964
+              ],
+              [
+               45.0,
+               15.0
+              ],
+              [
+               45.0,
+               25.0
+              ],
+              [
+               16.000000000000004,
+               4.0000000000000036
+              ]
+             ],
+             "type": "prism"
+            },
+            "type": "place"
+           },
+           "type": "place"
+          }
+         ],
+         "type": "union"
+        },
+        "type": "place"
+       },
+       {
+        "at": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "shape": {
+         "items": [
+          {
+           "at": [
+            34,
+            38,
+            5.0
+           ],
+           "rot": [
+            0,
+            0,
+            0
+           ],
+           "shape": {
+            "size": [
+             3,
+             10,
+             38
+            ],
+            "type": "box"
+           },
+           "type": "place"
+          },
+          {
+           "at": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "shape": {
+            "at": [
+             32.5,
+             0.0,
+             0.0
+            ],
+            "rot": [
+             90.0,
+             0.0,
+             90.0
+            ],
+            "shape": {
+             "height": 3.0,
+             "points": [
+              [
+               16.000000000000004,
+               -5.9999999999999964
+              ],
+              [
+               45.0,
+               15.0
+              ],
+              [
+               45.0,
+               25.0
+              ],
+              [
+               16.000000000000004,
+               4.0000000000000036
+              ]
+             ],
+             "type": "prism"
+            },
+            "type": "place"
+           },
+           "type": "place"
+          }
+         ],
+         "type": "union"
+        },
+        "type": "place"
+       }
+      ],
+      "type": "subtract"
+     },
+     "cut": [
+      {
+       "base": {
+        "items": [
+         {
+          "at": [
+           2.5,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "items": [
+            {
+             "items": [
+              {
+               "base": {
+                "at": [
+                 0.0,
+                 0.0,
+                 -14.0
+                ],
+                "rot": [
+                 90.0,
+                 0.0,
+                 90.0
+                ],
+                "shape": {
+                 "height": 124.0,
+                 "points": [
+                  [
+                   -22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   1.5
+                  ],
+                  [
+                   22.0,
+                   18.0
+                  ],
+                  [
+                   -22.0,
+                   18.0
+                  ]
+                 ],
+                 "type": "prism"
+                },
+                "type": "place"
+               },
+               "cut": [
+                {
+                 "at": [
+                  70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                },
+                {
+                 "at": [
+                  -70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                }
+               ],
+               "type": "subtract"
+              },
+              {
+               "at": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "rot": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "shape": {
+                "at": [
+                 -36.0,
+                 16.0,
+                 -1.81
+                ],
+                "rot": [
+                 0.0,
+                 0.0,
+                 0.0
+                ],
+                "shape": {
+                 "size": [
+                  9.0,
+                  9,
+                  8.0
+                 ],
+                 "type": "box"
+                },
+                "type": "place"
+               },
+               "type": "place"
+              }
+             ],
+             "type": "union"
+            },
+            {
+             "at": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "rot": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "shape": {
+              "at": [
+               36.0,
+               16.0,
+               -1.81
+              ],
+              "rot": [
+               0.0,
+               0.0,
+               0.0
+              ],
+              "shape": {
+               "size": [
+                9.0,
+                9,
+                8.0
+               ],
+               "type": "box"
+              },
+              "type": "place"
+             },
+             "type": "place"
+            }
+           ],
+           "type": "union"
+          },
+          "type": "place"
+         },
+         {
+          "at": [
+           -2.5,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "items": [
+            {
+             "items": [
+              {
+               "base": {
+                "at": [
+                 0.0,
+                 0.0,
+                 -14.0
+                ],
+                "rot": [
+                 90.0,
+                 0.0,
+                 90.0
+                ],
+                "shape": {
+                 "height": 124.0,
+                 "points": [
+                  [
+                   -22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   1.5
+                  ],
+                  [
+                   22.0,
+                   18.0
+                  ],
+                  [
+                   -22.0,
+                   18.0
+                  ]
+                 ],
+                 "type": "prism"
+                },
+                "type": "place"
+               },
+               "cut": [
+                {
+                 "at": [
+                  70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                },
+                {
+                 "at": [
+                  -70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                }
+               ],
+               "type": "subtract"
+              },
+              {
+               "at": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "rot": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "shape": {
+                "at": [
+                 -36.0,
+                 16.0,
+                 -1.81
+                ],
+                "rot": [
+                 0.0,
+                 0.0,
+                 0.0
+                ],
+                "shape": {
+                 "size": [
+                  9.0,
+                  9,
+                  8.0
+                 ],
+                 "type": "box"
+                },
+                "type": "place"
+               },
+               "type": "place"
+              }
+             ],
+             "type": "union"
+            },
+            {
+             "at": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "rot": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "shape": {
+              "at": [
+               36.0,
+               16.0,
+               -1.81
+              ],
+              "rot": [
+               0.0,
+               0.0,
+               0.0
+              ],
+              "shape": {
+               "size": [
+                9.0,
+                9,
+                8.0
+               ],
+               "type": "box"
+              },
+              "type": "place"
+             },
+             "type": "place"
+            }
+           ],
+           "type": "union"
+          },
+          "type": "place"
+         },
+         {
+          "at": [
+           0.0,
+           2.5,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "items": [
+            {
+             "items": [
+              {
+               "base": {
+                "at": [
+                 0.0,
+                 0.0,
+                 -14.0
+                ],
+                "rot": [
+                 90.0,
+                 0.0,
+                 90.0
+                ],
+                "shape": {
+                 "height": 124.0,
+                 "points": [
+                  [
+                   -22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   1.5
+                  ],
+                  [
+                   22.0,
+                   18.0
+                  ],
+                  [
+                   -22.0,
+                   18.0
+                  ]
+                 ],
+                 "type": "prism"
+                },
+                "type": "place"
+               },
+               "cut": [
+                {
+                 "at": [
+                  70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                },
+                {
+                 "at": [
+                  -70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                }
+               ],
+               "type": "subtract"
+              },
+              {
+               "at": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "rot": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "shape": {
+                "at": [
+                 -36.0,
+                 16.0,
+                 -1.81
+                ],
+                "rot": [
+                 0.0,
+                 0.0,
+                 0.0
+                ],
+                "shape": {
+                 "size": [
+                  9.0,
+                  9,
+                  8.0
+                 ],
+                 "type": "box"
+                },
+                "type": "place"
+               },
+               "type": "place"
+              }
+             ],
+             "type": "union"
+            },
+            {
+             "at": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "rot": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "shape": {
+              "at": [
+               36.0,
+               16.0,
+               -1.81
+              ],
+              "rot": [
+               0.0,
+               0.0,
+               0.0
+              ],
+              "shape": {
+               "size": [
+                9.0,
+                9,
+                8.0
+               ],
+               "type": "box"
+              },
+              "type": "place"
+             },
+             "type": "place"
+            }
+           ],
+           "type": "union"
+          },
+          "type": "place"
+         },
+         {
+          "at": [
+           0.0,
+           -2.5,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "items": [
+            {
+             "items": [
+              {
+               "base": {
+                "at": [
+                 0.0,
+                 0.0,
+                 -14.0
+                ],
+                "rot": [
+                 90.0,
+                 0.0,
+                 90.0
+                ],
+                "shape": {
+                 "height": 124.0,
+                 "points": [
+                  [
+                   -22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   1.5
+                  ],
+                  [
+                   22.0,
+                   18.0
+                  ],
+                  [
+                   -22.0,
+                   18.0
+                  ]
+                 ],
+                 "type": "prism"
+                },
+                "type": "place"
+               },
+               "cut": [
+                {
+                 "at": [
+                  70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                },
+                {
+                 "at": [
+                  -70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                }
+               ],
+               "type": "subtract"
+              },
+              {
+               "at": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "rot": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "shape": {
+                "at": [
+                 -36.0,
+                 16.0,
+                 -1.81
+                ],
+                "rot": [
+                 0.0,
+                 0.0,
+                 0.0
+                ],
+                "shape": {
+                 "size": [
+                  9.0,
+                  9,
+                  8.0
+                 ],
+                 "type": "box"
+                },
+                "type": "place"
+               },
+               "type": "place"
+              }
+             ],
+             "type": "union"
+            },
+            {
+             "at": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "rot": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "shape": {
+              "at": [
+               36.0,
+               16.0,
+               -1.81
+              ],
+              "rot": [
+               0.0,
+               0.0,
+               0.0
+              ],
+              "shape": {
+               "size": [
+                9.0,
+                9,
+                8.0
+               ],
+               "type": "box"
+              },
+              "type": "place"
+             },
+             "type": "place"
+            }
+           ],
+           "type": "union"
+          },
+          "type": "place"
+         },
+         {
+          "at": [
+           0.0,
+           0.0,
+           2.5
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "items": [
+            {
+             "items": [
+              {
+               "base": {
+                "at": [
+                 0.0,
+                 0.0,
+                 -14.0
+                ],
+                "rot": [
+                 90.0,
+                 0.0,
+                 90.0
+                ],
+                "shape": {
+                 "height": 124.0,
+                 "points": [
+                  [
+                   -22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   1.5
+                  ],
+                  [
+                   22.0,
+                   18.0
+                  ],
+                  [
+                   -22.0,
+                   18.0
+                  ]
+                 ],
+                 "type": "prism"
+                },
+                "type": "place"
+               },
+               "cut": [
+                {
+                 "at": [
+                  70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                },
+                {
+                 "at": [
+                  -70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                }
+               ],
+               "type": "subtract"
+              },
+              {
+               "at": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "rot": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "shape": {
+                "at": [
+                 -36.0,
+                 16.0,
+                 -1.81
+                ],
+                "rot": [
+                 0.0,
+                 0.0,
+                 0.0
+                ],
+                "shape": {
+                 "size": [
+                  9.0,
+                  9,
+                  8.0
+                 ],
+                 "type": "box"
+                },
+                "type": "place"
+               },
+               "type": "place"
+              }
+             ],
+             "type": "union"
+            },
+            {
+             "at": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "rot": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "shape": {
+              "at": [
+               36.0,
+               16.0,
+               -1.81
+              ],
+              "rot": [
+               0.0,
+               0.0,
+               0.0
+              ],
+              "shape": {
+               "size": [
+                9.0,
+                9,
+                8.0
+               ],
+               "type": "box"
+              },
+              "type": "place"
+             },
+             "type": "place"
+            }
+           ],
+           "type": "union"
+          },
+          "type": "place"
+         },
+         {
+          "at": [
+           0.0,
+           0.0,
+           -2.5
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "items": [
+            {
+             "items": [
+              {
+               "base": {
+                "at": [
+                 0.0,
+                 0.0,
+                 -14.0
+                ],
+                "rot": [
+                 90.0,
+                 0.0,
+                 90.0
+                ],
+                "shape": {
+                 "height": 124.0,
+                 "points": [
+                  [
+                   -22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   0.0
+                  ],
+                  [
+                   22.0,
+                   1.5
+                  ],
+                  [
+                   22.0,
+                   18.0
+                  ],
+                  [
+                   -22.0,
+                   18.0
+                  ]
+                 ],
+                 "type": "prism"
+                },
+                "type": "place"
+               },
+               "cut": [
+                {
+                 "at": [
+                  70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                },
+                {
+                 "at": [
+                  -70.0,
+                  0.0,
+                  0
+                 ],
+                 "rot": [
+                  0,
+                  0,
+                  0
+                 ],
+                 "shape": {
+                  "size": [
+                   52.0,
+                   37.0,
+                   200
+                  ],
+                  "type": "box"
+                 },
+                 "type": "place"
+                }
+               ],
+               "type": "subtract"
+              },
+              {
+               "at": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "rot": [
+                0.0,
+                0.0,
+                0.0
+               ],
+               "shape": {
+                "at": [
+                 -36.0,
+                 16.0,
+                 -1.81
+                ],
+                "rot": [
+                 0.0,
+                 0.0,
+                 0.0
+                ],
+                "shape": {
+                 "size": [
+                  9.0,
+                  9,
+                  8.0
+                 ],
+                 "type": "box"
+                },
+                "type": "place"
+               },
+               "type": "place"
+              }
+             ],
+             "type": "union"
+            },
+            {
+             "at": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "rot": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "shape": {
+              "at": [
+               36.0,
+               16.0,
+               -1.81
+              ],
+              "rot": [
+               0.0,
+               0.0,
+               0.0
+              ],
+              "shape": {
+               "size": [
+                9.0,
+                9,
+                8.0
+               ],
+               "type": "box"
+              },
+              "type": "place"
+             },
+             "type": "place"
+            }
+           ],
+           "type": "union"
+          },
+          "type": "place"
+         }
+        ],
+        "type": "intersect"
+       },
+       "cut": [
+        {
+         "at": [
+          33.338,
+          0.0,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           47.025,
+           17.5,
+           15.5
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          -33.338,
+          0.0,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           47.025,
+           17.500000000000004,
+           15.5
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          -0.487,
+          0.017,
+          -6.489
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           22.5,
+           41.5,
+           16.5
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          25.513,
+          0.017,
+          -9.489
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           28.500000000000004,
+           21.5,
+           10.5
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          -26.487,
+          0.017,
+          -9.989
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           28.5,
+           17.5,
+           9.5
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          -20.4,
+          -16.788,
+          -10.5
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           17.0,
+           9.0,
+           9.200000000000001
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          -22.5,
+          -16.788,
+          -12.75
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           13.0,
+           9.0,
+           9.5
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          50.0,
+          0.0,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           19.800000000000004,
+           39.902132901341304,
+           40.0
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          -50.0,
+          0.0,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           19.79999999999999,
+           39.902132901341304,
+           40.0
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          -36.0,
+          49.323,
+          -8.255
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           10.0,
+           66.06097462713149,
+           19.84682003216869
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          36.0,
+          49.323,
+          -8.255
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           10.0,
+           66.06097462713149,
+           19.84682003216869
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          -16.5,
+          39.0,
+          4.004
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           8.000000000000002,
+           50.99977110921857,
+           48.96108139746339
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        },
+        {
+         "at": [
+          33.25,
+          30.5,
+          5.5
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ],
+         "shape": {
+          "size": [
+           9.5,
+           34.0,
+           44.0
+          ],
+          "type": "box"
+         },
+         "type": "place"
+        }
+       ],
+       "type": "subtract"
+      }
+     ],
+     "type": "subtract"
+    },
+    "cut": [
+     {
+      "at": [
+       37.026,
+       6.004,
+       -7.23
+      ],
+      "rot": [
+       0.0,
+       41.638,
+       90.002
+      ],
+      "shape": {
+       "height": 8.446797289396144,
+       "radius": 2.413,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       25.539,
+       7.991,
+       -3.471
+      ],
+      "rot": [
+       0.0,
+       82.577,
+       180.004
+      ],
+      "shape": {
+       "height": 25.6468270094864,
+       "radius": 2.4259999999999997,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       14.052,
+       3.978,
+       -1.962
+      ],
+      "rot": [
+       0.0,
+       90.012,
+       -89.993
+      ],
+      "shape": {
+       "height": 10.477999999999998,
+       "radius": 2.439,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       15.358,
+       -0.044,
+       -0.958
+      ],
+      "rot": [
+       0.0,
+       52.462,
+       -0.368
+      ],
+      "shape": {
+       "height": 5.767277340343601,
+       "radius": 2.452,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       -16.128,
+       -16.951,
+       -6.949
+      ],
+      "rot": [
+       0.0,
+       12.816,
+       -25.264
+      ],
+      "shape": {
+       "height": 4.592211191900577,
+       "radius": 2.465,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       -15.909,
+       -15.061,
+       -5.934
+      ],
+      "rot": [
+       0.0,
+       90.024,
+       90.013
+      ],
+      "shape": {
+       "height": 6.556,
+       "radius": 2.4779999999999998,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       -26.896,
+       -10.574,
+       -7.425
+      ],
+      "rot": [
+       0.0,
+       97.603,
+       167.211
+      ],
+      "shape": {
+       "height": 25.34161335348208,
+       "radius": 2.491,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       -37.974,
+       -5.496,
+       -9.48
+      ],
+      "rot": [
+       0.0,
+       101.314,
+       90.002
+      ],
+      "shape": {
+       "height": 7.125019513592788,
+       "radius": 2.013,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       0.0,
+       0.0,
+       -6.25
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "shape": {
+       "size": [
+        104.0,
+        32.0,
+        11.5
+       ],
+       "type": "box"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       -20.4,
+       -14.5,
+       -8.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ],
+      "shape": {
+       "size": [
+        5.0,
+        5.0,
+        8.0
+       ],
+       "type": "box"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       18.1,
+       -4.0,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ],
+      "shape": {
+       "size": [
+        4.0,
+        4.0,
+        12.0
+       ],
+       "type": "box"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       18.1,
+       4.02,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ],
+      "shape": {
+       "size": [
+        4.0,
+        4.0,
+        12.0
+       ],
+       "type": "box"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       -18.1,
+       -4.0,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ],
+      "shape": {
+       "size": [
+        4.0,
+        4.0,
+        12.0
+       ],
+       "type": "box"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       -18.1,
+       4.02,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ],
+      "shape": {
+       "size": [
+        4.0,
+        4.0,
+        12.0
+       ],
+       "type": "box"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       -2.0,
+       17.0,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ],
+      "shape": {
+       "size": [
+        6.0,
+        12.0,
+        6.0
+       ],
+       "type": "box"
+      },
+      "type": "place"
+     }
+    ],
+    "size": [
+     124.0,
+     60.0,
+     13.5
+    ],
+    "type": "subtract"
+   }
+  },
+  {
+   "at": [
+    8.0,
+    40.0,
+    20.0
+   ],
+   "color": "#35c935",
+   "id": "weapon",
+   "joint": {
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "default": 0,
+    "kind": "revolute",
+    "max": 360,
+    "min": 0,
+    "pivot": [
+     8.0,
+     40.0,
+     24.75
+    ]
+   },
+   "kind": "weapon",
+   "material": "aluminium",
+   "min_wall_mm": 0.9,
+   "parent": null,
+   "process": "cnc",
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "rotor_weapon",
+   "shape": {
+    "at": [
+     8.0,
+     40.0,
+     24.75
+    ],
+    "cut": [
+     {
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "note": "RVRN: axial shaft pocket through the drum core; rod passes at 0.2 mm radial clearance",
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "shape": {
+       "height": 74.0,
+       "radius": 2.7,
+       "type": "cylinder"
+      },
+      "type": "place"
+     }
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "shape": {
+     "cut": [
+      {
+       "at": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "height": 42.0,
+        "radius": 16.5,
+        "type": "cylinder"
+       },
+       "type": "place"
+      }
+     ],
+     "height": 42.0,
+     "radius": 19.75,
+     "type": "cylinder"
+    },
+    "type": "place"
+   },
+   "solids": 1,
+   "solids_reason": "RVRN: drum shell rebuilt as one closed solid; volume baseline set to measured 9059 mm3",
+   "volume_mm3": 9059.0
+  },
+  {
+   "at": [
+    50.0,
+    0.0,
+    0.0
+   ],
+   "color": "#2a2c30",
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "rot": [
+      0,
+      90,
+      0
+     ],
+     "shape": {
+      "height": 9.0,
+      "radius": 16.0,
+      "type": "cylinder"
+     },
+     "type": "place"
+    },
+    "cut": [
+     {
+      "at": [
+       -50.0,
+       -0.0,
+       -0.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "shape": {
+       "at": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "items": [
+         {
+          "at": [
+           50.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           90.0,
+           0.0
+          ],
+          "shape": {
+           "height": 10.2,
+           "radius": 8.32,
+           "type": "cylinder"
+          },
+          "type": "place"
+         },
+         {
+          "at": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "at": [
+            55.9,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            90.0,
+            0.0
+           ],
+           "shape": {
+            "height": 1.6,
+            "radius": 2.6,
+            "type": "cylinder"
+           },
+           "type": "place"
+          },
+          "type": "place"
+         }
+        ],
+        "type": "union"
+       },
+       "type": "place"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   },
+   "tyre_of": "dt_hub_wheel_l0"
+  },
+  {
+   "at": [
+    -50.0,
+    0.0,
+    0.0
+   ],
+   "color": "#2a2c30",
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "rot": [
+      0,
+      90,
+      0
+     ],
+     "shape": {
+      "height": 9.0,
+      "radius": 16.0,
+      "type": "cylinder"
+     },
+     "type": "place"
+    },
+    "cut": [
+     {
+      "at": [
+       50.0,
+       -0.0,
+       -0.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "shape": {
+       "at": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "items": [
+         {
+          "at": [
+           -50.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           90.0,
+           0.0
+          ],
+          "shape": {
+           "height": 10.2,
+           "radius": 8.32,
+           "type": "cylinder"
+          },
+          "type": "place"
+         },
+         {
+          "at": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "at": [
+            -55.9,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            90.0,
+            0.0
+           ],
+           "shape": {
+            "height": 1.6,
+            "radius": 2.6,
+            "type": "cylinder"
+           },
+           "type": "place"
+          },
+          "type": "place"
+         }
+        ],
+        "type": "union"
+       },
+       "type": "place"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   },
+   "tyre_of": "dt_hub_wheel_r0"
+  },
+  {
+   "at": [
+    36.0,
+    -46.36,
+    -8.25
+   ],
+   "color": "#9aa3a8",
+   "id": "fork_0",
+   "kind": "wedge",
+   "material": "polycarbonate",
+   "min_wall_mm": 0.6,
+   "parent": "chassis",
+   "process": "laser",
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "secondary_ops": [
+    "chamfer"
+   ],
+   "shape": {
+    "at": [
+     36.0,
+     46.0,
+     -8.25
+    ],
+    "rot": [
+     -12.0,
+     0.0,
+     0.0
+    ],
+    "shape": {
+     "height": 14.0,
+     "points": [
+      [
+       20.0,
+       0.0
+      ],
+      [
+       19.6,
+       3.4
+      ],
+      [
+       18.3,
+       6.6
+      ],
+      [
+       16.2,
+       9.5
+      ],
+      [
+       13.5,
+       11.9
+      ],
+      [
+       10.3,
+       13.6
+      ],
+      [
+       6.8,
+       14.5
+      ],
+      [
+       3.2,
+       14.7
+      ]
+     ],
+     "type": "spline_prism"
+    },
+    "type": "place"
+   }
+  },
+  {
+   "at": [
+    36.0,
+    45.64,
+    -8.25
+   ],
+   "color": "#9aa3a8",
+   "id": "fork_1",
+   "kind": "wedge",
+   "material": "polycarbonate",
+   "min_wall_mm": 0.6,
+   "parent": "chassis",
+   "process": "laser",
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "secondary_ops": [
+    "chamfer"
+   ],
+   "shape": {
+    "at": [
+     36.0,
+     46.0,
+     -8.25
+    ],
+    "rot": [
+     -12.0,
+     0.0,
+     0.0
+    ],
+    "shape": {
+     "height": 14.0,
+     "points": [
+      [
+       20.0,
+       0.0
+      ],
+      [
+       19.6,
+       3.4
+      ],
+      [
+       18.3,
+       6.6
+      ],
+      [
+       16.2,
+       9.5
+      ],
+      [
+       13.5,
+       11.9
+      ],
+      [
+       10.3,
+       13.6
+      ],
+      [
+       6.8,
+       14.5
+      ],
+      [
+       3.2,
+       14.7
+      ]
+     ],
+     "type": "spline_prism"
+    },
+    "type": "place"
+   }
+  },
+  {
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#35c935",
+   "fused_with": "end_wedge_l",
+   "id": "endcap_l",
+   "kind": "other",
+   "material": "polycarbonate",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "at": [
+      65,
+      0,
+      -5.0
+     ],
+     "rot": [
+      0,
+      0,
+      0
+     ],
+     "shape": {
+      "size": [
+       6,
+       44,
+       18
+      ],
+      "type": "box"
+     },
+     "type": "place"
+    },
+    "cut": [
+     {
+      "at": [
+       37.026,
+       6.004,
+       -7.23
+      ],
+      "rot": [
+       0.0,
+       41.638,
+       90.002
+      ],
+      "shape": {
+       "height": 8.446797289396144,
+       "radius": 2.413,
+       "type": "cylinder"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   }
+  },
+  {
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#35c935",
+   "fused_with": "end_wedge_r",
+   "id": "endcap_r",
+   "kind": "other",
+   "material": "polycarbonate",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "at": [
+      -65,
+      0,
+      -5.0
+     ],
+     "rot": [
+      0,
+      0,
+      0
+     ],
+     "shape": {
+      "size": [
+       6,
+       44,
+       18
+      ],
+      "type": "box"
+     },
+     "type": "place"
+    },
+    "cut": [
+     {
+      "at": [
+       -37.974,
+       -5.496,
+       -9.48
+      ],
+      "rot": [
+       0.0,
+       101.314,
+       90.002
+      ],
+      "shape": {
+       "height": 7.125019513592788,
+       "radius": 2.013,
+       "type": "cylinder"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   }
+  },
+  {
+   "at": [
+    8.0,
+    40.0,
+    24.75
+   ],
+   "color": "#b89a3a",
+   "id": "flywheel",
+   "joint": {
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "default": 0,
+    "kind": "revolute",
+    "max": 360,
+    "min": 0,
+    "pivot": [
+     8.0,
+     40.0,
+     24.75
+    ]
+   },
+   "kind": "weapon_part",
+   "material": "brass",
+   "parent": "weapon",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "items": [
+      {
+       "at": [
+        -17,
+        40,
+        4.0
+       ],
+       "rot": [
+        0,
+        90,
+        0
+       ],
+       "shape": {
+        "height": 3.0,
+        "radius": 10.0,
+        "type": "cylinder"
+       },
+       "type": "place"
+      }
+     ],
+     "type": "union"
+    },
+    "cut": [
+     {
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "shape": {
+       "at": [
+        8.0,
+        40.0,
+        20.0
+       ],
+       "rot": [
+        0.0,
+        90.0,
+        0.0
+       ],
+       "shape": {
+        "height": 52.0,
+        "radius": 2.0,
+        "type": "cylinder"
+       },
+       "type": "place"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   }
+  },
+  {
+   "at": [
+    38.0,
+    40.0,
+    24.75
+   ],
+   "color": "#cfe8e0",
+   "cuts": [
+    {
+     "at": [
+      38.0,
+      40.0,
+      24.75
+     ],
+     "note": "RVRN: drum relief cut, r20.3 over the drum axis so the shell passes with 0.5 mm clearance",
+     "rot": [
+      0.0,
+      90.0,
+      0.0
+     ],
+     "shape": {
+      "height": 39.0,
+      "radius": 20.3,
+      "type": "cylinder"
+     },
+     "type": "place"
+    }
+   ],
+   "id": "upright_a",
+   "kind": "other",
+   "material": "polycarbonate",
+   "parent": "chassis",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "at": [
+      -38,
+      38,
+      5.0
+     ],
+     "rot": [
+      0,
+      0,
+      0
+     ],
+     "shape": {
+      "size": [
+       3,
+       10,
+       38
+      ],
+      "type": "box"
+     },
+     "type": "place"
+    },
+    "cut": [
+     {
+      "at": [
+       -38.0,
+       40.0,
+       20.0
+      ],
+      "rot": [
+       0,
+       90,
+       0
+      ],
+      "shape": {
+       "height": 10.0,
+       "radius": 4.0,
+       "type": "cylinder"
+      },
+      "type": "place"
+     }
+    ],
+    "size": [
+     3,
+     10,
+     42
+    ],
+    "type": "box"
+   },
+   "solids": 1,
+   "solids_reason": "RVRN: seat band removed; one closed solid, bore continuous"
+  },
+  {
+   "at": [
+    32.5,
+    40.0,
+    24.75
+   ],
+   "color": "#cfe8e0",
+   "cuts": [
+    {
+     "at": [
+      32.5,
+      40.0,
+      24.75
+     ],
+     "note": "RVRN: drum relief cut, r20.3 over the drum axis so the shell passes with 0.5 mm clearance",
+     "rot": [
+      0.0,
+      90.0,
+      0.0
+     ],
+     "shape": {
+      "height": 39.0,
+      "radius": 20.3,
+      "type": "cylinder"
+     },
+     "type": "place"
+    }
+   ],
+   "id": "upright_b",
+   "kind": "other",
+   "material": "polycarbonate",
+   "min_wall_mm": 0.9,
+   "parent": "chassis",
+   "print_orientation": "+x",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "items": [
+      {
+       "at": [
+        34,
+        38,
+        5.0
+       ],
+       "rot": [
+        0,
+        0,
+        0
+       ],
+       "shape": {
+        "size": [
+         3,
+         10,
+         38
+        ],
+        "type": "box"
+       },
+       "type": "place"
+      },
+      {
+       "at": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "at": [
+         32.5,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         90.0,
+         0.0,
+         90.0
+        ],
+        "shape": {
+         "height": 3.0,
+         "points": [
+          [
+           16.000000000000004,
+           -5.9999999999999964
+          ],
+          [
+           45.0,
+           15.0
+          ],
+          [
+           45.0,
+           25.0
+          ],
+          [
+           16.000000000000004,
+           4.0000000000000036
+          ]
+         ],
+         "type": "prism"
+        },
+        "type": "place"
+       },
+       "type": "place"
+      }
+     ],
+     "type": "union"
+    },
+    "cut": [
+     {
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "shape": {
+       "at": [
+        8.0,
+        40.0,
+        20.0
+       ],
+       "rot": [
+        0.0,
+        90.0,
+        0.0
+       ],
+       "shape": {
+        "height": 52.0,
+        "radius": 4.0,
+        "type": "cylinder"
+       },
+       "type": "place"
+      },
+      "type": "place"
+     }
+    ],
+    "size": [
+     3,
+     10,
+     42
+    ],
+    "type": "box"
+   },
+   "solids": 1,
+   "solids_reason": "RVRN: bore continuous, ring intact"
+  },
+  {
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#35c935",
+   "fused_with": "chassis",
+   "id": "weapon_rail",
+   "kind": "other",
+   "material": "polycarbonate",
+   "min_wall_mm": 0.6,
+   "parent": "chassis",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "base": {
+      "at": [
+       -2,
+       25,
+       -12.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ],
+      "shape": {
+       "size": [
+        80,
+        8,
+        4
+       ],
+       "type": "box"
+      },
+      "type": "place"
+     },
+     "cut": [
+      {
+       "at": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "items": [
+         {
+          "at": [
+           -17,
+           40,
+           4.0
+          ],
+          "rot": [
+           0,
+           90,
+           0
+          ],
+          "shape": {
+           "height": 2,
+           "radius": 22,
+           "type": "cylinder"
+          },
+          "type": "place"
+         },
+         {
+          "at": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "shape": {
+           "at": [
+            -16.5,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            90.0,
+            0.0,
+            90.0
+           ],
+           "shape": {
+            "height": 3.0,
+            "points": [
+             [
+              16.000000000000004,
+              -5.9999999999999964
+             ],
+             [
+              45.0,
+              15.0
+             ],
+             [
+              45.0,
+              25.0
+             ],
+             [
+              16.000000000000004,
+              4.0000000000000036
+             ]
+            ],
+            "type": "prism"
+           },
+           "type": "place"
+          },
+          "type": "place"
+         }
+        ],
+        "type": "union"
+       },
+       "type": "place"
+      }
+     ],
+     "type": "subtract"
+    },
+    "cut": [
+     {
+      "at": [
+       37.026,
+       6.004,
+       -7.23
+      ],
+      "rot": [
+       0.0,
+       41.638,
+       90.002
+      ],
+      "shape": {
+       "height": 8.446797289396144,
+       "radius": 2.413,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       25.539,
+       7.991,
+       -3.471
+      ],
+      "rot": [
+       0.0,
+       82.577,
+       180.004
+      ],
+      "shape": {
+       "height": 25.6468270094864,
+       "radius": 2.4259999999999997,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       14.052,
+       3.978,
+       -1.962
+      ],
+      "rot": [
+       0.0,
+       90.012,
+       -89.993
+      ],
+      "shape": {
+       "height": 10.477999999999998,
+       "radius": 2.439,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     {
+      "at": [
+       15.358,
+       -0.044,
+       -0.958
+      ],
+      "rot": [
+       0.0,
+       52.462,
+       -0.368
+      ],
+      "shape": {
+       "height": 5.767277340343601,
+       "radius": 2.452,
+       "type": "cylinder"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   }
+  },
+  {
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#35c935",
+   "fused_with": "chassis",
+   "id": "end_wedge_l",
+   "kind": "other",
+   "material": "polycarbonate",
+   "min_wall_mm": 0.45,
+   "parent": "chassis",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "at": [
+      62.0,
+      0,
+      0
+     ],
+     "rot": [
+      90,
+      0,
+      90
+     ],
+     "shape": {
+      "height": 12,
+      "points": [
+       [
+        20,
+        -14.0
+       ],
+       [
+        38,
+        -14.0
+       ],
+       [
+        20,
+        -3.0
+       ]
+      ],
+      "type": "prism"
+     },
+     "type": "place"
+    },
+    "cut": [
+     {
+      "at": [
+       37.026,
+       6.004,
+       -7.23
+      ],
+      "rot": [
+       0.0,
+       41.638,
+       90.002
+      ],
+      "shape": {
+       "height": 8.446797289396144,
+       "radius": 2.413,
+       "type": "cylinder"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   }
+  },
+  {
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#35c935",
+   "fused_with": "chassis",
+   "id": "end_wedge_r",
+   "kind": "other",
+   "material": "polycarbonate",
+   "min_wall_mm": 0.45,
+   "parent": "chassis",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "at": [
+     -62.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ],
+    "shape": {
+     "height": 12,
+     "points": [
+      [
+       20,
+       -14.0
+      ],
+      [
+       38,
+       -14.0
+      ],
+      [
+       20,
+       -3.0
+      ]
+     ],
+     "type": "prism"
+    },
+    "type": "place"
+   }
+  },
+  {
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9fa0a1",
+   "id": "dt_hub_wheel_l0",
+   "kind": "other",
+   "material": "nylon",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "items": [
+      {
+       "at": [
+        50.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        90.0,
+        0.0
+       ],
+       "shape": {
+        "height": 10.2,
+        "radius": 8.32,
+        "type": "cylinder"
+       },
+       "type": "place"
+      },
+      {
+       "at": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "at": [
+         55.9,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         90.0,
+         0.0
+        ],
+        "shape": {
+         "height": 1.6,
+         "radius": 2.6,
+         "type": "cylinder"
+        },
+        "type": "place"
+       },
+       "type": "place"
+      }
+     ],
+     "type": "union"
+    },
+    "cut": [
+     {
+      "at": [
+       30.85,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "shape": {
+       "at": [
+        17.5,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        90.0,
+        0.0
+       ],
+       "shape": {
+        "height": 12.0,
+        "radius": 1.55,
+        "type": "cylinder"
+       },
+       "type": "place"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   }
+  },
+  {
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9fa0a1",
+   "id": "dt_hub_wheel_r0",
+   "kind": "other",
+   "material": "nylon",
+   "print_orientation": "+z",
+   "process": "fdm",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "base": {
+     "items": [
+      {
+       "at": [
+        -50.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        90.0,
+        0.0
+       ],
+       "shape": {
+        "height": 10.2,
+        "radius": 8.32,
+        "type": "cylinder"
+       },
+       "type": "place"
+      },
+      {
+       "at": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "at": [
+         -55.9,
+         0.0,
+         0.0
+        ],
+        "rot": [
+         0.0,
+         90.0,
+         0.0
+        ],
+        "shape": {
+         "height": 1.6,
+         "radius": 2.6,
+         "type": "cylinder"
+        },
+        "type": "place"
+       },
+       "type": "place"
+      }
+     ],
+     "type": "union"
+    },
+    "cut": [
+     {
+      "at": [
+       -30.85,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       180.0
+      ],
+      "shape": {
+       "at": [
+        17.5,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        90.0,
+        0.0
+       ],
+       "shape": {
+        "height": 12.0,
+        "radius": 1.55,
+        "type": "cylinder"
+       },
+       "type": "place"
+      },
+      "type": "place"
+     }
+    ],
+    "type": "subtract"
+   }
+  },
+  {
+   "at": [
+    8.0,
+    40.0,
+    24.75
+   ],
+   "color": "#9aa3a8",
+   "id": "dt_shaft_weapon",
+   "kind": "shaft",
+   "label": "4 mm silver steel shaft",
+   "material": "steel",
+   "parent": "weapon",
+   "process": "cots",
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "rotor_weapon",
+   "shaft_of": "weapon_motor_can",
+   "shape": {
+    "at": [
+     -38.5,
+     40.0,
+     24.75
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "shape": {
+     "height": 74.0,
+     "radius": 2.5,
+     "type": "cylinder"
+    },
+    "type": "place"
+   },
+   "solids": 1,
+   "solids_reason": "RVRN: silver-steel rod pressed into the drum bore; one closed solid turning with the rotor group"
+  },
+  {
+   "at": [
+    30.85,
+    0.0,
+    0.0
+   ],
+   "catalog": "bbb_n20_600rpm",
+   "id": "dm_wheel_l0",
+   "kind": "motor",
+   "parent": "chassis",
+   "ratings": {
+    "stall_current_a": 1.6
+   },
+   "retained": "press_fit",
+   "retained_reason": "gearbox is a snug 0.25 mm pocket fit in the printed side wall and clamped by the pocket on all sides",
+   "rot": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "at": [
+    -31.46,
+    0.0,
+    0.0
+   ],
+   "catalog": "bbb_n20_600rpm",
+   "id": "dm_wheel_r0",
+   "kind": "motor",
+   "note": "pushed -x 0.61 mm clear of the battery swathe (measured fix)",
+   "parent": "chassis",
+   "ratings": {
+    "stall_current_a": 1.6
+   },
+   "retained": "press_fit",
+   "retained_reason": "gearbox is a snug 0.25 mm pocket fit in the printed side wall and clamped by the pocket on all sides",
+   "rot": [
+    0,
+    0,
+    180
+   ]
+  },
+  {
+   "at": [
+    2.0,
+    40.0,
+    28.44
+   ],
+   "catalog": "gr1507",
+   "fasteners": [
+    {
+     "designation": "M2x12",
+     "dir": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "qty": 2,
+     "through": [
+      "weapon_motor_stator",
+      "chassis"
+     ]
+    }
+   ],
+   "id": "weapon_motor_stator",
+   "kind": "weapon_motor",
+   "parent": "chassis",
+   "ports": {
+    "phases": {
+     "pos": [
+      19.0,
+      40.0,
+      20.0
+     ],
+     "type": "motor_phases"
+    }
+   },
+   "retained": "screws",
+   "retained_reason": "stator clamped between the drum end plate and the frame ring by M2 screws through its 12 mm cross base",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": null,
+   "scale_mass_g": 8.5
+  },
+  {
+   "at": [
+    8.0,
+    40.0,
+    24.75
+   ],
+   "catalog": "gr1507_can",
+   "id": "weapon_motor_can",
+   "kind": "other",
+   "parent": "weapon",
+   "role": "rotor",
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "rotor_weapon",
+   "scale_mass_g": 7.0,
+   "shape": {
+    "at": [
+     8.0,
+     40.0,
+     10.75
+    ],
+    "note": "RVRN: bell shell, wall 1.8 mm, open at the stator end; drain hole r2 in the crown",
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "shape": {
+     "cut": [
+      {
+       "at": [
+        0.0,
+        0.0,
+        -1.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "shape": {
+        "height": 27.0,
+        "radius": 14.5,
+        "type": "cylinder"
+       },
+       "type": "place"
+      }
+     ],
+     "height": 29.0,
+     "open_end": "back",
+     "radius": 16.3,
+     "type": "cylinder"
+    },
+    "type": "place"
+   },
+   "shell_wall_mm": 1.8,
+   "volume_mm3": 4845.0
+  },
+  {
+   "_extra": {},
+   "at": [
+    -0.5,
+    -1.0,
+    -6.489
+   ],
+   "catalog": "lipo_2s_350",
+   "id": "el_battery",
+   "kind": "battery",
+   "note": "probe free spot yaw+180, 0.7 mm travel box y -9.5..7.5",
+   "parent": "chassis",
+   "retained": "velcro",
+   "retained_reason": "velcro pad on the pocket floor; the closed pocket (0.25 mm per side) stops it moving",
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "scale_mass_g": 9.5
+  },
+  {
+   "at": [
+    32.18,
+    8.02,
+    -9.5
+   ],
+   "catalog": "malenki_nano",
+   "id": "el_rx_esc",
+   "kind": "esc",
+   "parent": "chassis",
+   "retained": "pocket",
+   "retained_reason": "captured on all six faces by its printed pocket (0.25 mm per side)",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "scale_mass_g": 1.5
+  },
+  {
+   "at": [
+    -30.51,
+    -8.02,
+    -9.5
+   ],
+   "catalog": "bbb_brushless_esc_20a",
+   "id": "el_wesc",
+   "kind": "esc",
+   "parent": "chassis",
+   "retained": "pocket",
+   "retained_reason": "captured on all six faces by its printed pocket (0.25 mm per side)",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "scale_mass_g": 2.0
+  },
+  {
+   "at": [
+    -20.4,
+    -16.79,
+    -4.01
+   ],
+   "catalog": "switch_slide_12x4",
+   "id": "el_switch",
+   "kind": "switch",
+   "label": "POWER ON/OFF",
+   "marked": true,
+   "off_dir": [
+    -1,
+    0,
+    0
+   ],
+   "parent": "chassis",
+   "retained": "pocket",
+   "retained_reason": "switch body sits in a 0.1 mm-per-side printed pocket above the belly skin; the pocket walls capture it",
+   "rot": [
+    180,
+    0,
+    0
+   ],
+   "scale_mass_g": 0.5,
+   "tool_free": true
+  },
+  {
+   "at": [
+    -10.0,
+    19.0,
+    20.0
+   ],
+   "color": "#d23a2a",
+   "id": "lock_pin",
+   "kind": "locking_bar",
+   "label": "3 mm silver steel locking pin",
+   "material": "steel",
+   "note": "pin reaches through the drum center ring; lanyard to frame",
+   "parent": "chassis",
+   "process": "cots",
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "shape": {
+    "height": 14.0,
+    "radius": 1.5,
+    "type": "cylinder"
+   },
+   "tethered": true
+  },
+  {
+   "at": [
+    38.0,
+    40.0,
+    24.75
+   ],
+   "color": "#555555",
+   "id": "wbear_l",
+   "kind": "bearing",
+   "label": "MR85ZZ in the upright bore: shaft support",
+   "material": "steel",
+   "parent": "chassis",
+   "process": "cots",
+   "race": {
+    "inner": "dt_shaft_weapon",
+    "outer": "upright_a"
+   },
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": null,
+   "shape": {
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "shape": {
+     "base": {
+      "at": [
+       -38.0,
+       40.0,
+       20.0
+      ],
+      "rot": [
+       0,
+       90,
+       0
+      ],
+      "shape": {
+       "height": 2.5,
+       "radius": 4.0,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     "cut": [
+      {
+       "at": [
+        -38.0,
+        40.0,
+        20.0
+       ],
+       "rot": [
+        0,
+        90,
+        0
+       ],
+       "shape": {
+        "height": 6.0,
+        "radius": 2.55,
+        "type": "cylinder"
+       },
+       "type": "place"
+      }
+     ],
+     "type": "subtract"
+    },
+    "type": "place"
+   },
+   "stock": "MR85ZZ 5 x 8 x 2.5"
+  },
+  {
+   "at": [
+    32.5,
+    40.0,
+    24.75
+   ],
+   "color": "#555555",
+   "id": "wbear_r",
+   "kind": "bearing",
+   "label": "MR85ZZ in the upright bore: shaft support",
+   "material": "steel",
+   "parent": "chassis",
+   "process": "cots",
+   "race": {
+    "inner": "dt_shaft_weapon",
+    "outer": "upright_b"
+   },
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": null,
+   "shape": {
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "shape": {
+     "base": {
+      "at": [
+       33.0,
+       40.0,
+       20.0
+      ],
+      "rot": [
+       0,
+       90,
+       0
+      ],
+      "shape": {
+       "height": 2.5,
+       "radius": 4.0,
+       "type": "cylinder"
+      },
+      "type": "place"
+     },
+     "cut": [
+      {
+       "at": [
+        33.0,
+        40.0,
+        20.0
+       ],
+       "rot": [
+        0,
+        90,
+        0
+       ],
+       "shape": {
+        "height": 6.0,
+        "radius": 2.55,
+        "type": "cylinder"
+       },
+       "type": "place"
+      }
+     ],
+     "type": "subtract"
+    },
+    "type": "place"
+   },
+   "stock": "MR85ZZ 5 x 8 x 2.5"
+  }
+ ],
+ "profile": "aws2025",
+ "reference": [
+  {
+   "approximate": true,
+   "image": "reference/grandmaster_smash.aws72.webp",
+   "mask": "reference/grandmaster_smash.aws72_mask.png",
+   "view": "iso"
+  },
+  {
+   "approximate": true,
+   "image": "reference/grandmaster_smash.aws73.webp",
+   "mask": "reference/grandmaster_smash.aws73_mask.png",
+   "view": "iso"
+  }
+ ],
+ "robot_type": "drum",
+ "views": [
+  {
+   "azimuth": 0,
+   "elevation": 25,
+   "name": "front_left_iso"
+  },
+  {
+   "azimuth": 0,
+   "elevation": 90,
+   "name": "top"
+  },
+  {
+   "azimuth": 90,
+   "elevation": 0,
+   "name": "front"
+  }
+ ],
+ "wires": [
+  {
+   "awg": 22,
+   "from": "el_battery.xt30",
+   "id": "w_bat_sw",
+   "kind": "power",
+   "slack_mm": 10,
+   "to": "el_switch.in"
+  },
+  {
+   "awg": 22,
+   "from": "el_switch.out",
+   "id": "w_sw_esc",
+   "kind": "power",
+   "slack_mm": 10,
+   "to": "el_rx_esc.bat"
+  },
+  {
+   "awg": 26,
+   "clearance_mm": 1.4,
+   "from": "el_rx_esc.m1",
+   "id": "w_m1",
+   "kind": "motor",
+   "note": "channels +z over the drum sweep",
+   "slack_mm": 10,
+   "to": "dm_wheel_l0.terminals",
+   "via": [
+    [
+     17.9,
+     0.2,
+     6.0
+    ],
+    [
+     18.5,
+     0.2,
+     5.4
+    ]
+   ]
+  },
+  {
+   "awg": 26,
+   "clearance_mm": 1.4,
+   "from": "el_rx_esc.m2",
+   "id": "w_m2",
+   "kind": "motor",
+   "note": "channels +z over the drum sweep",
+   "slack_mm": 10,
+   "to": "dm_wheel_r0.terminals",
+   "via": [
+    [
+     15.5,
+     3.2,
+     6.0
+    ],
+    [
+     15.5,
+     3.2,
+     5.6
+    ]
+   ]
+  },
+  {
+   "awg": 20,
+   "from": "el_switch.out",
+   "id": "w_sw_wesc",
+   "kind": "power",
+   "slack_mm": 10,
+   "to": "el_wesc.bat"
+  },
+  {
+   "awg": 28,
+   "from": "el_rx_esc.wpn",
+   "id": "w_wesc_sig",
+   "kind": "signal",
+   "slack_mm": 10,
+   "to": "el_wesc.rx"
+  },
+  {
+   "awg": 22,
+   "b": "weapon_motor_stator.phases",
+   "from": "el_wesc.motor",
+   "id": "w_phases",
+   "kind": "motor",
+   "slack_mm": 10,
+   "to": "weapon_motor.phases"
+  }
+ ]
+}

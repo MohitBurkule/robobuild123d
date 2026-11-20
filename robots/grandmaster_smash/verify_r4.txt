@@ -1,0 +1,117 @@
+BLOCKERS: 35
+  [ran] integrity 0.08s
+  [proxy] wiring 0.19s
+  [ran] mass 0.00s
+  [proxy] interference 12.61s
+  [ran] connections 0.76s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.01s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.67s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.51s
+  [ran] process 0.11s
+  [ran] electrical 0.01s
+  [ran] combat 0.14s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
+  [ran] bom 0.01s
+  [ran] wire_review 0.06s
+  [ran] fastener_record 0.00s
+  [ran] likeness 12.49s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.02s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.14s
+  [ran] dfm 0.07s
+  [ran] realworld 0.10s
+grandmaster smash: ok=False 35 blockers in 34 root causes, mass 295.2/150 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `weapon_shaft`. (+1 consequences)
+   | weapon: x -13.00..29.00  y 20.93..59.07  z -0.00..40.01  size 42.00 x 38.14 x 40.01 mm
+   |   centre (8.00, 40.00, 20.01), volume 40356.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [8.0, 40.0, 20.0] range 0..360 default 0
+   |   OVERLAP `weapon_shaft` 1.78 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+2. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+3. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_rx_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [proxy.wiring] Wire `w_m2` (`el_rx_esc.m2` to `dm_wheel_r0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+5. [proxy.wiring] Wire `w_wesc_sig` (`el_rx_esc.wpn` to `el_wesc.rx`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+6. [proxy.wiring] Wire `w_phases` (`el_wesc.motor` to `weapon_motor.phases`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+7. [mass.over] 295.2 g (range 260.5 to 329.8 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+8. [proxy.interference] `weapon` and `weapon_shaft` overlap by 1.78 mm (allowed 0.08).
+   | weapon: x -13.00..29.00  y 20.93..59.07  z -0.00..40.01  size 42.00 x 38.14 x 40.01 mm
+   |   centre (8.00, 40.00, 20.01), volume 40356.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [8.0, 40.0, 20.0] range 0..360 default 0
+   |   OVERLAP `weapon_shaft` 1.78 mm (allowed 0.08)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+9. [proxy.interference] `wheel_l0` and `hub_l` overlap by 1.38 mm (allowed 0.08).
+   | wheel_l0: x 45.50..54.50  y -16.00..16.00  z -16.00..16.00  size 9.00 x 31.99 x 32.00 mm
+   |   centre (50.00, -0.00, 0.00), volume 5281.0 mm3
+   |   OVERLAP `hub_l` 1.38 mm (allowed 0.08)
+   |   gap to `dt_hub_wheel_l0` 0.00 mm (touching)
+   |   gap to `dm_wheel_l0` 1.97 mm
+10. [proxy.interference] `wheel_r0` and `hub_r` overlap by 1.38 mm (allowed 0.08).
+   | wheel_r0: x -54.50..-45.50  y -16.00..16.00  z -16.00..16.00  size 9.00 x 31.99 x 32.00 mm
+   |   centre (-50.00, -0.00, 0.00), volume 5281.0 mm3
+   |   OVERLAP `hub_r` 1.38 mm (allowed 0.08)
+   |   gap to `dt_hub_wheel_r0` 0.00 mm (touching)
+   |   gap to `dm_wheel_r0` 1.97 mm
+11. [proxy.interference] `fork_0` and `upright_a` overlap by 0.73 mm (allowed 0.08).
+   | fork_0: x -38.50..-33.50  y 18.79..79.85  z -15.68..-0.83  size 5.00 x 61.06 x 14.85 mm
+   |   centre (-36.00, 49.32, -8.25), volume 387.5 mm3
+   |   OVERLAP `upright_a` 0.73 mm (allowed 0.08)
+   |   gap to `chassis` 0.00 mm (touching)
+   | upright_a: x -39.50..-36.50  y 33.00..43.00  z -14.00..24.00  size 3.00 x 10.00 x 38.00 mm
+12. [proxy.interference] `fork_1` and `upright_b` overlap by 0.73 mm (allowed 0.08).
+   | fork_1: x 33.50..38.50  y 18.79..79.85  z -15.68..-0.83  size 5.00 x 61.06 x 14.85 mm
+   |   centre (36.00, 49.32, -8.25), volume 387.5 mm3
+   |   OVERLAP `upright_b` 0.73 mm (allowed 0.08)
+   |   gap to `chassis` 0.00 mm (touching)
+   | upright_b: x 31.00..35.50  y 16.00..45.00  z -14.00..25.00  size 4.50 x 29.00 x 39.00 mm
+... 22 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 295.2 g of 150 g (-145.2 g margin)
+    weapon                    108.96 g  fills 63% of its box  <- solid block? a tub should be a shell
+    chassis                    38.75 g  fills 41% of its box
+    flywheel                   24.16 g  fills 55% of its box  <- solid block? a tub should be a shell
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    weapon_shaft                7.09 g  fills 79% of its box
+    wheel_l0                    5.39 g  fills 57% of its box
+    wheel_r0                    5.39 g  fills 57% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    endcap_l                    4.52 g  fills 100% of its box
+    endcap_r                    4.52 g  fills 100% of its box
+    hub_l                       3.80 g  fills 79% of its box
+    hub_r                       3.80 g  fills 79% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    dt_shaft_weapon             3.02 g  fills 46% of its box
+    weapon_rail                 2.41 g  fills 99% of its box
+    dt_hub_wheel_l0             2.08 g  fills 67% of its box
+    dt_hub_wheel_r0             2.08 g  fills 67% of its box
+    upright_b                   1.86 g  fills 36% of its box
+    fork_0                      1.72 g  fills 9% of its box
+    fork_1                      1.72 g  fills 9% of its box
+    upright_a                   1.16 g  fills 100% of its box
+    end_wedge_l                 1.13 g  fills 50% of its box
+    end_wedge_r                 1.13 g  fills 50% of its box
+    lock_pin                    0.78 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 295.2 g (range 260.5 to 329.8 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 28 miss

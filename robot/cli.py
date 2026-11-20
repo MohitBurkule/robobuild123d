@@ -109,6 +109,9 @@ def opts_from(a):
         o.only = [g.strip() for g in only.split(",") if g.strip()]
     # gate and tier (checks/registry.py). Default: the full design tier, parity reported apart. --combined is the
     # old run: every group, every blocker decides ok.
+    skip = getattr(a, "skip", None)
+    if skip:
+        o.skip_groups = [g.strip() for g in skip.split(",") if g.strip()]
     o.combined = bool(getattr(a, "combined", False))
     o.parity = "only" if getattr(a, "parity_only", False) else "no" if getattr(a, "no_parity", False) else "both"
     o.tier = getattr(a, "tier", None) or (None if o.combined or o.only or o.parity == "only" else "full")
@@ -182,6 +185,7 @@ def main(argv=None):
     t.add_argument("name")
     v = sub.add_parser("verify")
     v.add_argument("spec", nargs="?")
+    v.add_argument("--skip", metavar="GROUP[,GROUP...]", help="leave these check groups out of this run (e.g. fight,combat)")
     v.add_argument("--full", action="store_true")
     v.add_argument("--only", metavar="GROUP[,GROUP...]", help="run only these check groups (parts are still built and cached)")
     v.add_argument("--list-groups", action="store_true", help="print the check group names and exit")

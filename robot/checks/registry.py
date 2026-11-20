@@ -138,7 +138,7 @@ class Selection:
     filtered: bool  # False: nothing was asked for, every group runs exactly as before
 
 
-def select(tier=None, parity="both", only=None, deep=True) -> Selection:
+def select(tier=None, parity="both", only=None, deep=True, skip_groups=None) -> Selection:
     """Which groups a run executes. `only` (explicit names) wins over `tier`; `parity` is "both" | "no" | "only"
     ("only" runs the parity groups whatever their tier)."""
     if parity not in ("both", "no", "only"):
@@ -151,7 +151,9 @@ def select(tier=None, parity="both", only=None, deep=True) -> Selection:
         not_run.append({"group": g.name, "kind": g.kind, "tier": g.tier, "reason": why})
 
     for g in REGISTRY:
-        if g.deep_only and not deep and not (tier == INNER and g.proxy and not only):
+        if skip_groups and g.name in skip_groups:
+            skip(g, "skipped by --skip")
+        elif g.deep_only and not deep and not (tier == INNER and g.proxy and not only):
             skip(g, "slow sweep skipped by --quick")
         elif only:
             (run.append(g.name) if g.name in only else skip(g, "not named by --only"))
