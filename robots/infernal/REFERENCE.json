@@ -1,0 +1,21 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "infernal.aws71.webp"
+ ],
+ "view": {
+  "infernal.aws69.webp": "front_left_iso",
+  "infernal.aws71.webp": "front_right_iso"
+ },
+ "elevation": {
+  "infernal.aws69.webp": 45
+ },
+ "view_source": {
+  "infernal.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
+ }
+}
