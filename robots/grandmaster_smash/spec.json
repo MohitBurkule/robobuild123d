@@ -255,6 +255,9 @@
    "id": "chassis",
    "kind": "structure",
    "material": "nylon",
+   "notes": [
+    "RVRN: widened y 48->60 so the upright foot channel (y 34.8..45.2) sits fully inside the deck"
+   ],
    "print_orientation": "+z",
    "process": "fdm",
    "rot": [
@@ -2623,6 +2626,11 @@
       "type": "place"
      }
     ],
+    "size": [
+     124.0,
+     60.0,
+     13.5
+    ],
     "type": "subtract"
    }
   },
@@ -3336,9 +3344,9 @@
   },
   {
    "at": [
-    0,
-    0,
-    0
+    38.0,
+    40.0,
+    24.75
    ],
    "color": "#cfe8e0",
    "cuts": [
@@ -3360,22 +3368,6 @@
       "type": "cylinder"
      },
      "type": "place"
-    },
-    {
-     "at": [
-      38.0,
-      40.0,
-      24.75
-     ],
-     "height": 42.0,
-     "note": "MR85ZZ bore, full height, race edge covered",
-     "radius": 4.02,
-     "rot": [
-      0.0,
-      90.0,
-      0.0
-     ],
-     "type": "cylinder"
     }
    ],
    "id": "upright_a",
@@ -3443,9 +3435,9 @@
   },
   {
    "at": [
-    0,
-    0,
-    0
+    32.5,
+    40.0,
+    24.75
    ],
    "color": "#cfe8e0",
    "cuts": [
@@ -3467,22 +3459,6 @@
       "type": "cylinder"
      },
      "type": "place"
-    },
-    {
-     "at": [
-      32.5,
-      40.0,
-      24.75
-     ],
-     "height": 42.0,
-     "note": "MR85ZZ bore, full height, race edge covered",
-     "radius": 4.02,
-     "rot": [
-      0.0,
-      90.0,
-      0.0
-     ],
-     "type": "cylinder"
     }
    ],
    "id": "upright_b",
@@ -4469,6 +4445,11 @@
    "tethered": true
   },
   {
+   "at": [
+    38.0,
+    40.0,
+    24.75
+   ],
    "color": "#555555",
    "id": "wbear_l",
    "kind": "bearing",
@@ -4480,6 +4461,11 @@
     "inner": "dt_shaft_weapon",
     "outer": "upright_a"
    },
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
    "rotates_with": null,
    "shape": {
     "at": [
@@ -4538,6 +4524,11 @@
    "stock": "MR85ZZ 5 x 8 x 2.5"
   },
   {
+   "at": [
+    32.5,
+    40.0,
+    24.75
+   ],
    "color": "#555555",
    "id": "wbear_r",
    "kind": "bearing",
@@ -4549,6 +4540,11 @@
     "inner": "dt_shaft_weapon",
     "outer": "upright_b"
    },
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
    "rotates_with": null,
    "shape": {
     "at": [
@@ -4659,19 +4655,47 @@
   },
   {
    "awg": 26,
+   "clearance_mm": 1.4,
    "from": "el_rx_esc.m1",
    "id": "w_m1",
    "kind": "motor",
+   "note": "channels +z over the drum sweep",
    "slack_mm": 10,
-   "to": "dm_wheel_l0.terminals"
+   "to": "dm_wheel_l0.terminals",
+   "via": [
+    [
+     17.9,
+     0.2,
+     6.0
+    ],
+    [
+     18.5,
+     0.2,
+     5.4
+    ]
+   ]
   },
   {
    "awg": 26,
+   "clearance_mm": 1.4,
    "from": "el_rx_esc.m2",
    "id": "w_m2",
    "kind": "motor",
+   "note": "channels +z over the drum sweep",
    "slack_mm": 10,
-   "to": "dm_wheel_r0.terminals"
+   "to": "dm_wheel_r0.terminals",
+   "via": [
+    [
+     15.5,
+     3.2,
+     6.0
+    ],
+    [
+     15.5,
+     3.2,
+     5.6
+    ]
+   ]
   },
   {
    "awg": 20,
