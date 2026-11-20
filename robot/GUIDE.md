@@ -97,6 +97,58 @@ screw heads under overhangs; wires with no channel; wheel not touching the floor
 wheels; parts too thin to print (min wall about 0.9 mm FDM); brittle material for weapons; no locking bar; switch can be knocked by the
 robot's own motion or when inverted.
 
+## Outline details and windows from the photo (looks)
+- `robot outline spec.json PART --edge=+y-x --chamfer A [B]` (or `--step A [B]`, `--span=LO,HI`) bevels or notches one
+  edge of a static printed part's box: front corners in plan (`+y+x`, `+y-x`: a taper), top edges (`+z+x`), the nose
+  (`+y+z`). A hollow part keeps a `--wall` skin behind the new face, so the cavity never opens. It refuses when the cut
+  or the skin would meet another part. A corner that is already empty removes nothing.
+- Side and plan profiles from 2-3 numbers, with the same skin and refusal rules:
+  - `--round A [B]`: a rounded corner (a quarter circle, or a quarter ellipse with B). Use it for a soft rear or a
+    rounded end cap.
+  - `--stairs A B --n 3`: equal steps inside the corner, for a stepped flank.
+  - Face cuts: the first face of `--edge` is cut, and the second face only names the axis the cut runs along.
+    - `--notch DEPTH WIDTH [--at C]`: a square slot or channel.
+    - `--vnotch DEPTH WIDTH`: a V slot, such as cat ears or a slot for an arm.
+    - `--arc SAG [--along=LO,HI]`: the edge becomes an arc. `+SAG` drops both ends for a bowed top. `--arc=-SAG` sinks
+      the middle for a concave side.
+  - These cut only static parts, never a jointed weapon. On a big hollow chassis a run takes 1-2 minutes.
+- **Photo graphics (eyes, stripes, emblems, the robot's name):** use
+  `robot decal spec.json HOST --face +z --shape circle|ellipse|almond|star|ring|rect|stripe|poly|text --size W [H]
+  [--at U,V] [--angle DEG] [--pair D] [--text STR] --color #hex`.
+  - Each graphic becomes its own coloured part, flush with HOST's face, so it shows in renders and the outline does
+    not change.
+  - How it is built: HOST gets a pocket `--depth` deep (default 0.8 mm), and the graphic fills the pocket, running
+    0.25 mm deeper than the pocket floor.
+  - On a printed HOST the graphic is `fused_with` HOST (a multi-colour print) and follows HOST's joint.
+  - HOST must be printed. A pocket in a cut or machined plate is a blind feature (`process.geometry`), so give sheet
+    plates their photo colour with `robot colors` instead.
+  - A graphic placed over an earlier one on the same face replaces the earlier one there and takes its depth. Build
+    layers this way, for example an iris on an eye, or a head and beak on a disc.
+  - Several pieces in one call (`--pair`, or the letters of a text) are joined into one solid by a hidden web inside
+    HOST.
+  - It refuses when:
+    - the face under the graphic is not one plane;
+    - the graphic would not lie inside HOST with 0.15 mm of HOST left under it.
+  - Text takes `--size H [W]`. On a top face, `--angle 180` makes it read from the front.
+  - To sample the colour from the photo instead, leave out `--color` and run
+    `robot colors spec.json --parts ID --force`.
+  - Check `robot verify` (groups `geom`, `integrity`, `interference`) after each robot. A pocket that clips a screw
+    hole can make HOST an invalid solid; move the graphic.
+- `robot window spec.json PART --over el_battery [--face +z] [--lip 2]` opens a see-through window over a battery, ESC
+  or PCB where the photo shows the electronics, keeping a rim so the component stays captive. It refuses when anything
+  but wires lies between the component and the outside.
+- `robot electronics spec.json [--kinds battery,esc,receiver] [--only el_battery] [--lip 2] [--dry]` does the window
+  for every battery / ESC / receiver at once, through *all* the static prints over it (a tub's deck and a `top_plate`
+  together): one box over the component's footprint less the rim. It skips a component with a screw, a moving or
+  bought part, or any other body in that box, and it only opens shells (structure, plate, armor, a lid or cover),
+  never a weapon or arm; openings under 60 mm2 are skipped. The real parts and their routed wires show, nothing faked.
+- `robot brackets spec.json [--wheels wheel_l0,..] [--spokes 5]` puts a hub cap on each wheel's printed hub
+  (`tyre_of`): a ring on the hub's outer face, around the axle stub and inside the hub rim, never standing past the
+  stub (so the wheel's width and the footprint stay the same), with shallow lug pockets. It is part of the hub print,
+  so mass and BOM stay true. It refuses when the ring would touch the tyre or anything else. Outboard wheel brackets
+  change how the axle is carried: design those by hand.
+- Both change the outline on purpose: keep a change only if the likeness IoU does not drop, and re-run verify.
+
 ## Tips
 - Keep a 0.2 to 0.5 mm gap around pockets (printing tolerance) but snug enough to capture parts.
 - Moving parts need at least 1 mm of running clearance. Wheels need walls cut away to slide on from outside.
@@ -106,6 +158,10 @@ robot's own motion or when inverted.
 - Wires only route through `structure` parts. A port outside that volume gives "got within N mm" errors; make the holding part `structure`.
 - Catalog part ports and axes: `robot catalog <id>` lists port names; the weapon motor's `phases` port is on its local +z face and its shaft runs along local z.
 - Spinners: the disc must sit on a `shaft` part running through structure on BOTH sides (`spinner.bearing`); declaring `supported_both_ends` is checked, not trusted.
+- Hinged weapons (`weapon.kind` lifter, flipper, axe, hammer, arm, grabber, crusher, clamp, self_right; `robot/checks/arm_sweep.py`) are judged as arms, not spinners. Any other kind, or no kind, is a spinner, and the spinner rules apply.
+  - Sweep: when the joint's `min`..`max` is under a full turn, `wire.rotor_clearance`, `battery.rotor_gap`, `electrical.battery_weapon_gap`, the wire router and `proxy.wiring` keep out of the volume the arm and the parts that move with it sweep over that range, not a full revolution or the arm's box. Wires and the battery can sit under a lifter's plate. A wire or LiPo the arm passes through on its way up still fails, so declare the joint's real range (a range of 360 or more is swept as a full turn).
+  - Actuator (`power.weapon_motor`): `weapon.motor` (or the part's `actuated_by`) must name a catalog servo (e.g. `servo_cs07`), a geared DC motor, or a brushless motor behind `weapon.reduction` >= 10. A hinged weapon with no actuator, or on a direct-drive brushless motor, is a blocker. A spinner still needs a catalog brushless motor with a kV. A servo's stall current counts toward the battery peak.
+  - Printed arms are allowed: `process.weapon_printed` (printed weapon with no hardened insert teeth) applies to spinners only. Arm loads are judged by the strength group.
 - `robot verify` prints `check set revision N`; compare it with `CHECKS_REVISION` in robot/checks/__init__.py.
 - A check group that is missing or crashes is never a silent pass: it shows as `checks.missing` (warning) or `checks.crashed` (blocker) and in NOT CHECKED.
 - Geometry is cached under `~/.cache/robot` (override with `ROBOT_CACHE`); delete it if a model file's imports changed.
@@ -150,6 +206,14 @@ GENERATOR INTENT KEEPS YOUR ADDITIONS: put `reference`, `robot_type`, and hand-m
 LOOKS FIRST: `robot kit kit.json spec.json` builds a shape draft from named numbers (body box / twin pods with a centre
 slot + front ramp, weapon disc/drum/bar size+position+axis+teeth, 2 or 4 wheels anywhere, forks); see `robot/kit.py` doc.
 Only `likeness` judges it; iterate kit numbers with `robot likeness` until the photos match, then do the full build.
+FORKS: do not hand-roll tines. Use the shared fork set (`robot/modules/forks.py`): kit.json `"forks": {"style": "plate"
+| "sheet", "n", "length", "width", "taper", "thick", "pitch" | "spread", "tilt_deg", "tab", "holes", "hole_d", "x",
+"mirror", "hinge": {"pin_d", "range": [min, max]}, "lift": {"servo"}}` (no `style` = the old plain tines), or
+`{"part": "fork_set", ...}` in `use` (robot/KITPARTS.md). plate = one laser plate per tine with its own screw tab;
+sheet = one comb. `hinge` adds a knuckle tube on a pin (`kind: pin`, the axle), static lugs + a screw tab, a joint
+limited to `range`; `lift` adds a catalog servo coaxial with the hinge and a horn link. `mirror` + `x` makes a pair
+either side of a centre disc. Hinged forks are kind `other` with no `weapon`, so `kin.*` sweeps only the joint range:
+never model hinged forks as `kind: weapon` on a spinner, the verifier then sweeps them a full turn (long forks block).
 WHAT TO CHANGE: `robot diff-photo spec.json` writes renders/diff_<photo>.png = photo | model from the matching camera |
 overlay, and (with ANTHROPIC_API_KEY) a Haiku-written list of concrete differences. Read the sheet every loop.
 CLUSTERBOTS: model ONE bot and set top-level `"cluster": N` in the spec: the mass limit becomes 150/N g per bot
@@ -197,6 +261,14 @@ Decide each joint like a mechanical engineer before placing screws. Off-default 
 - **Nuts** sit in hex traps (captive) or are replaced by inserts (`joint.loose_nut`).
 - **Outside surfaces:** no proud heads on armour or exterior (`joint.head_proud`), never on the ground plane
   (`joint.head_ground`): counterbore flush or countersink.
+- **Visible screws the photo shows** (looks): `robot screws spec.json PART --face +z --pattern corners|row|ring|at
+  [--n N] [--inset MM] [--at "u,v;u,v"] [--plug] [--dry]` puts real M2 button-head screws, flush in counterbores,
+  on that face of a static printed part. Each one clamps PART to the printed part under it (or, with `--plug`, threads
+  into PART itself when nothing is under it; one-print pairs are recorded as plugs). On a thin shell wall it grows a
+  6 mm boss behind the wall, inside the cavity only. It skips, and says why, any spot with a blocked driver line, no
+  material, or another part in the way, then fills the hole records. Use it instead of printed dots or cylinders;
+  `--dry` first, then re-run verify and likeness. Face coordinates: +-z (x, y), +-x (y, z), +-y (x, z). Thin plates
+  (wedges, blades under 4 mm with air behind) get no screw: they need a nut, which shows on the far side.
 - **Kit:** <= 3 thread sizes (`joint.screw_sizes`), <= 5 distinct screws (`joint.screw_variety`), stock ISO lengths
   (`joint.standard_length`).
 
@@ -604,6 +676,30 @@ widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in
 connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
 the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.
 
+## Photo details that keep the outline (`robot plate`, `robot colors`)
+
+The photo review (`robot diff-photo`, Haiku notes) most often reports details, not the outline: "photo has separate deck
+plates screwed on, model is one slab", "photo shows screw heads, model has none", "white plates on a yellow frame,
+model is all grey". Fix them with these tools instead of reshaping, then re-run `robot likeness` (it must not drop) and
+`robot verify`:
+- **Separate plates:** `robot plate spec.json --face +z --id top_plate --screws 4 [--material pc]`
+  splits the skin of the chassis's largest flat face off as its own part (a lid over the tub's pockets; kind
+  `structure`, because the wire router only routes inside the structure parts' box),
+  a shade lighter than the chassis so its outline reads. The
+  union is unchanged, so the silhouette is too. It refuses splits that would break a part into two solids or add
+  tiny edges, and splits whose skin is mostly pocket. `--screws N` also fixes the plate on with N flush M2 button
+  screws (`robot screws`, so the photo's screw heads come with it). It places them where the chassis has 8.5 mm of
+  material under the plate. Where it doesn't (a thin-walled tub), it fuses a 6 mm boss to the wall inside the closed cavity, keeping
+  only bosses that touch nothing else and add no tiny edge. The thickness (default: the first of 2, 2.5, 3 and 1.5 mm
+  that fits) must not leave a skin under 0.9 mm on the chassis, so the plate is usually the whole deck. A metal or carbon plate weighs
+  2-3 times as much as a printed one, so check `mass` first. Use `--face +y` for a front plate.
+- **Colours:** `robot colors spec.json [--dry] [--force] [--debug renders/]` samples each large made part's colour
+  from the reference photos at the camera `likeness` picks. It replaces only placeholder colours (none, or the
+  generators' plain mid grey) and only with a clearly different colour. No geometry changes. It skips photos whose
+  silhouette IoU is under 0.6, and skips bought parts and wheels, because a model that still differs from the photo
+  puts them on the wrong pixels. Clear or shiny parts sample as whatever is behind them, so check the `--debug`
+  sheet (photo with the model's part outlines in red) before using `--force`.
+
 ## Fixing collisions without hand maths (jiggle)
 
 - Read `ROOT CAUSES` first: one collision = one item; its consequences (fit, assembly.blocked, sweeps) go with it.
@@ -621,3 +717,19 @@ the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, ne
 - Part does not fit: `robot probe --place PART` for the free box, then `robot catalog --kind KIND --fits LxWxH`.
 - Overlap of a few tenths of a mm: the `fit.interference` message gives the measured move; apply it, don't guess.
 - Generate spec.json from the CAD masters (`make_spec.py`); never hand-patch coordinates that a master drives.
+
+## Copying a real robot (`reference_copy`)
+A copy must look and work like the original, so our own combat-effectiveness taste must not force it to change. Add
+`"reference_copy": {"robot": "Baphomet", "source": "AWS wiki photos aws74-77"}` to the spec: `spinner.reach` (rim must reach the
+floor, weapon must lead), `spinner.mass_share`, `shape.weapon_leads`, `archetype.blade_lead`, `archetype.wedgelets_flank` and the
+`combat`/`coverage` groups then drop from BLOCKER to WARNING and are listed under `copy_mode` in the report. Buildability
+(interference, assembly, mass, fit, fasteners, wiring) is never relaxed. Our own robots (no `reference_copy`) keep every rule.
+Code: `robot/checks/copymode.py`.
+
+## Photo pose (`robot pose-photo SPEC`)
+Monocular depth (Depth Anything V2 small, ONNX CPU, auto-downloaded) + silhouette fit of the CAD through a pinhole camera.
+Writes `<robot>/pose/<photo>.pose.json` (camera az/el/roll, distance, fx/fy/cx/cy, robot-in-camera 4x4, scores, runner-ups,
+`confidence`), `.depth.png` and a side-by-side `.overlay.png`. `view_string` ("az,el!") feeds `robot render --view`.
+Evidence is photo mask + depth only; the declared REFERENCE.json view is reported, not used. Robot assumed flat on floor.
+`robot part-pose SPEC [SEGDIR]`: per partseg part, median metric depth, 3D centroid / normal / extent in the robot frame and
+pairwise offsets (`part_pose.json` in the segments folder). Needs pose-photo + partseg export; trust only if `calibration.r` is high.
