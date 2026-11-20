@@ -1,0 +1,71 @@
+BLOCKERS: 3
+  [cached] integrity 0.00s
+  [proxy] wiring 0.18s
+  [cached] mass 0.00s
+  [proxy] interference 0.06s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+brisk: ok=False 3 blockers in 3 root causes, mass 144.6/150 g
+1. [proxy.sweep] joint `flipper`: `flipper` hits `chassis` 0.23 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
+   | flipper: x -3.00..3.00  y -27.72..23.72  z 21.15..58.85  size 6.00 x 51.44 x 37.69 mm
+   |   centre (0.00, -2.00, 40.00), volume 1440.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 32.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `lid` 0.00 mm (touching)
+2. [power.weapon_motor] flipper `flipper` has no actuator (`weapon.motor` / `actuated_by`).
+   fix: Add a catalog servo (e.g. `servo_cs07`) or geared motor and name it in `weapon.motor` (or `actuated_by`); a brushless motor needs `weapon.reduction` >= 10.
+   | flipper: x -3.00..3.00  y -27.72..23.72  z 21.15..58.85  size 6.00 x 51.44 x 37.69 mm
+   |   centre (0.00, -2.00, 40.00), volume 1440.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 32.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `lid` 0.00 mm (touching)
+3. [likeness.silhouette] `reference/brisk.aws76.webp`: best silhouette IoU 0.77 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.77). Regions (photo frame, left third first) 0.74 / 0.77 / 0.81: worst = front third. Height/length 0.70 model vs 0.59 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 144.6 g of 150 g (+5.4 g margin)
+    chassis                    89.87 g  fills 22% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    lid                         6.64 g  fills 97% of its box
+    wheel_l0                    3.66 g  fills 65% of its box
+    wheel_r0                    3.66 g  fills 65% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    flipper                     1.37 g  fills 12% of its box
+    dt_hub_wheel_l0             1.10 g  fills 75% of its box
+    dt_hub_wheel_r0             1.10 g  fills 75% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fs_look_lid_0               0.28 g  fills 27% of its box
+    fs_look_lid_1               0.28 g  fills 27% of its box
+    fs_look_lid_2               0.28 g  fills 27% of its box
+    fs_look_lid_3               0.28 g  fills 27% of its box
+    mass.may_be_over: 144.6 g (range 117.4 to 171.8 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 5 hit / 0 miss, group 31 hit / 0 miss, inside 5 hit / 0 miss, min_gap 14 hit / 0 miss, overlap 186 hit / 0 miss, part_geom 24 hit / 0 miss
