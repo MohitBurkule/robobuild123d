@@ -1,0 +1,26 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 4,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "thwack_attack.aws74.webp",
+  "thwack_attack.aws76.webp",
+  "thwack_attack.aws77.webp"
+ ],
+ "view": {
+  "thwack_attack.aws74.webp": "front_right_iso",
+  "thwack_attack.aws76.webp": "rear_left_iso",
+  "thwack_attack.aws77.webp": "front_left_iso"
+ },
+ "elevation": {
+  "thwack_attack.aws76.webp": 45,
+  "thwack_attack.aws77.webp": 45
+ },
+ "view_source": {
+  "thwack_attack.aws74.webp": "user camera pick (azimuth 45, elevation 45); replaces the automatic label"
+ }
+}

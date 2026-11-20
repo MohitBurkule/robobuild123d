@@ -1,0 +1,136 @@
+BLOCKERS: 36
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.94s
+  [cached] connections 0.01s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.01s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.01s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.01s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+thwack attack: ok=False 36 blockers in 35 root causes, mass 204.4/150 g
+1. [mfg.stock] `fork_0` (laser): thickness 2.50 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 2 mm. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | fork_0: x -39.06..-23.04  y 36.18..99.98  z -10.69..-1.52  size 16.02 x 63.81 x 9.18 mm
+   |   centre (-31.05, 68.08, -6.11), volume 800.0 mm3
+   |   overlap allowed `dt_mount_fork_0` 0.01 mm (allowed 0.08)
+   |   gap to `chassis` 0.00 mm (touching)
+   | fork_1: x 23.04..39.06  y 36.18..99.98  z -10.69..-1.52  size 16.02 x 63.81 x 9.18 mm
+2. [mass.over] 204.4 g (range 174.3 to 234.4 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+3. [proxy.interference] `wheel_l1` and `side_pod_l` overlap by 1.22 mm (allowed 0.08).
+   | wheel_l1: x 40.50..49.50  y 15.00..37.00  z -11.00..11.00  size 9.00 x 21.99 x 22.00 mm
+   |   centre (45.00, 26.00, 0.00), volume 3357.6 mm3
+   |   overlap allowed `dt_hub_wheel_l1` 2.12 mm (allowed inf)
+   |   OVERLAP `side_pod_l` 1.22 mm (allowed 0.08)
+   |   gap to `dt_axle_wheel_l1` 0.00 mm (touching)
+4. [proxy.interference] `side_pod_l` and `dt_hub_wheel_l1` overlap by 1.22 mm (allowed 0.08).
+   | side_pod_l: x 37.93..52.00  y -45.00..45.00  z -10.00..14.00  size 14.07 x 90.00 x 24.00 mm
+   |   centre (44.97, 0.00, 2.00), volume 10488.5 mm3
+   |   OVERLAP `wheel_l1` 1.22 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l1` 1.22 mm (allowed 0.08)
+   |   overlap allowed `chassis` 0.45 mm (allowed inf)
+5. [proxy.interference] `el_wesc` and `lock_pin` overlap by 0.70 mm (allowed 0.08).
+   | el_wesc: x -6.50..5.50  y -12.00..11.00  z 4.50..8.50  size 12.00 x 23.00 x 4.00 mm
+   |   centre (-0.50, -0.50, 6.50), volume 1040.0 mm3
+   |   port bat: (2.50, -12.00, 6.50)
+   |   port motor: (-0.50, 11.00, 6.50)
+   |   port rx: (-3.50, -12.00, 6.50)
+6. [proxy.sweep] joint `tail_arm`: `tail_arm` hits `chassis` 0.14 mm deep at 14.5 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint tail_arm` lists the closest approach to every part.
+   | tail_arm: x -4.00..4.00  y -82.00..-26.00  z 11.00..67.00  size 8.00 x 56.00 x 56.00 mm
+   |   centre (-0.00, -54.00, 39.00), volume 7808.0 mm3
+   |   joint revolute axis [-1.0, -0.0, -0.0] pivot [0, -34, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -40.00..40.00  y -40.00..40.00  z -9.00..13.00  size 80.00 x 80.00 x 22.00 mm
+7. [connection.cover_fasteners] `side_pod_l` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | side_pod_l: x 37.93..52.00  y -45.00..45.00  z -10.00..14.00  size 14.07 x 90.00 x 24.00 mm
+   |   centre (44.97, 0.00, 2.00), volume 10488.5 mm3
+   |   OVERLAP `wheel_l1` 1.22 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l1` 1.22 mm (allowed 0.08)
+   |   overlap allowed `chassis` 0.45 mm (allowed inf)
+8. [connection.cover_fasteners] `side_pod_r` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | side_pod_r: x -52.00..-38.02  y -45.00..45.00  z -10.00..14.00  size 13.98 x 90.00 x 24.00 mm
+   |   centre (-45.01, 0.00, 2.00), volume 10212.5 mm3
+   |   overlap allowed `chassis` 0.78 mm (allowed inf)
+   |   gap to `wheel_r0` 0.00 mm (touching)
+   |   gap to `dt_axle_wheel_r1` 0.00 mm (touching)
+9. [legal.footprint] Smallest square that holds the robot is 166.7 mm; the limit is 150 mm with no overhang at any height.
+   fix: Shorten the wedge, narrow the wheels or move parts inward.
+10. [power.weapon_motor] `tail_arm` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | tail_arm: x -4.00..4.00  y -82.00..-26.00  z 11.00..67.00  size 8.00 x 56.00 x 56.00 mm
+   |   centre (-0.00, -54.00, 39.00), volume 7808.0 mm3
+   |   joint revolute axis [-1.0, -0.0, -0.0] pivot [0, -34, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+11. [process.geometry] `weapon` (laser): 1 hole(s) of dia 4.00 mm < 6.00 mm (1 x thickness): cut holes that small distort or do not pierce; drill/ream them as a secondary op or enlarge.
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | weapon: x -3.00..3.00  y -14.07..14.07  z 15.00..45.01  size 6.00 x 28.14 x 30.02 mm
+   |   centre (0.00, 0.00, 30.01), volume 3723.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 0.0, 30.0] range 0..360 default 0
+   |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+12. [process.weapon_printed] Weapon `tail_arm` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | tail_arm: x -4.00..4.00  y -82.00..-26.00  z 11.00..67.00  size 8.00 x 56.00 x 56.00 mm
+   |   centre (-0.00, -54.00, 39.00), volume 7808.0 mm3
+   |   joint revolute axis [-1.0, -0.0, -0.0] pivot [0, -34, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+... 23 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 204.4 g of 150 g (-54.4 g margin)
+    chassis                    58.20 g  fills 43% of its box
+    weapon                     29.41 g  fills 73% of its box  <- solid block? a tub should be a shell
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    side_pod_l                  9.99 g  fills 35% of its box
+    side_pod_r                  9.72 g  fills 34% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    weapon_motor                8.60 g  fills 53% of its box
+    tail_arm                    7.43 g  fills 31% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    fork_0                      3.54 g  fills 9% of its box
+    fork_1                      3.54 g  fills 9% of its box
+    wheel_l0                    3.45 g  fills 66% of its box
+    wheel_r0                    3.45 g  fills 66% of its box
+    wheel_l1                    3.42 g  fills 77% of its box
+    wheel_r1                    3.42 g  fills 77% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_shaft_weapon             1.59 g  fills 79% of its box
+    dt_axle_wheel_r1            1.09 g  fills 79% of its box
+    dt_axle_wheel_l1            1.09 g  fills 79% of its box
+    dt_hub_wheel_l0             1.02 g  fills 75% of its box
+    dt_hub_wheel_r0             1.02 g  fills 75% of its box
+    dt_hub_wheel_l1             1.00 g  fills 73% of its box
+    dt_hub_wheel_r1             1.00 g  fills 73% of its box
+    dt_mount_fork_0             0.79 g  fills 96% of its box
+    dt_mount_fork_1             0.79 g  fills 96% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    lock_pin                    0.48 g  fills 79% of its box
+    mass.over: 204.4 g (range 174.3 to 234.4 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 64 hit / 0 miss, overlap 406 hit / 0 miss, part_geom 28 hit / 0 miss

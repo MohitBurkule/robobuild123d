@@ -1,0 +1,104 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 80,
+  "width": 80,
+  "height": 22,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 9,
+  "y": [
+   -26,
+   26
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 15,
+  "width": 6,
+  "y": 0,
+  "teeth": 2,
+  "z": 30,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 2,
+  "length": 64,
+  "width": 8,
+  "spread": 54,
+  "tilt_deg": 6,
+  "splay_deg": 10,
+  "taper": true
+ },
+ "colors": {
+  "body": "#f08a2c",
+  "wheel": "#5a5ac8",
+  "weapon": "#2a55c8",
+  "fork": "#8ab8a0"
+ },
+ "name": "thwack attack",
+ "macros": [
+  {
+   "box": [
+    12,
+    90,
+    24
+   ],
+   "at": [
+    46,
+    0,
+    13
+   ],
+   "mirror": true,
+   "kind": "armor",
+   "id": "side_pod",
+   "color": "#f0603a"
+  },
+  {
+   "side": [
+    [
+     -36,
+     22
+    ],
+    [
+     -26,
+     28
+    ],
+    [
+     -60,
+     62
+    ],
+    [
+     -66,
+     78
+    ],
+    [
+     -82,
+     74
+    ],
+    [
+     -80,
+     58
+    ],
+    [
+     -70,
+     52
+    ]
+   ],
+   "x": [
+    -4,
+    4
+   ],
+   "weapon": "axe",
+   "pivot": [
+    -34,
+    24
+   ],
+   "id": "tail_arm",
+   "color": "#1c1d20"
+  }
+ ]
+}
