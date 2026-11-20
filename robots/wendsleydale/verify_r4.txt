@@ -1,0 +1,123 @@
+BLOCKERS: 21
+  [cached] integrity 0.00s
+  [cached] mass 0.01s
+  [proxy] interference 0.41s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.01s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.01s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.01s
+  [cached] waiver_audit 0.01s
+  [cached] geom 0.01s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+wendsleydale: ok=False 21 blockers in 21 root causes, mass 180.7/150 g
+1. [mass.over] 180.7 g (range 148.3 to 213.2 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.sweep] joint `lifter`: `lifter` hits `chassis` 0.88 mm deep at 7.5 (declared range 0..90; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
+   | lifter: x -16.00..16.00  y -48.00..52.00  z -12.00..24.00  size 32.00 x 100.00 x 36.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 27711.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 11] range 0..90 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.90 mm
+3. [connection.floating] `side_plate_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wheel_l0`, 0.9 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | side_plate_l: x 51.00..53.00  y -52.00..54.00  z -13.00..17.00  size 2.00 x 106.00 x 30.00 mm
+   |   centre (52.00, 1.00, 2.00), volume 5532.0 mm3
+   |   gap to `wheel_l0` 0.90 mm
+   |   gap to `chassis` 1.00 mm
+   |   gap to `corner_rl` 1.00 mm
+4. [connection.floating] `side_plate_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wheel_r0`, 0.9 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | side_plate_r: x -53.00..-51.00  y -52.00..54.00  z -13.00..17.00  size 2.00 x 106.00 x 30.00 mm
+   |   centre (-52.00, 1.00, 2.00), volume 5532.0 mm3
+   |   gap to `wheel_r0` 0.90 mm
+   |   gap to `chassis` 1.00 mm
+   |   gap to `corner_rr` 1.00 mm
+5. [connection.cover_fasteners] `corner_rl` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | corner_rl: x 26.00..50.00  y -48.50..-39.50  z 11.00..17.00  size 24.00 x 9.00 x 6.00 mm
+   |   centre (38.00, -44.00, 14.00), volume 1293.2 mm3
+   |   overlap allowed `chassis` 1.33 mm (allowed inf)
+   |   gap to `wheel_l0` 1.00 mm
+   |   gap to `side_plate_l` 1.00 mm
+6. [connection.cover_fasteners] `corner_fl` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | corner_fl: x 20.00..50.00  y 20.67..39.33  z -4.75..14.75  size 30.00 x 18.66 x 19.50 mm
+   |   centre (35.00, 30.00, 5.00), volume 1898.7 mm3
+   |   overlap allowed `chassis` 2.53 mm (allowed inf)
+   |   gap to `side_plate_l` 1.00 mm
+7. [connection.cover_fasteners] `corner_rr` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | corner_rr: x -50.00..-26.00  y -48.50..-39.50  z 11.00..17.00  size 24.00 x 9.00 x 6.00 mm
+   |   centre (-38.00, -44.00, 14.00), volume 1293.2 mm3
+   |   overlap allowed `chassis` 1.33 mm (allowed inf)
+   |   gap to `wheel_r0` 1.00 mm
+   |   gap to `side_plate_r` 1.00 mm
+8. [connection.cover_fasteners] `corner_fr` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | corner_fr: x -50.00..-20.00  y 20.67..39.33  z -4.75..14.75  size 30.00 x 18.66 x 19.50 mm
+   |   centre (-35.00, 30.00, 5.00), volume 1898.7 mm3
+   |   overlap allowed `chassis` 2.53 mm (allowed inf)
+   |   gap to `side_plate_r` 1.00 mm
+9. [power.weapon_motor] `lifter` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | lifter: x -16.00..16.00  y -48.00..52.00  z -12.00..24.00  size 32.00 x 100.00 x 36.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 27711.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 11] range 0..90 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.90 mm
+10. [process.weapon_printed] Weapon `lifter` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | lifter: x -16.00..16.00  y -48.00..52.00  z -12.00..24.00  size 32.00 x 100.00 x 36.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 27711.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 11] range 0..90 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.90 mm
+11. [electrical.battery_weapon_gap] Battery is -12.5 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+   fix: Move the battery >= 3 mm from the swept volume.
+12. [wire.render_wires] 12 of 12 robot render(s) do not draw all 4 wires: renders/diff_wendsleydale.aws65.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_wendsleydale.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_wendsleydale.aws65_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_wendsleydale.aws68_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_wendsleydale.aws65.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_wendsleydale.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_wendsleydale.aws65.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+... 9 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 180.7 g of 150 g (-30.7 g margin)
+    chassis                    81.10 g  fills 30% of its box
+    lifter                     26.38 g  fills 24% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    wheel_l0                    6.86 g  fills 68% of its box
+    wheel_r0                    6.86 g  fills 68% of its box
+    side_plate_l                6.64 g  fills 87% of its box
+    side_plate_r                6.64 g  fills 87% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_r0             1.99 g  fills 76% of its box
+    dt_hub_wheel_l0             1.99 g  fills 76% of its box
+    corner_fr                   1.81 g  fills 17% of its box
+    corner_fl                   1.81 g  fills 17% of its box
+    corner_rr                   1.23 g  fills 100% of its box
+    corner_rl                   1.23 g  fills 100% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 180.7 g (range 148.3 to 213.2 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 54 hit / 0 miss, overlap 255 hit / 0 miss, part_geom 17 hit / 0 miss

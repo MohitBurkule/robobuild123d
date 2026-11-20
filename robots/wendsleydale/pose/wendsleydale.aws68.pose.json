@@ -1,0 +1,101 @@
+{
+ "photo": "wendsleydale.aws68.webp",
+ "evidence": [
+  "photo mask",
+  "monocular depth (Depth Anything V2 small)"
+ ],
+ "declared_view": "rear",
+ "camera": {
+  "azimuth": 169.28,
+  "elevation": 55.65,
+  "roll": 19.87,
+  "distance_mm": 295.2,
+  "intrinsics_px": {
+   "fx": 1335.8,
+   "fy": 1335.8,
+   "cx": 321.2,
+   "cy": 226.2,
+   "width": 605,
+   "height": 576,
+   "fov_deg_long_side": 25.5
+  },
+  "camera_position_mm": [
+   -163.7,
+   31.0,
+   243.7
+  ],
+  "robot_in_camera_4x4": [
+   [
+    0.10081,
+    -0.97625,
+    0.19178,
+    -0.0
+   ],
+   [
+    -0.8261,
+    -0.18956,
+    -0.53068,
+    0.0
+   ],
+   [
+    0.55443,
+    -0.10493,
+    -0.82559,
+    295.22431
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "view_string": "169,56!"
+ },
+ "scores": {
+  "iou": 0.922,
+  "depth_corr": 0.886
+ },
+ "confidence": "ambiguous",
+ "runner_up_loss_gap": 0.02,
+ "alternatives": [
+  {
+   "azimuth": 3.3,
+   "elevation": 53.2,
+   "loss": 0.138,
+   "iou": 0.907,
+   "depth_corr": 0.872
+  },
+  {
+   "azimuth": 182.3,
+   "elevation": 52.2,
+   "loss": 0.14,
+   "iou": 0.898,
+   "depth_corr": 0.89
+  },
+  {
+   "azimuth": 97.5,
+   "elevation": 61.3,
+   "loss": 0.178,
+   "iou": 0.861,
+   "depth_corr": 0.886
+  },
+  {
+   "azimuth": 279.0,
+   "elevation": 81.9,
+   "loss": 0.215,
+   "iou": 0.845,
+   "depth_corr": 0.829
+  }
+ ],
+ "model_bbox_centre_mm": [
+  0.0,
+  1.0,
+  5.0
+ ],
+ "assumptions": [
+  "robot flat on floor",
+  "square pixels",
+  "spec articulation as built"
+ ]
+}

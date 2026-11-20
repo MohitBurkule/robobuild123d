@@ -1,0 +1,124 @@
+BLOCKERS: 37
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.06s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.02s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.47s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.07s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.47s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.03s
+  [ran] dfm 0.00s
+  [ran] realworld 0.01s
+wendsleydale: ok=False 37 blockers in 37 root causes, mass 264.8/150 g
+1. [mass.over] 264.8 g (range 213.6 to 316.0 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `lifter` overlap by 8.88 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -12.00..16.00  size 100.00 x 100.00 x 28.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 211564.0 mm3
+   |   OVERLAP `lifter` 8.88 mm (allowed 0.08)
+   |   OVERLAP `corner_fl` 2.53 mm (allowed 0.08)
+   |   OVERLAP `corner_fr` 2.53 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `corner_rl` overlap by 1.33 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -12.00..16.00  size 100.00 x 100.00 x 28.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 211564.0 mm3
+   |   OVERLAP `lifter` 8.88 mm (allowed 0.08)
+   |   OVERLAP `corner_fl` 2.53 mm (allowed 0.08)
+   |   OVERLAP `corner_fr` 2.53 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `corner_fl` overlap by 2.53 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -12.00..16.00  size 100.00 x 100.00 x 28.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 211564.0 mm3
+   |   OVERLAP `lifter` 8.88 mm (allowed 0.08)
+   |   OVERLAP `corner_fl` 2.53 mm (allowed 0.08)
+   |   OVERLAP `corner_fr` 2.53 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `corner_rr` overlap by 1.33 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -12.00..16.00  size 100.00 x 100.00 x 28.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 211564.0 mm3
+   |   OVERLAP `lifter` 8.88 mm (allowed 0.08)
+   |   OVERLAP `corner_fl` 2.53 mm (allowed 0.08)
+   |   OVERLAP `corner_fr` 2.53 mm (allowed 0.08)
+6. [proxy.interference] `chassis` and `corner_fr` overlap by 2.53 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -12.00..16.00  size 100.00 x 100.00 x 28.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 211564.0 mm3
+   |   OVERLAP `lifter` 8.88 mm (allowed 0.08)
+   |   OVERLAP `corner_fl` 2.53 mm (allowed 0.08)
+   |   OVERLAP `corner_fr` 2.53 mm (allowed 0.08)
+7. [proxy.sweep] joint `lifter`: `lifter` hits `chassis` 8.88 mm deep at 0.0 (declared range 0..90; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
+   | lifter: x -16.00..16.00  y -48.00..52.00  z -12.00..24.00  size 32.00 x 100.00 x 36.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 27711.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -10, 11] range 0..90 default 0
+   |   OVERLAP `chassis` 8.88 mm (allowed 0.08)
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -12.00..16.00  size 100.00 x 100.00 x 28.00 mm
+8. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 37.50..48.50  y -44.00..-16.00  z -14.00..14.00  size 11.00 x 27.99 x 28.00 mm
+   |   centre (43.00, -30.00, 0.00), volume 6773.3 mm3
+   |   gap to `chassis` 0.50 mm
+   |   gap to `corner_rl` 0.54 mm
+   |   gap to `side_plate_l` 2.50 mm
+9. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -48.50..-37.50  y -44.00..-16.00  z -14.00..14.00  size 11.00 x 27.99 x 28.00 mm
+   |   centre (-43.00, -30.00, 0.00), volume 6773.3 mm3
+   |   gap to `chassis` 0.50 mm
+   |   gap to `corner_rr` 0.54 mm
+   |   gap to `side_plate_r` 2.50 mm
+10. [connection.floating] `side_plate_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 1.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | side_plate_l: x 51.00..53.00  y -52.00..54.00  z -13.00..17.00  size 2.00 x 106.00 x 30.00 mm
+   |   centre (52.00, 1.00, 2.00), volume 5532.0 mm3
+   |   gap to `chassis` 1.00 mm
+   |   gap to `corner_rl` 1.00 mm
+   |   gap to `corner_fl` 1.00 mm
+11. [connection.floating] `corner_rl` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | corner_rl: x 26.00..50.00  y -48.50..-39.50  z 11.00..17.00  size 24.00 x 9.00 x 6.00 mm
+   |   centre (38.00, -44.00, 14.00), volume 1296.0 mm3
+   |   OVERLAP `chassis` 1.33 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.54 mm
+   |   gap to `side_plate_l` 1.00 mm
+12. [connection.floating] `corner_fl` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | corner_fl: x 20.00..50.00  y 20.67..39.33  z -4.75..14.75  size 30.00 x 18.66 x 19.50 mm
+   |   centre (35.00, 30.00, 5.00), volume 3300.0 mm3
+   |   OVERLAP `chassis` 2.53 mm (allowed 0.08)
+   |   gap to `side_plate_l` 1.00 mm
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -12.00..16.00  size 100.00 x 100.00 x 28.00 mm
+... 25 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 264.8 g of 150 g (-114.8 g margin)
+    chassis                   201.41 g  fills 76% of its box  <- solid block? a tub should be a shell
+    lifter                     26.38 g  fills 24% of its box
+    wheel_l0                    6.91 g  fills 79% of its box
+    wheel_r0                    6.91 g  fills 79% of its box
+    side_plate_l                6.64 g  fills 87% of its box
+    side_plate_r                6.64 g  fills 87% of its box
+    corner_fl                   3.14 g  fills 30% of its box
+    corner_fr                   3.14 g  fills 30% of its box
+    corner_rl                   1.23 g  fills 100% of its box
+    corner_rr                   1.23 g  fills 100% of its box
+    mass.over: 264.8 g (range 213.6 to 316.0 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 10 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 101 hit / 0 miss, overlap 133 hit / 0 miss, part_check 3 hit / 0 miss, part_geom 10 hit / 0 miss, ray 50 hit / 0 miss

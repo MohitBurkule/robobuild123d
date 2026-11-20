@@ -1,0 +1,33 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x",
+  "position": "middle",
+  "width_frac": 0.3
+ },
+ "photos": [
+  "wendsleydale.aws65.webp",
+  "wendsleydale.aws68.webp"
+ ],
+ "mask_mode": {
+  "wendsleydale.aws65.webp": "textured",
+  "wendsleydale.aws68.webp": "textured"
+ },
+ "view": {
+  "wendsleydale.aws63.webp": "front_left_iso",
+  "wendsleydale.aws65.webp": "rear_right_iso",
+  "wendsleydale.aws68.webp": "rear"
+ },
+ "elevation": {
+  "wendsleydale.aws63.webp": 25,
+  "wendsleydale.aws68.webp": 45
+ },
+ "view_source": {
+  "wendsleydale.aws65.webp": "user camera pick (azimuth 300, elevation 35); replaces the automatic label"
+ },
+ "rear_ok": [
+  "wendsleydale.aws65.webp"
+ ]
+}
