@@ -43,7 +43,7 @@ class Hazards:
                 for p in g.parts:
                     for gi in range(m.ngeom):
                         nm = m.geom(gi).name
-                        if nm.startswith(pre + p.id + "_g") or nm.startswith(pre + p.id + "_s"):
+                        if nm.startswith(pre + p.id + "_g") or nm.startswith(pre + p.id + "_s") or nm.startswith(pre + p.id + "_c"):
                             self.owner[gi] = (r, g.name, p.id)
         self.kind = {r: {p.id: p.kind for g in sim.robots[r].groups for p in g.parts} for r in sim.robots}
         self.com = {r: {p.id: p.com for g in sim.robots[r].groups for p in g.parts} for r in sim.robots}
@@ -99,6 +99,12 @@ class Hazards:
             else:
                 b = bits[o[0]]
                 m.geom_contype[gi], m.geom_conaffinity[gi] = b, 0xFFFF & ~b
+        for w in self.sim.welds:  # a breakable part collides through its rigid copy until it comes off
+            for gi in (w.copies if w.broken_at is not None else w.ghosts):
+                m.geom_contype[gi] = m.geom_conaffinity[gi] = 0
+            for gi in (w.ghosts if w.broken_at is not None else w.copies):
+                b = bits[w.robot]
+                m.geom_contype[gi], m.geom_conaffinity[gi] = b, 0xFFFF & ~b
 
     def tick(self, t, dt):
         sim, m, d = self.sim, self.sim.m, self.sim.d
@@ -115,7 +121,7 @@ class Hazards:
             if np.all((rel > lo - 0.002) & (rel < hi + 0.002)):
                 continue
             for gi, o in self.owner.items():
-                if o[0] == w.robot and o[1] == w.part:
+                if gi in w.ghosts:
                     m.geom_contype[gi], m.geom_conaffinity[gi] = DEBRIS_BIT, 0xFFFF
             self.debris_live.add((w.robot, w.part))
         # a gram-scale chip pinched between a 1500 rad/s disc and the chassis can get a non-physical kick in one 0.1 ms
