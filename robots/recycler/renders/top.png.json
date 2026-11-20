@@ -1,0 +1,98 @@
+{
+ "spec": "/tmp/work10_recycler/robots/recycler/spec.json",
+ "rendered_at": 1795051604.7264938,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "lid",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_shaft_weapon",
+  "dt_arm_weapon_0",
+  "dt_arm_weapon_1",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin"
+ ],
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    4.5,
+    -12.5,
+    -8.0
+   ],
+   "to": [
+    -11.0,
+    -2.5,
+    7.5
+   ]
+  },
+  "w_wm": {
+   "from": [
+    12.0,
+    0.5,
+    7.5
+   ],
+   "to": [
+    -26.5,
+    -2.5,
+    16.5
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    10.0,
+    -7.5
+   ],
+   "to": [
+    -3.5,
+    -12.5,
+    -8.0
+   ]
+  },
+  "w_m1": {
+   "from": [
+    16.5,
+    6.5,
+    2.5
+   ],
+   "to": [
+    29.5,
+    -12.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -15.5,
+    6.5,
+    2.5
+   ],
+   "to": [
+    -29.5,
+    -12.000000000000002,
+    0.0
+   ]
+  },
+  "w_sig_wesc": {
+   "from": [
+    16.5,
+    -5.5,
+    2.5
+   ],
+   "to": [
+    -11.0,
+    3.5,
+    7.5
+   ]
+  }
+ }
+}

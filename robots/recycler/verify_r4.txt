@@ -1,0 +1,89 @@
+BLOCKERS: 11
+  [ran] integrity 0.10s
+  [proxy] wiring 0.72s
+  [ran] mass 0.00s
+  [proxy] interference 29.26s
+  [ran] connections 0.50s
+  [ran] legal 0.03s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.05s
+  [ran] shape 0.72s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 2.81s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.27s
+  [ran] physics 0.00s
+  [ran] plausibility 0.04s
+  [ran] cots 0.00s
+  [ran] fit 0.18s
+  [ran] bom 0.01s
+  [ran] wire_review 0.04s
+  [ran] fastener_record 0.00s
+  [ran] likeness 23.70s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.02s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.41s
+  [ran] dfm 0.15s
+  [ran] realworld 0.32s
+recycler: ok=False 11 blockers in 9 root causes, mass 334.7/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -52.00..52.00  y 19.93..48.07  z 2.00..32.01  size 104.00 x 28.14 x 30.02 mm
+   |   centre (0.00, 34.00, 17.01), volume 64537.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 34.0, 17.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.33 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.78 mm (allowed 1000.00)
+2. [mfg.layer_load] `dt_arm_weapon_0` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Print it lying flat so the spin axis is the build direction, or make it a cut metal plate.
+   | dt_arm_weapon_0: x -55.50..-52.50  y 25.00..39.00  z 9.00..22.00  size 3.00 x 14.00 x 13.00 mm
+   |   centre (-54.00, 32.00, 15.50), volume 382.3 mm3
+   |   overlap allowed `chassis` 1.39 mm (allowed inf)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+   |   gap to `weapon` 0.50 mm
+3. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [mass.over] 334.7 g (range 301.9 to 367.6 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+5. [proxy.interference] `chassis` and `weapon` overlap by 1.33 mm (allowed 0.08).
+   | chassis: x -56.00..56.00  y -31.00..31.00  z -15.00..19.00  size 112.00 x 62.00 x 34.00 mm
+   |   centre (-0.00, 0.00, 2.00), volume 63094.2 mm3
+   |   overlap allowed `dt_arm_weapon_0` 1.39 mm (allowed inf)
+   |   overlap allowed `dt_arm_weapon_1` 1.39 mm (allowed inf)
+   |   OVERLAP `weapon` 1.33 mm (allowed 0.08)
+6. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_sw_esc` not drawn; renders/top.png: wire `w_sw_esc` not drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+7. [wire.render_count] iso.png: 6 routes vs 7 spec wires (missing ['w_sw_esc']); top.png: 6 routes vs 7 spec wires (missing ['w_sw_esc'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+8. [likeness.view] `reference/recycler.aws67.webp` is declared `front` (IoU 0.59 there) but the model matches it better from rear_right_iso (elevation 25, azimuth 300) (IoU 0.82).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+9. [likeness.silhouette] `reference/recycler.aws67.webp`: best silhouette IoU 0.59 at camera front (elevation 25, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.76). Regions (photo frame, left third first) 0.48 / 0.65 / 0.64: worst = front third. Height/length 0.42 model vs 0.61 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 334.7 g of 225 g (-109.7 g margin)
+    weapon                    174.25 g  fills 73% of its box  <- solid block? a tub should be a shell
+    chassis                    60.07 g  fills 27% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    dt_shaft_weapon            11.32 g  fills 79% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    weapon_motor                8.60 g  fills 53% of its box
+    wheel_r0                    8.30 g  fills 66% of its box
+    wheel_l0                    8.30 g  fills 66% of its box
+    lid                         7.42 g  fills 55% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    dt_hub_wheel_r0             2.50 g  fills 77% of its box
+    dt_hub_wheel_l0             2.50 g  fills 77% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    lock_pin                    0.37 g  fills 79% of its box
+    dt_arm_weapon_0             0.36 g  fills 70% of its box
+    dt_arm_weapon_1             0.36 g  fills 70% of its box
+    mass.over: 334.7 g (range 301.9 to 367.6 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 9 miss, group 0 hit / 31 miss, inside 11 hit / 10 miss, likeness 1 hit / 0 miss, min_gap 37 hit / 1 miss, overlap 132 hit / 75 miss, part_check 8 hit / 1 miss, part_geom 18 hit / 0 miss, ray 92 hit / 48 miss
