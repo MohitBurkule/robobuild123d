@@ -1,0 +1,111 @@
+BLOCKERS: 19
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.09s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.01s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.60s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.06s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 4.32s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.01s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+zero: ok=False 19 blockers in 18 root causes, mass 367.4/150 g
+1. [process.geometry] `scoop` (laser): 9 broad face(s) at an angle to the plate: an angled flange / bend, not a flat cut part; declare `process: sheet_bent` with cylindrical bends or split into flat parts. (+1 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | scoop: x -64.00..64.00  y 35.00..70.00  z -16.00..9.00  size 128.00 x 35.00 x 25.00 mm
+   |   centre (0.00, 52.50, -3.50), volume 9379.2 mm3
+   |   OVERLAP `chassis` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.60 mm
+   |   gap to `wheel_r0` 0.60 mm
+2. [mass.over] 367.4 g (range 346.2 to 388.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+3. [proxy.interference] `chassis` and `scoop` overlap by 0.46 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -40.00..36.00  z -14.00..10.00  size 80.00 x 76.00 x 24.00 mm
+   |   centre (0.00, -2.00, -2.00), volume 112538.9 mm3
+   |   OVERLAP `scoop` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_l0` 1.19 mm
+   |   gap to `wheel_r0` 1.19 mm
+4. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `scoop`, 0.6 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 41.00..57.00  y -2.99..34.99  z -16.00..22.00  size 16.00 x 37.99 x 38.00 mm
+   |   centre (49.00, 16.00, 3.00), volume 18145.8 mm3
+   |   gap to `scoop` 0.60 mm
+   |   gap to `chassis` 1.19 mm
+   | scoop: x -64.00..64.00  y 35.00..70.00  z -16.00..9.00  size 128.00 x 35.00 x 25.00 mm
+5. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `scoop`, 0.6 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -57.00..-41.00  y -2.99..34.99  z -16.00..22.00  size 16.00 x 37.99 x 38.00 mm
+   |   centre (-49.00, 16.00, 3.00), volume 18145.8 mm3
+   |   gap to `scoop` 0.60 mm
+   |   gap to `chassis` 1.19 mm
+   | scoop: x -64.00..64.00  y 35.00..70.00  z -16.00..9.00  size 128.00 x 35.00 x 25.00 mm
+6. [connection.floating] `scoop` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | scoop: x -64.00..64.00  y 35.00..70.00  z -16.00..9.00  size 128.00 x 35.00 x 25.00 mm
+   |   centre (0.00, 52.50, -3.50), volume 9379.2 mm3
+   |   OVERLAP `chassis` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.60 mm
+   |   gap to `wheel_r0` 0.60 mm
+7. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+8. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+9. [process.geometry] `chassis` (laser): 1 oblique planar face(s): chamfer/bevel; declare `secondary_ops: ["chamfer"]` or remove.
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | chassis: x -40.00..40.00  y -40.00..36.00  z -14.00..10.00  size 80.00 x 76.00 x 24.00 mm
+   |   centre (0.00, -2.00, -2.00), volume 112538.9 mm3
+   |   OVERLAP `scoop` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_l0` 1.19 mm
+   |   gap to `wheel_r0` 1.19 mm
+10. [mfg.stock] `chassis` (laser): thickness 24.00 mm is not a stock aluminium gauge (0.5, 0.8, 1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12); nearest 12 mm.
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | chassis: x -40.00..40.00  y -40.00..36.00  z -14.00..10.00  size 80.00 x 76.00 x 24.00 mm
+   |   centre (0.00, -2.00, -2.00), volume 112538.9 mm3
+   |   OVERLAP `scoop` 0.46 mm (allowed 0.08)
+   |   gap to `wheel_l0` 1.19 mm
+   |   gap to `wheel_r0` 1.19 mm
+11. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 41.00..57.00  y -2.99..34.99  z -16.00..22.00  size 16.00 x 37.99 x 38.00 mm
+   |   centre (49.00, 16.00, 3.00), volume 18145.8 mm3
+   |   gap to `scoop` 0.60 mm
+   |   gap to `chassis` 1.19 mm
+12. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -57.00..-41.00  y -2.99..34.99  z -16.00..22.00  size 16.00 x 37.99 x 38.00 mm
+   |   centre (-49.00, 16.00, 3.00), volume 18145.8 mm3
+   |   gap to `scoop` 0.60 mm
+   |   gap to `chassis` 1.19 mm
+... 6 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 367.4 g of 150 g (-217.4 g margin)
+    chassis                   303.86 g  fills 77% of its box  <- solid block? a tub should be a shell
+    scoop                      25.32 g  fills 8% of its box
+    wheel_l0                   18.51 g  fills 79% of its box  <- solid block? a tub should be a shell
+    wheel_r0                   18.51 g  fills 79% of its box  <- solid block? a tub should be a shell
+    mass.over: 367.4 g (range 346.2 to 388.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 4 hit / 0 miss, likeness 3 hit / 0 miss, min_gap 33 hit / 0 miss, overlap 12 hit / 0 miss, part_check 2 hit / 0 miss, part_geom 4 hit / 0 miss, ray 20 hit / 0 miss
