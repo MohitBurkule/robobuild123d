@@ -1,0 +1,26 @@
+{
+ "spec": "/tmp/work10_beater_griffin/robots/beater_griffin/spec.json",
+ "rendered_at": 1795026343.2451978,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "bumper_l",
+  "bumper_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_shaft_weapon",
+  "dt_arm_weapon_0",
+  "dt_arm_weapon_1"
+ ],
+ "wires": {}
+}
