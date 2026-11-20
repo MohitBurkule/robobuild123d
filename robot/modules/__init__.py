@@ -16,6 +16,7 @@ _SPECS = {
     "weapon": ("weapon", "WeaponModule"),
     "electronics_bay": ("electronics_bay", "ElectronicsBay"),
     "tub": ("tub", "TubShell"),
+    "forks": ("forks", "ForkSet"),
 }
 IMPORT_ERRORS: dict[str, str] = {}
 for _name, (_mod, _cls) in _SPECS.items():
