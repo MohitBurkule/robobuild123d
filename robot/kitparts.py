@@ -163,12 +163,38 @@ def spinner_disc(id="disc", radius=30.0, thick=4.0, teeth=2, kind="disc", axis="
                joint={"kind": "revolute", "axis": ax, "pivot": [0, 0, 0], "min": 0, "max": 360, "default": 0})]
 
 
+@part
+def fork_set(id="forks", style="plate", n=2, length=25.0, width=6.0, taper=1.0, thick=1.5, pitch=None, spread=30.0,
+             tilt_deg=0.0, tab=8.0, tab_width=None, holes=1, hole_d=2.2, x=0.0, mirror=False, hinge=None, lift=None,
+             material="titanium", process="laser"):
+    """Fork set (robot/modules/forks.py): `n` tines `length` x `width` (tip = width*taper), `thick` sheet, `pitch` mm
+    apart (or outer centres `spread` apart), pitched `tilt_deg` down; style plate (own tab per tine) | sheet (one comb).
+    Origin = hinge axis / tab bend line, tines +y. hinge {pin_d, range: [min, max], tab_h} adds pin, lugs + mount tab;
+    lift {servo, angle} adds a coaxial servo + horn link. Symmetric about `x`; `mirror` (here or in the use entry)
+    adds the mirror-image set at -x.
+    Parts: rigid plate -> `<id>_<j>` (kind fork, tab with `holes` x `hole_d` screw holes); rigid sheet -> `<id>`;
+    hinged -> `<id>` knuckle tube (revolute about +x, joint `range` deg, + = tips up), `<id>_<j>` tines or `<id>_sheet`
+    (children, kind other), `<id>_mount` (lugs + tab with screw holes), `<id>_pin` (kind pin); lift adds `<id>_horn`
+    and `<id>_servo`. Hinged parts are kind other with no `weapon`, so the kinematics checker sweeps only the joint
+    range: long hinged forks on a spinner are not swept through a full circle (what blocks `kind: weapon` forks).
+    In kit.json the same set is `"forks": {"style": "plate" | "sheet", ...}` (placed at the nose, tips on the floor)."""
+    from .modules import forks
+    return forks.fork_parts(id=id, style=style, n=n, length=length, width=width, taper=taper, thick=thick, pitch=pitch,
+                            spread=spread, tilt_deg=tilt_deg, tab=tab, tab_width=tab_width, holes=holes, hole_d=hole_d,
+                            x=x, mirror=mirror, hinge=hinge, lift=lift, material=material, process=process)
+
+
+fork_set.own_mirror = True  # mirror: "x" = mirror-image copy at -x (not the 180 deg turn drive pods use)
+
+
 # ---- placing ------------------------------------------------------------------------------------------------------
 
 def _place(p, at, rot, mx=False):
     """Compose a part's own at/rot under the use entry's placement (rot about z only is composed exactly; full rot
-    is applied by wrapping the part's shape)."""
+    is applied by wrapping the part's shape). A part with a `parent` stays in its parent's frame (it follows it)."""
     p = dict(p)
+    if p.get("parent"):
+        return p
     a = [float(v) for v in p.get("at", [0, 0, 0])]
     if mx:
         a[0] = -a[0]
@@ -200,7 +226,10 @@ def expand(use: list) -> list:
             raise ValueError(f"kit use: unknown part `{name}`; known: {', '.join(sorted(LIB))}")
         at, rot, mir = u.pop("at", [0, 0, 0]), u.pop("rot", [0, 0, 0]), u.pop("mirror", None)
         pid = u.pop("id", name)
-        if mir == "x":
+        if mir == "x" and getattr(LIB[name], "own_mirror", False):
+            u.update(mirror=True, x=float(u.get("x", 0.0)) + float(at[0]))
+            out += [_place(p, [0.0, at[1], at[2]], rot) for p in LIB[name](id=pid, **u)]
+        elif mir == "x":
             for side, mx in (("l", False), ("r", True)):
                 out += [_place(p, [(-1 if mx else 1) * float(at[0]), at[1], at[2]], rot, mx)
                         for p in LIB[name](id=f"{pid}_{side}", **u)]
