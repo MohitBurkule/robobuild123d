@@ -206,6 +206,14 @@ GENERATOR INTENT KEEPS YOUR ADDITIONS: put `reference`, `robot_type`, and hand-m
 LOOKS FIRST: `robot kit kit.json spec.json` builds a shape draft from named numbers (body box / twin pods with a centre
 slot + front ramp, weapon disc/drum/bar size+position+axis+teeth, 2 or 4 wheels anywhere, forks); see `robot/kit.py` doc.
 Only `likeness` judges it; iterate kit numbers with `robot likeness` until the photos match, then do the full build.
+FORKS: do not hand-roll tines. Use the shared fork set (`robot/modules/forks.py`): kit.json `"forks": {"style": "plate"
+| "sheet", "n", "length", "width", "taper", "thick", "pitch" | "spread", "tilt_deg", "tab", "holes", "hole_d", "x",
+"mirror", "hinge": {"pin_d", "range": [min, max]}, "lift": {"servo"}}` (no `style` = the old plain tines), or
+`{"part": "fork_set", ...}` in `use` (robot/KITPARTS.md). plate = one laser plate per tine with its own screw tab;
+sheet = one comb. `hinge` adds a knuckle tube on a pin (`kind: pin`, the axle), static lugs + a screw tab, a joint
+limited to `range`; `lift` adds a catalog servo coaxial with the hinge and a horn link. `mirror` + `x` makes a pair
+either side of a centre disc. Hinged forks are kind `other` with no `weapon`, so `kin.*` sweeps only the joint range:
+never model hinged forks as `kind: weapon` on a spinner, the verifier then sweeps them a full turn (long forks block).
 WHAT TO CHANGE: `robot diff-photo spec.json` writes renders/diff_<photo>.png = photo | model from the matching camera |
 overlay, and (with ANTHROPIC_API_KEY) a Haiku-written list of concrete differences. Read the sheet every loop.
 CLUSTERBOTS: model ONE bot and set top-level `"cluster": N` in the spec: the mass limit becomes 150/N g per bot
@@ -709,3 +717,19 @@ model is all grey". Fix them with these tools instead of reshaping, then re-run 
 - Part does not fit: `robot probe --place PART` for the free box, then `robot catalog --kind KIND --fits LxWxH`.
 - Overlap of a few tenths of a mm: the `fit.interference` message gives the measured move; apply it, don't guess.
 - Generate spec.json from the CAD masters (`make_spec.py`); never hand-patch coordinates that a master drives.
+
+## Copying a real robot (`reference_copy`)
+A copy must look and work like the original, so our own combat-effectiveness taste must not force it to change. Add
+`"reference_copy": {"robot": "Baphomet", "source": "AWS wiki photos aws74-77"}` to the spec: `spinner.reach` (rim must reach the
+floor, weapon must lead), `spinner.mass_share`, `shape.weapon_leads`, `archetype.blade_lead`, `archetype.wedgelets_flank` and the
+`combat`/`coverage` groups then drop from BLOCKER to WARNING and are listed under `copy_mode` in the report. Buildability
+(interference, assembly, mass, fit, fasteners, wiring) is never relaxed. Our own robots (no `reference_copy`) keep every rule.
+Code: `robot/checks/copymode.py`.
+
+## Photo pose (`robot pose-photo SPEC`)
+Monocular depth (Depth Anything V2 small, ONNX CPU, auto-downloaded) + silhouette fit of the CAD through a pinhole camera.
+Writes `<robot>/pose/<photo>.pose.json` (camera az/el/roll, distance, fx/fy/cx/cy, robot-in-camera 4x4, scores, runner-ups,
+`confidence`), `.depth.png` and a side-by-side `.overlay.png`. `view_string` ("az,el!") feeds `robot render --view`.
+Evidence is photo mask + depth only; the declared REFERENCE.json view is reported, not used. Robot assumed flat on floor.
+`robot part-pose SPEC [SEGDIR]`: per partseg part, median metric depth, 3D centroid / normal / extent in the robot frame and
+pairwise offsets (`part_pose.json` in the segments folder). Needs pose-photo + partseg export; trust only if `calibration.r` is high.
