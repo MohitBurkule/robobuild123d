@@ -1,0 +1,104 @@
+{
+ "robot_type": "horizontal_spinner",
+ "body": {
+  "length": 62,
+  "width": 64,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 14,
+  "width": 9,
+  "y": [
+   -26
+  ]
+ },
+ "weapon": {
+  "kind": "ring",
+  "radius": 52,
+  "width": 3,
+  "y": 26,
+  "teeth": 1,
+  "thick": 8,
+  "z": 5,
+  "axis": "z"
+ },
+ "colors": {
+  "body": "#1f2226",
+  "wheel": "#3fa8b8",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  1
+ ],
+ "ref": {
+  "robot_type": "horizontal_spinner",
+  "wheels": 2,
+  "weapon": {
+   "kind": "ring",
+   "axis": "z"
+  }
+ },
+ "name": "gargantua",
+ "macros": [
+  {
+   "box": [
+    36,
+    30,
+    8
+   ],
+   "at": [
+    0,
+    -10,
+    32
+   ],
+   "id": "lid",
+   "color": "#1f2226"
+  },
+  {
+   "box": [
+    8,
+    110,
+    3
+   ],
+   "at": [
+    0,
+    30,
+    5
+   ],
+   "id": "spoke",
+   "color": "#c9cdd3"
+  },
+  {
+   "box": [
+    110,
+    8,
+    3
+   ],
+   "at": [
+    0,
+    30,
+    5
+   ],
+   "id": "spoke2",
+   "color": "#c9cdd3"
+  },
+  {
+   "box": [
+    16,
+    16,
+    3
+   ],
+   "at": [
+    50,
+    62,
+    5
+   ],
+   "id": "tooth",
+   "color": "#c9cdd3"
+  }
+ ]
+}

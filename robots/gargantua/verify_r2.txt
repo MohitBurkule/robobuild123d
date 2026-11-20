@@ -1,0 +1,112 @@
+BLOCKERS: 25
+  [ran] integrity 0.03s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.47s
+  [ran] connections 0.01s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.58s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.83s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.04s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 4.24s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.01s
+  [ran] geom 0.04s
+  [ran] dfm 0.02s
+  [ran] realworld 0.01s
+gargantua: ok=False 25 blockers in 25 root causes, mass 215.6/150 g
+1. [integrity.volume] `weapon` volume 8143 mm3 vs previous 30832 (-74%)
+   fix: The solid lost most of its material: check the last boolean/fillet.
+   | weapon: x -58.00..58.00  y -27.98..87.98  z 3.50..6.50  size 116.00 x 115.96 x 3.00 mm
+   |   centre (0.00, 30.00, 5.00), volume 8143.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 1.39 mm (allowed 0.08)
+2. [mass.over] 215.6 g (range 182.4 to 248.7 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+3. [proxy.interference] `chassis` and `weapon` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -12.00..14.00  size 72.00 x 70.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 131040.0 mm3
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+   |   OVERLAP `spoke` 1.39 mm (allowed 0.08)
+   |   OVERLAP `spoke2` 1.39 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `spoke` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -12.00..14.00  size 72.00 x 70.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 131040.0 mm3
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+   |   OVERLAP `spoke` 1.39 mm (allowed 0.08)
+   |   OVERLAP `spoke2` 1.39 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `spoke2` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -12.00..14.00  size 72.00 x 70.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 131040.0 mm3
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+   |   OVERLAP `spoke` 1.39 mm (allowed 0.08)
+   |   OVERLAP `spoke2` 1.39 mm (allowed 0.08)
+6. [proxy.interference] `weapon` and `wheel_l0` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -58.00..58.00  y -27.98..87.98  z 3.50..6.50  size 116.00 x 115.96 x 3.00 mm
+   |   centre (0.00, 30.00, 5.00), volume 8143.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 1.39 mm (allowed 0.08)
+7. [proxy.interference] `weapon` and `wheel_r0` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -58.00..58.00  y -27.98..87.98  z 3.50..6.50  size 116.00 x 115.96 x 3.00 mm
+   |   centre (0.00, 30.00, 5.00), volume 8143.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 1.39 mm (allowed 0.08)
+8. [proxy.interference] `spoke` and `spoke2` overlap by 1.39 mm (allowed 0.08).
+   | spoke: x -4.00..4.00  y -25.00..85.00  z -10.50..-7.50  size 8.00 x 110.00 x 3.00 mm
+   |   centre (0.00, 30.00, -9.00), volume 2640.0 mm3
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `spoke2` 1.39 mm (allowed 0.08)
+   | spoke2: x -55.00..55.00  y 26.00..34.00  z -10.50..-7.50  size 110.00 x 8.00 x 3.00 mm
+9. [connection.floating] `lid` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | lid: x -18.00..18.00  y -25.00..5.00  z 14.00..22.00  size 36.00 x 30.00 x 8.00 mm
+   |   centre (0.00, -10.00, 18.00), volume 8640.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -12.00..14.00  size 72.00 x 70.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 131040.0 mm3
+10. [connection.floating] `tooth` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `weapon`, 11.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | tooth: x 42.00..58.00  y 54.00..70.00  z -10.50..-7.50  size 16.00 x 16.00 x 3.00 mm
+   |   centre (50.00, 62.00, -9.00), volume 768.0 mm3
+   | weapon: x -58.00..58.00  y -27.98..87.98  z 3.50..6.50  size 116.00 x 115.96 x 3.00 mm
+   |   centre (0.00, 30.00, 5.00), volume 8143.0 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+11. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+12. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+... 13 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 215.6 g of 150 g (-65.6 g margin)
+    chassis                   124.75 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon                     64.33 g  fills 20% of its box
+    lid                         8.23 g  fills 100% of its box
+    wheel_l0                    5.65 g  fills 79% of its box
+    wheel_r0                    5.65 g  fills 79% of its box
+    spoke                       2.51 g  fills 100% of its box
+    spoke2                      2.51 g  fills 100% of its box
+    tooth                       0.73 g  fills 100% of its box
+    mass.over: 215.6 g (range 182.4 to 248.7 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 3 miss, group 0 hit / 31 miss, inside 4 hit / 4 miss, likeness 1 hit / 0 miss, min_gap 18 hit / 9 miss, overlap 38 hit / 72 miss, part_check 1 hit / 1 miss, part_geom 8 hit / 0 miss, ray 4 hit / 36 miss
