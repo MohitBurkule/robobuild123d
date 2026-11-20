@@ -1,0 +1,120 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/baphomet/spec.json",
+ "rendered_at": 1795113719.8318183,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "weapon",
+  "tooth_l",
+  "tooth_r",
+  "dt_shaft_weapon",
+  "weapon_arm_r",
+  "weapon_arm_l",
+  "fork_0",
+  "fork_1",
+  "top_plate",
+  "decal_disc",
+  "decal_ring",
+  "decal_star",
+  "label_onoff",
+  "lock_pin",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor_stator",
+  "weapon_motor_can",
+  "wbearing",
+  "bolt_wm0",
+  "bolt_wm1"
+ ],
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    14.0,
+    -34.5,
+    4.5
+   ],
+   "to": [
+    -11.5,
+    18.8,
+    -11.5
+   ]
+  },
+  "w_wm": {
+   "from": [
+    11.5,
+    21.8,
+    -11.5
+   ],
+   "to": [
+    29.0,
+    45.0,
+    5.500000000000001
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    0.0,
+    16.0,
+    -7.5
+   ],
+   "to": [
+    6.0,
+    -34.5,
+    4.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    14.0,
+    -34.5,
+    4.5
+   ],
+   "to": [
+    -16.0,
+    4.5,
+    -0.2
+   ]
+  },
+  "w_m1": {
+   "from": [
+    16.0,
+    16.5,
+    -0.2
+   ],
+   "to": [
+    8.5,
+    -10.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.0,
+    16.5,
+    -0.2
+   ],
+   "to": [
+    -8.5,
+    -10.000000000000002,
+    0.0
+   ]
+  },
+  "w_sig_wesc": {
+   "from": [
+    16.0,
+    4.5,
+    -0.2
+   ],
+   "to": [
+    -11.5,
+    24.8,
+    -11.5
+   ]
+  }
+ }
+}
