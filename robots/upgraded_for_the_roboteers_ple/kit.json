@@ -1,0 +1,122 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 100,
+  "width": 110,
+  "height": 30,
+  "ramp": 30,
+  "top": [
+   [
+    -55,
+    -25
+   ],
+   [
+    -35,
+    -50
+   ],
+   [
+    35,
+    -50
+   ],
+   [
+    55,
+    -25
+   ],
+   [
+    55,
+    20
+   ],
+   [
+    30,
+    50
+   ],
+   [
+    -30,
+    50
+   ],
+   [
+    -55,
+    20
+   ]
+  ]
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -30
+  ],
+  "outside": false,
+  "x": 50
+ },
+ "colors": {
+  "body": "#1c1d20",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "upgraded for the roboteers ple",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     -2,
+     30
+    ],
+    [
+     12,
+     30
+    ],
+    [
+     2,
+     58
+    ],
+    [
+     -18,
+     78
+    ],
+    [
+     -28,
+     74
+    ],
+    [
+     -12,
+     54
+    ]
+   ],
+   "x": [
+    -4,
+    4
+   ],
+   "weapon": "axe",
+   "pivot": [
+    5,
+    30
+   ],
+   "id": "arm",
+   "color": "#eeeeea"
+  },
+  {
+   "cyl": [
+    11,
+    10
+   ],
+   "at": [
+    0,
+    8,
+    34
+   ],
+   "axis": "x",
+   "id": "gear",
+   "color": "#eeeeea"
+  }
+ ]
+}

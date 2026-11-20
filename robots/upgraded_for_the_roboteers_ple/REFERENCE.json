@@ -1,0 +1,19 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "axe",
+  "axis": "x"
+ },
+ "photos": [
+  "upgraded_for_the_roboteers_pleasure.aws67.webp"
+ ],
+ "view": {
+  "upgraded_for_the_roboteers_pleasure.aws66.webp": "top",
+  "upgraded_for_the_roboteers_pleasure.aws67.webp": "front_left_iso",
+  "upgraded_for_the_roboteers_pleasure.aws68.webp": "top"
+ },
+ "view_source": {
+  "upgraded_for_the_roboteers_pleasure.aws67.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
+}
