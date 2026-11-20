@@ -1,0 +1,60 @@
+{
+ "robot_type": "lifter",
+ "cluster": 2,
+ "body": {
+  "length": 34,
+  "width": 60,
+  "height": 30,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 15,
+  "width": 14,
+  "y": [
+   -4
+  ]
+ },
+ "colors": {
+  "body": "#e8e8e4",
+  "wheel": "#f2f2ee",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0
+ ],
+ "textured": [
+  1
+ ],
+ "name": "tip and pit",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    44,
+    38,
+    2
+   ],
+   "at": [
+    0,
+    8,
+    31
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    0,
+    28
+   ],
+   "id": "plate",
+   "color": "#b9bdc2",
+   "rot": [
+    -18,
+    0,
+    0
+   ]
+  }
+ ]
+}
