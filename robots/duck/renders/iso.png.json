@@ -1,0 +1,90 @@
+{
+ "spec": "/tmp/work10_duck/robots/duck/spec.json",
+ "rendered_at": 1795076551.9672105,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "flipper",
+  "duckname_2",
+  "duckname_1",
+  "duckface_beak",
+  "duckface_head",
+  "duckface_bg",
+  "duckface_rim",
+  "front_plate",
+  "front_lip",
+  "hook_l",
+  "hook_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch",
+  "wa_act"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    15.5,
+    -3.254
+   ],
+   "to": [
+    -3.5,
+    -13.5,
+    -3.7539999999999996
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.5,
+    -13.5,
+    -3.7539999999999996
+   ],
+   "to": [
+    -15.5,
+    -3.5,
+    5.746
+   ]
+  },
+  "w_m1": {
+   "from": [
+    16.5,
+    8.5,
+    5.746
+   ],
+   "to": [
+    17.5,
+    -28.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -15.5,
+    8.5,
+    5.746
+   ],
+   "to": [
+    -17.5,
+    -28.0,
+    0.0
+   ]
+  },
+  "w_wpn": {
+   "from": [
+    16.5,
+    -3.5,
+    5.746
+   ],
+   "to": [
+    -0.8500000000000014,
+    -20.0,
+    12.0
+   ]
+  }
+ }
+}
