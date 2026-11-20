@@ -1,0 +1,5 @@
+{"name":"stronghold","robot_type":"wedge",
+ "body":{"length":64,"width":82,"height":34,"ramp":0,"style":"box","clearance":3},
+ "weapon":{"kind":"none"},
+ "wheels":{"n":2,"radius":13,"width":10,"y":[-25],"outside":false},
+ "forks":{"n":2,"length":42,"width":4,"spread":42}}
