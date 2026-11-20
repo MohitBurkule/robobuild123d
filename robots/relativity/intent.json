@@ -1,0 +1,64 @@
+{
+ "hypothesis": "hspin_bar",
+ "name": "Relativity",
+ "outline": [
+  [
+   -48,
+   -42
+  ],
+  [
+   48,
+   -42
+  ],
+  [
+   52,
+   -6
+  ],
+  [
+   36,
+   28
+  ],
+  [
+   14,
+   52
+  ],
+  [
+   -14,
+   52
+  ],
+  [
+   -36,
+   28
+  ],
+  [
+   -52,
+   -6
+  ]
+ ],
+ "y0": -42,
+ "y1": 52,
+ "zb": -8,
+ "zt": 16,
+ "axle_y": -24,
+ "robot_type": "hspin_bar",
+ "reference": [
+  {
+   "image": "reference/relativity.aws72.webp",
+   "view": "iso",
+   "mask": "reference/relativity.aws72_mask.png",
+   "approximate": true
+  },
+  {
+   "image": "reference/relativity.aws74.webp",
+   "view": "iso",
+   "mask": "reference/relativity.aws74_mask.png",
+   "approximate": true
+  },
+  {
+   "image": "reference/relativity.aws76.webp",
+   "view": "iso",
+   "mask": "reference/relativity.aws76_mask.png",
+   "approximate": true
+  }
+ ]
+}

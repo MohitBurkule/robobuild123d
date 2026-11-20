@@ -1,0 +1,121 @@
+BLOCKERS: 126
+  [ran] integrity 0.07s
+  [proxy] wiring 0.01s
+  [ran] mass 0.02s
+  [proxy] interference 4.04s
+  [ran] connections 0.95s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.12s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.36s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.08s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.06s
+  [ran] bom 0.00s
+  [ran] wire_review 0.04s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.10s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.07s
+  [ran] dfm 0.01s
+  [ran] realworld 0.13s
+Relativity: ok=False 126 blockers in 110 root causes, mass 249.2/150 g
+1. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -44.90..-41.10  y -42.90..-39.10  z 19.60..21.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-43.00, -41.00, 20.30), volume 15.9 mm3
+   |   OVERLAP `wall_l` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 41.10..44.90  y -42.90..-39.10  z 19.60..21.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (43.00, -41.00, 20.30), volume 15.9 mm3
+2. [proxy.interference] `chassis_bottom` and `dt_screw_2` overlap by 0.65 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis_bottom: x -50.00..50.00  y -48.00..52.00  z -4.00..16.00  size 100.00 x 100.00 x 20.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 148642.7 mm3
+   |   OVERLAP `motor_l` 4.88 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 4.88 mm (allowed 0.08)
+   |   OVERLAP `battery` 4.88 mm (allowed 0.08)
+3. [connection.ref] `insert_c0`-`chassis_bottom`. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis_bottom: x -50.00..50.00  y -48.00..52.00  z -4.00..16.00  size 100.00 x 100.00 x 20.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 148642.7 mm3
+   |   OVERLAP `motor_l` 4.88 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 4.88 mm (allowed 0.08)
+   |   OVERLAP `battery` 4.88 mm (allowed 0.08)
+4. [connection.ref] `insert_w0`-`chassis_top`. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `hub`. (+1 consequences)
+   | weapon: x -30.00..30.00  y 41.00..63.00  z -13.00..-10.00  size 60.00 x 22.00 x 3.00 mm
+   |   centre (0.00, 52.00, -11.50), volume 2239.4 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0, 0, -2.5] range 0..360 default 0
+   |   parent weapon_motor (moves with it)
+   |   overlap allowed `weapon_motor` 1.39 mm (allowed 1000.00)
+6. [connection.floating] `dt_screw_4` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis_bottom`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_4: x -1.90..1.90  y -42.90..-39.10  z 15.60..17.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (0.00, -41.00, 16.30), volume 15.9 mm3
+   |   OVERLAP `chassis_bottom` 0.19 mm (allowed 0.08)
+   | chassis_bottom: x -50.00..50.00  y -48.00..52.00  z -4.00..16.00  size 100.00 x 100.00 x 20.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 148642.7 mm3
+7. [proxy.wiring] Wire `w_bat_sw` (`battery.xt30` to `power_switch.in`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+8. [proxy.wiring] Wire `w_sw_esc` (`power_switch.out` to `esc.bat`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+9. [proxy.wiring] Wire `w_esc_ml` (`esc.m2` to `motor_l.terminals`): its ports moved 36.89 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+10. [proxy.wiring] Wire `w_esc_mr` (`esc.m1` to `motor_r.terminals`): its ports moved 52.01 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+11. [proxy.wiring] Wire `w_sw_wesc` (`power_switch.out` to `wesc.bat`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+12. [proxy.wiring] Wire `w_wesc_m` (`wesc.motor` to `weapon_motor.phases`): its ports moved 28.07 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+... 98 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 249.2 g of 150 g (-99.2 g margin)
+    chassis_bottom            141.51 g  fills 74% of its box  <- solid block? a tub should be a shell
+    weapon                     17.69 g  fills 57% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    battery                    15.80 g  fills 100% of its box  <- solid block? a tub should be a shell
+    motor_l                     7.50 g  fills 67% of its box
+    motor_r                     7.50 g  fills 67% of its box
+    wesc                        5.00 g  fills 100% of its box
+    dt_shaft_weapon             4.34 g  fills 79% of its box
+    hub                         4.04 g  fills 79% of its box
+    wheel_l                     3.15 g  fills 77% of its box
+    wheel_r                     3.15 g  fills 77% of its box
+    wall_l                      2.74 g  fills 100% of its box
+    wall_r                      2.74 g  fills 100% of its box
+    esc                         2.30 g  fills 100% of its box
+    dt_hubw_weapon              2.15 g  fills 79% of its box
+    handle_bar                  1.71 g  fills 100% of its box
+    dt_axle_wheel_r             1.04 g  fills 79% of its box
+    dt_axle_wheel_l             1.04 g  fills 79% of its box
+    dt_hub_wheel_l              0.90 g  fills 79% of its box
+    dt_hub_wheel_r              0.90 g  fills 79% of its box
+    dt_strut_eye_r              0.75 g  fills 31% of its box
+    dt_strut_eye_l              0.72 g  fills 23% of its box
+    power_switch                0.50 g  fills 100% of its box
+    handle_l                    0.46 g  fills 100% of its box
+    handle_r                    0.46 g  fills 100% of its box
+    dt_nut_wheel_l              0.27 g  fills 79% of its box
+    dt_nut_wheel_r              0.27 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_4                  0.13 g  fills 79% of its box
+    dt_screw_5                  0.13 g  fills 79% of its box
+    eye_l                       0.07 g  fills 79% of its box
+    eye_r                       0.07 g  fills 79% of its box
+    mass.over: 249.2 g (range 206.3 to 292.0 g) against the 150 g limit; 9.0 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 41 hit / 0 miss, group 0 hit / 31 miss, inside 12 hit / 16 miss, likeness 3 hit / 0 miss, min_gap 81 hit / 126 miss, overlap 207 hit / 332 miss, part_check 3 hit / 0 miss, part_geom 35 hit / 0 miss, ray 129 hit / 92 miss

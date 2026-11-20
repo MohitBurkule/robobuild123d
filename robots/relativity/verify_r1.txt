@@ -1,0 +1,94 @@
+  [ran] integrity 0.05s
+  [proxy] wiring 0.06s
+  [ran] mass 0.01s
+  [proxy] interference 2.85s
+  [ran] connections 1.08s
+  [ran] legal 0.02s
+  [ran] fasteners 0.01s
+  [ran] power 0.02s
+  [ran] tension 0.01s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.51s
+  [ran] dynamics 0.02s
+  [ran] strength 0.00s
+  [ran] printability 0.62s
+  [ran] process 0.05s
+  [ran] electrical 0.01s
+  [ran] combat 0.09s
+  [ran] physics 0.01s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.44s
+  [ran] bom 0.01s
+  [ran] wire_review 0.07s
+  [ran] fastener_record 0.00s
+  [ran] likeness 7.42s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.04s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.06s
+  [ran] dfm 0.02s
+  [ran] realworld 0.27s
+Relativity: ok=False 75 blockers in 68 root causes, mass 236.1/150 g
+1. [connection.ref] `insert_c0`-`chassis_bottom`. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis_bottom: x -50.00..50.00  y -48.00..52.00  z -4.00..16.00  size 100.00 x 100.00 x 20.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 148642.7 mm3
+   |   OVERLAP `motor_l` 4.88 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 4.88 mm (allowed 0.08)
+   |   OVERLAP `battery` 4.88 mm (allowed 0.08)
+2. [connection.ref] `insert_w0`-`chassis_top`. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+3. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `hub`. (+1 consequences)
+   | weapon: x -30.00..30.00  y 41.00..63.00  z -13.00..-10.00  size 60.00 x 22.00 x 3.00 mm
+   |   centre (0.00, 52.00, -11.50), volume 2239.4 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0, 0, -2.5] range 0..360 default 0
+   |   parent weapon_motor (moves with it)
+   |   overlap allowed `weapon_motor` 1.39 mm (allowed 1000.00)
+4. [proxy.wiring] Wire `w_bat_sw` (`battery.xt30` to `power_switch.in`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+5. [proxy.wiring] Wire `w_sw_esc` (`power_switch.out` to `esc.bat`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+6. [proxy.wiring] Wire `w_esc_ml` (`esc.m2` to `motor_l.terminals`): its ports moved 36.89 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+7. [proxy.wiring] Wire `w_esc_mr` (`esc.m1` to `motor_r.terminals`): its ports moved 52.01 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+8. [proxy.wiring] Wire `w_sw_wesc` (`power_switch.out` to `wesc.bat`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+9. [proxy.wiring] Wire `w_wesc_m` (`wesc.motor` to `weapon_motor.phases`): its ports moved 28.07 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+10. [proxy.wiring] Wire `w_rx_wesc` (`esc.wpn` to `wesc.rx`): its ports moved 44.91 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+11. [mass.over] 236.1 g (range 194.0 to 278.1 g) against the 150 g limit; 9.0 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+12. [proxy.interference] `chassis_bottom` and `motor_l` overlap by 4.88 mm (allowed 0.08).
+   | chassis_bottom: x -50.00..50.00  y -48.00..52.00  z -4.00..16.00  size 100.00 x 100.00 x 20.00 mm
+   |   centre (0.00, 2.00, 6.00), volume 148642.7 mm3
+   |   OVERLAP `motor_l` 4.88 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 4.88 mm (allowed 0.08)
+   |   OVERLAP `battery` 4.88 mm (allowed 0.08)
+... 56 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 236.1 g of 150 g (-86.1 g margin)
+    chassis_bottom            141.51 g  fills 74% of its box  <- solid block? a tub should be a shell
+    weapon                     17.69 g  fills 57% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    battery                    15.80 g  fills 100% of its box  <- solid block? a tub should be a shell
+    motor_l                     7.50 g  fills 67% of its box
+    motor_r                     7.50 g  fills 67% of its box
+    wesc                        5.00 g  fills 100% of its box
+    hub                         4.04 g  fills 79% of its box
+    wheel_l                     3.15 g  fills 77% of its box
+    wheel_r                     3.15 g  fills 77% of its box
+    wall_l                      2.74 g  fills 100% of its box
+    wall_r                      2.74 g  fills 100% of its box
+    esc                         2.30 g  fills 100% of its box
+    handle_bar                  1.71 g  fills 100% of its box
+    power_switch                0.50 g  fills 100% of its box
+    handle_l                    0.46 g  fills 100% of its box
+    handle_r                    0.46 g  fills 100% of its box
+    eye_l                       0.07 g  fills 79% of its box
+    eye_r                       0.07 g  fills 79% of its box
+    mass.over: 236.1 g (range 194.0 to 278.1 g) against the 150 g limit; 9.0 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 40 miss, group 0 hit / 31 miss, inside 2 hit / 10 miss, likeness 3 hit / 0 miss, min_gap 10 hit / 102 miss, overlap 53 hit / 104 miss, part_check 2 hit / 1 miss, part_geom 19 hit / 0 miss, ray 0 hit / 129 miss

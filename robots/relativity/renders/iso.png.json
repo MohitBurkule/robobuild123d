@@ -1,0 +1,105 @@
+{
+ "spec": "/tmp/work10_relativity/robots/relativity/spec.json",
+ "rendered_at": 1795051911.6028955,
+ "bodies": [
+  "chassis_bottom",
+  "motor_l",
+  "wheel_l",
+  "motor_r",
+  "wheel_r",
+  "battery",
+  "esc",
+  "wesc",
+  "power_switch",
+  "weapon_motor",
+  "weapon",
+  "handle_bar",
+  "handle_l",
+  "handle_r",
+  "wall_l",
+  "wall_r",
+  "eye_l",
+  "eye_r",
+  "hub",
+  "dt_hub_wheel_l",
+  "dt_hub_wheel_r",
+  "dt_shaft_weapon",
+  "dt_hubw_weapon",
+  "dt_strut_eye_l",
+  "dt_strut_eye_r"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    17.0,
+    1.0,
+    0.0
+   ],
+   "to": [
+    27.0,
+    11.0,
+    9.5
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    35.0,
+    11.0,
+    9.5
+   ],
+   "to": [
+    16.5,
+    9.0,
+    0.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    35.0,
+    11.0,
+    9.5
+   ],
+   "to": [
+    -17.0,
+    -12.0,
+    0.0
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    -25.0,
+    -12.0,
+    0.0
+   ],
+   "to": [
+    5.549999999999997,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    -25.0,
+    20.0,
+    0.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_rx_wesc": {
+   "from": [
+    -17.0,
+    20.0,
+    0.0
+   ],
+   "to": [
+    -6.5,
+    12.0,
+    0.0
+   ]
+  }
+ }
+}
