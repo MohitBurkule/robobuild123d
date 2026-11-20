@@ -1,0 +1,52 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 80,
+  "width": 84,
+  "height": 30,
+  "ramp": 32
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 9,
+  "y": [
+   -28,
+   20
+  ]
+ },
+ "forks": {
+  "n": 6,
+  "length": 34,
+  "width": 10,
+  "spread": 68,
+  "tilt_deg": 22,
+  "z": 6
+ },
+ "colors": {
+  "body": "#1c1d20",
+  "wheel": "#22262a",
+  "weapon": "#c9cdd3",
+  "fork": "#f0603a"
+ },
+ "name": "pingu",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    56,
+    44,
+    2
+   ],
+   "at": [
+    0,
+    -12,
+    33
+   ],
+   "id": "lid",
+   "color": "#eeeeea"
+  }
+ ]
+}
