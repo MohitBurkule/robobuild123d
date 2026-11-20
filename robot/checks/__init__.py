@@ -284,6 +284,9 @@ def _group_key(name, r, opts, base_key):
     if name == "likeness":  # also reads the folder: reference/ photos, REFERENCE.json, sibling robots' specs
         from . import likeness
         return cache.h("group", name, base_key, likeness.folder_key(r.spec))
+    if name == "photopose":  # reads <robot>/pose/*.json
+        from . import photopose
+        return cache.h("group", name, base_key, photopose.folder_key(r.spec))
     return cache.h("group", name, base_key)
 
 
