@@ -1,0 +1,21 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "pantherk_ii.aws66.webp",
+  "pantherk_ii.aws67.webp",
+  "pantherk_ii.aws68.webp"
+ ],
+ "view": {
+  "pantherk_ii.aws66.webp": "front"
+ },
+ "elevation": {
+  "pantherk_ii.aws66.webp": 45
+ },
+ "view_source": {
+  "pantherk_ii.aws66.webp": "user camera pick (azimuth 90, elevation 65); replaces the automatic label"
+ }
+}

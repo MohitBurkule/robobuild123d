@@ -1,0 +1,52 @@
+{
+ "spec": "/tmp/work10_pantherk/robots/pantherk/spec.json",
+ "rendered_at": 1795037745.2491581,
+ "bodies": [
+  "pod_l",
+  "pod_r",
+  "bridge",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "top_plate",
+  "picture",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_esc",
+  "el_switch"
+ ],
+ "wires": {
+  "w_sw_esc": {
+   "from": [
+    -14.5,
+    -15.5,
+    -3.0
+   ],
+   "to": [
+    -15.5,
+    -8.5,
+    6.5
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -15.5,
+    3.5,
+    6.5
+   ],
+   "to": [
+    -15.5,
+    15.999999999999998,
+    0.0
+   ]
+  }
+ }
+}
