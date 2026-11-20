@@ -1,0 +1,49 @@
+
+## Tools I wanted
+- Kit weapon kind `lifter` (hinged plate/arm with pivot). Did instead: a hand-written extra prism/box marked kind weapon with a revolute joint. ~3 min.
+- Free primitives in kit.json (`extras`). Did instead: private generator script that appends lifter_nose to the kit spec. ~2 min per robot plus the script.
+- Colours in kit.json and `--palette spec` by default. Did instead: generator recolours parts. ~1 min.
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 1 (one-shot)
+Decisions: type lifter; body box rect 95x66x24 mm, ramp 20; wheels 6 r12 outboard; weapon none; extra parts: lifter, lifter_nose.
+
+Likeness: aws67 0.80 (FAIL).
+
+## Round 2 (looks)
+Decisions: type lifter; body box rect 95x66x24 mm, ramp 20; wheels 6 r12 outboard; weapon none; extra parts: lifter, lifter_nose.
+
+Likeness: aws67 0.80 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 95x66x24 mm, ramp 20; wheels 6 r12 outboard; weapon none; extra parts: lifter, lifter_nose.
+
+Likeness: aws67 0.69 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.69 there) but the model matches it better from front_right_i
+
+## Round 4 (verification, helper 2)
+Blockers r3 87 -> r4 6 (`verify --tier inner`).
+
+Fixed / changed (inside only, outside kept):
+- detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
+- catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l1` (pololu_hpcb6v_50to1), `dm_wheel_r1` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
+- overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
+- one print with the chassis (same material, `fused_with`): `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`, `dt_hub_wheel_l2`, `dt_hub_wheel_r2`
+- 5 wires declared (battery - switch - ESC - motors)
+- print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
+- power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
+- lifter sweeps through chassis at 41 poses: not carved (would change the outside)
+- rod dt_axle_wheel_l1: 2.8 mm stub clear of ['dm_wheel_l1'] printed as the wheel's hub boss
+- rod dt_axle_wheel_r1: 2.8 mm stub clear of ['dm_wheel_r1'] printed as the wheel's hub boss
+- hollowed chassis (wall 2.5, form 0): 135.6 -> 56.4 cm3
+- hollow skipped lifter_nose: solids 1 vol 1.00
+- lifter_nose: not touching the chassis, left undeclared
+- dt_strut_lifter_nose: not touching the chassis, left undeclared
+
+Left (and why):
+- proxy.wiring x3: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (8 samples).
+- proxy.sweep x1: joint `lifter`: `lifter` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
+- likeness.view x1: looks, not in scope for this pass.
+- likeness.silhouette x1: looks, not in scope for this pass.
+
+Likeness (best silhouette IoU per photo, r3 -> r4): the_golden_nugget.aws67.webp 0.69 -> 0.69
