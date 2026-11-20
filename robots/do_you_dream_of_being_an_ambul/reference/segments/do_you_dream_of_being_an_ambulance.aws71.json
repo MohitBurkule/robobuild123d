@@ -1,0 +1,557 @@
+{
+ "photo": "do_you_dream_of_being_an_ambulance.aws71.webp",
+ "prompts": [
+  {
+   "label": "back wheel top",
+   "kind": "wheel",
+   "points": [
+    [
+     0.54,
+     0.07
+    ]
+   ]
+  },
+  {
+   "label": "back wheel left",
+   "kind": "wheel",
+   "points": [
+    [
+     0.28,
+     0.16
+    ]
+   ]
+  },
+  {
+   "label": "right wheel",
+   "kind": "wheel",
+   "points": [
+    [
+     0.92,
+     0.42
+    ]
+   ]
+  },
+  {
+   "label": "front center wheel",
+   "kind": "wheel",
+   "points": [
+    [
+     0.5,
+     0.66
+    ]
+   ]
+  },
+  {
+   "label": "top plate left",
+   "kind": "armour",
+   "points": [
+    [
+     0.6,
+     0.36
+    ],
+    [
+     0.5,
+     0.4
+    ]
+   ]
+  },
+  {
+   "label": "top plate right",
+   "kind": "armour",
+   "points": [
+    [
+     0.74,
+     0.36
+    ],
+    [
+     0.82,
+     0.42
+    ]
+   ]
+  },
+  {
+   "label": "rear body block",
+   "kind": "frame",
+   "points": [
+    [
+     0.68,
+     0.56
+    ]
+   ]
+  },
+  {
+   "label": "left nose wedge",
+   "kind": "wedge",
+   "points": [
+    [
+     0.06,
+     0.42
+    ]
+   ]
+  },
+  {
+   "label": "left front wedge",
+   "kind": "wedge",
+   "points": [
+    [
+     0.16,
+     0.38
+    ]
+   ]
+  },
+  {
+   "label": "left upright arm",
+   "kind": "frame",
+   "points": [
+    [
+     0.28,
+     0.52
+    ]
+   ]
+  },
+  {
+   "label": "lower left foot",
+   "kind": "wedge",
+   "points": [
+    [
+     0.26,
+     0.78
+    ]
+   ],
+   "neg": [
+    [
+     0.5,
+     0.66
+    ]
+   ]
+  },
+  {
+   "label": "lower left foot tip",
+   "kind": "wedge",
+   "points": [
+    [
+     0.2,
+     0.84
+    ]
+   ]
+  },
+  {
+   "label": "orange switch",
+   "kind": "electronics",
+   "points": [
+    [
+     0.52,
+     0.3
+    ]
+   ]
+  },
+  {
+   "label": "screw top back",
+   "kind": "fastener",
+   "points": [
+    [
+     0.26,
+     0.23
+    ]
+   ]
+  },
+  {
+   "label": "screw top center",
+   "kind": "fastener",
+   "points": [
+    [
+     0.55,
+     0.14
+    ]
+   ]
+  },
+  {
+   "label": "screw top right",
+   "kind": "fastener",
+   "points": [
+    [
+     0.725,
+     0.26
+    ]
+   ]
+  },
+  {
+   "label": "screw right plate",
+   "kind": "fastener",
+   "points": [
+    [
+     0.77,
+     0.45
+    ]
+   ]
+  },
+  {
+   "label": "screw front plate",
+   "kind": "fastener",
+   "points": [
+    [
+     0.44,
+     0.59
+    ]
+   ]
+  },
+  {
+   "label": "screw left upright 1",
+   "kind": "fastener",
+   "points": [
+    [
+     0.21,
+     0.37
+    ]
+   ]
+  },
+  {
+   "label": "screw left upright 2",
+   "kind": "fastener",
+   "points": [
+    [
+     0.25,
+     0.47
+    ]
+   ]
+  },
+  {
+   "label": "screw left upright 3",
+   "kind": "fastener",
+   "points": [
+    [
+     0.31,
+     0.62
+    ]
+   ]
+  },
+  {
+   "label": "silver tape strip top right",
+   "kind": "other",
+   "points": [
+    [
+     0.72,
+     0.27
+    ]
+   ]
+  },
+  {
+   "label": "silver tape strip top",
+   "kind": "other",
+   "points": [
+    [
+     0.66,
+     0.24
+    ]
+   ]
+  },
+  {
+   "label": "top plate centre",
+   "kind": "armour",
+   "points": [
+    [
+     0.58,
+     0.34
+    ],
+    [
+     0.52,
+     0.3
+    ]
+   ]
+  },
+  {
+   "label": "left upright lower",
+   "kind": "frame",
+   "points": [
+    [
+     0.26,
+     0.65
+    ]
+   ]
+  },
+  {
+   "label": "left nose tip",
+   "kind": "wedge",
+   "points": [
+    [
+     0.04,
+     0.45
+    ]
+   ]
+  },
+  {
+   "label": "front wheel tread",
+   "kind": "wheel",
+   "points": [
+    [
+     0.46,
+     0.61
+    ]
+   ]
+  }
+ ],
+ "segments": [],
+ "parts": [
+  {
+   "label": "back wheel top",
+   "kind": "wheel",
+   "regions": [
+    19
+   ],
+   "sam_score": 0.969
+  },
+  {
+   "label": "back wheel left",
+   "kind": "wheel",
+   "regions": [
+    20
+   ],
+   "sam_score": 0.979
+  },
+  {
+   "label": "right wheel",
+   "kind": "wheel",
+   "regions": [
+    21
+   ],
+   "sam_score": 0.971
+  },
+  {
+   "label": "front center wheel",
+   "kind": "wheel",
+   "regions": [
+    22
+   ],
+   "sam_score": 0.981
+  },
+  {
+   "label": "top plate left",
+   "kind": "armour",
+   "regions": [
+    23
+   ],
+   "sam_score": 0.931
+  },
+  {
+   "label": "top plate right",
+   "kind": "armour",
+   "regions": [
+    24
+   ],
+   "sam_score": 0.914
+  },
+  {
+   "label": "rear body block",
+   "kind": "frame",
+   "regions": [
+    25
+   ],
+   "sam_score": 0.952
+  },
+  {
+   "label": "left nose wedge",
+   "kind": "wedge",
+   "regions": [
+    26
+   ],
+   "sam_score": 0.917
+  },
+  {
+   "label": "left front wedge",
+   "kind": "wedge",
+   "regions": [
+    27
+   ],
+   "sam_score": 0.945
+  },
+  {
+   "label": "left upright arm",
+   "kind": "frame",
+   "regions": [
+    28
+   ],
+   "sam_score": 0.951
+  },
+  {
+   "label": "lower left foot",
+   "kind": "wedge",
+   "regions": [
+    29
+   ],
+   "sam_score": 0.993
+  },
+  {
+   "label": "lower left foot tip",
+   "kind": "wedge",
+   "regions": [
+    30
+   ],
+   "sam_score": 0.9
+  },
+  {
+   "label": "orange switch",
+   "kind": "electronics",
+   "regions": [
+    31
+   ],
+   "sam_score": 0.961
+  },
+  {
+   "label": "screw top back",
+   "kind": "fastener",
+   "regions": [
+    32
+   ],
+   "sam_score": 0.905
+  },
+  {
+   "label": "screw top center",
+   "kind": "fastener",
+   "regions": [
+    33
+   ],
+   "sam_score": 0.901
+  },
+  {
+   "label": "screw top right",
+   "kind": "fastener",
+   "regions": [
+    34
+   ],
+   "sam_score": 0.884
+  },
+  {
+   "label": "screw right plate",
+   "kind": "fastener",
+   "regions": [
+    35
+   ],
+   "sam_score": 0.921
+  },
+  {
+   "label": "screw front plate",
+   "kind": "fastener",
+   "regions": [
+    36
+   ],
+   "sam_score": 0.936
+  },
+  {
+   "label": "screw left upright 1",
+   "kind": "fastener",
+   "regions": [
+    37
+   ],
+   "sam_score": 0.975
+  },
+  {
+   "label": "screw left upright 2",
+   "kind": "fastener",
+   "regions": [
+    38
+   ],
+   "sam_score": 0.964
+  },
+  {
+   "label": "screw left upright 3",
+   "kind": "fastener",
+   "regions": [
+    39
+   ],
+   "sam_score": 0.958
+  },
+  {
+   "label": "silver tape strip top right",
+   "kind": "other",
+   "regions": [
+    40
+   ],
+   "sam_score": 0.909
+  },
+  {
+   "label": "silver tape strip top",
+   "kind": "other",
+   "regions": [
+    41
+   ],
+   "sam_score": 0.829
+  },
+  {
+   "label": "auto_1",
+   "kind": "unassigned",
+   "regions": [
+    1
+   ]
+  },
+  {
+   "label": "auto_2",
+   "kind": "unassigned",
+   "regions": [
+    2
+   ]
+  },
+  {
+   "label": "auto_3",
+   "kind": "unassigned",
+   "regions": [
+    3
+   ]
+  },
+  {
+   "label": "auto_4",
+   "kind": "unassigned",
+   "regions": [
+    4
+   ]
+  },
+  {
+   "label": "auto_5",
+   "kind": "unassigned",
+   "regions": [
+    5
+   ]
+  },
+  {
+   "label": "auto_6",
+   "kind": "unassigned",
+   "regions": [
+    6
+   ]
+  },
+  {
+   "label": "auto_7",
+   "kind": "unassigned",
+   "regions": [
+    7
+   ]
+  },
+  {
+   "label": "auto_9",
+   "kind": "unassigned",
+   "regions": [
+    9
+   ]
+  },
+  {
+   "label": "auto_10",
+   "kind": "unassigned",
+   "regions": [
+    10
+   ]
+  },
+  {
+   "label": "auto_12",
+   "kind": "unassigned",
+   "regions": [
+    12
+   ]
+  },
+  {
+   "label": "auto_14",
+   "kind": "unassigned",
+   "regions": [
+    14
+   ]
+  }
+ ]
+}
