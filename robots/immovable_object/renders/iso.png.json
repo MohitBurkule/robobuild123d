@@ -1,0 +1,85 @@
+{
+ "spec": "/tmp/work10_immovable_object/robots/immovable_object/spec.json",
+ "rendered_at": 1795062176.0848339,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "shield",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_mount_fork_0",
+  "dt_mount_fork_1",
+  "dt_mount_fork_2",
+  "dt_mount_fork_3",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_esc",
+  "el_switch",
+  "fs_look_chassis_0",
+  "fs_look_chassis_1",
+  "fs_look_chassis_2",
+  "fs_look_chassis_3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    8.5,
+    -4.5
+   ],
+   "to": [
+    -4.5,
+    -15.5,
+    -5.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -15.5,
+    -5.0
+   ],
+   "to": [
+    -16.5,
+    -8.5,
+    4.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    15.5,
+    3.5,
+    4.5
+   ],
+   "to": [
+    7.5,
+    20.0,
+    -2.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    3.5,
+    4.5
+   ],
+   "to": [
+    -7.5,
+    20.0,
+    -2.0
+   ]
+  }
+ }
+}
