@@ -730,6 +730,143 @@ def score(spec_path, az=None, el=None):
     return agg, res
 
 
+
+# ---------------------------------------------------------------- export: every part / colour addressable
+def colour_name(rgb) -> str:
+    """Plain colour name of an RGB triple (black, white, grey, silver, red, orange, yellow, green, cyan, blue, purple, pink, brown)."""
+    import colorsys
+
+    r, g, b = (c / 255.0 for c in rgb)
+    h, s, v = colorsys.rgb_to_hsv(r, g, b)
+    h *= 360
+    if v < 0.18:
+        return "black"
+    if s < 0.14:
+        return "white" if v > 0.85 else ("silver" if v > 0.6 else "grey")
+    if v < 0.45 and 10 <= h < 50:
+        return "brown"
+    for hi, nm in ((15, "red"), (45, "orange"), (70, "yellow"), (165, "green"), (200, "cyan"), (255, "blue"), (290, "purple"), (335, "pink"), (361, "red")):
+        if h < hi:
+            if nm == "red" and v > 0.6 and s < 0.45:
+                return "pink"
+            return nm
+    return "red"
+
+
+def slug(label: str, used: set) -> str:
+    import re
+
+    s_ = re.sub(r"[^a-z0-9]+", "_", str(label).lower()).strip("_") or "part"
+    k, i = s_, 2
+    while k in used:
+        k, i = f"{s_}_{i}", i + 1
+    used.add(k)
+    return k
+
+
+def export(segfile) -> dict:
+    """Write every part as its own addressable mask + metadata, next to the segment file:
+
+        segments/<stem>/index.json         parts (label, slug, kind, rgb, hex, colour, area, bbox, polygon, mask file) and colour groups
+        segments/<stem>/masks/<slug>.png   one binary mask per part (white = part), size = <stem>.parts_id.png
+        segments/<stem>/colours/<name>.png union of all parts of one colour name (red, black, silver, ...)
+        segments/<stem>.parts_id.png       uint16 id map, pixel value = part number (1-based, order of index.json `parts`), 0 = background
+
+    Coordinates in index.json are fractions of the FULL photo (0..1); masks live in the cropped frame given by `crop`. Use `load_parts`
+    to read them back (by label, slug or colour name)."""
+    import cv2
+    from PIL import Image
+
+    sf = Path(segfile)
+    base = sf.parents[2]
+    d = load_segments(sf)
+    photo = d["photo"]
+    m, crop = photo_mask_for(base, photo)
+    H, W = m.shape
+    parts, masks = raster_parts(d, base, m.shape, crop)
+    im = Image.open(base / "reference" / photo).convert("RGB")
+    if crop:
+        W0, H0 = im.size
+        im = im.crop((int(crop[0] * W0), int(crop[1] * H0), int(crop[2] * W0), int(crop[3] * H0)))
+    a = np.asarray(im.resize((W, H)))
+    x0, y0, x1, y1 = crop or (0, 0, 1, 1)
+    out = sf.parent / sf.stem
+    (out / "masks").mkdir(parents=True, exist_ok=True)
+    (out / "colours").mkdir(exist_ok=True)
+    for old in list((out / "masks").glob("*.png")) + list((out / "colours").glob("*.png")):
+        old.unlink()
+    ids = np.zeros((H, W), np.uint16)
+    used: set = set()
+    rows, groups = [], {}
+    total = max(1, int(m.sum()))
+
+    def fr(px_x, px_y):
+        return [round(x0 + px_x / W * (x1 - x0), 4), round(y0 + px_y / H * (y1 - y0), 4)]
+
+    for i, (p_, mk) in enumerate(zip(parts, masks), 1):
+        mk = mk & m
+        if not mk.any():
+            continue
+        sl = slug(p_.get("label", f"part{i}"), used)
+        ids[mk & (ids == 0)] = i
+        er = cv2.erode(mk.astype(np.uint8), np.ones((3, 3), np.uint8), iterations=2).astype(bool)
+        px_ = a[er if er.sum() >= 20 else mk]
+        rgb = [int(v) for v in np.median(px_, axis=0)]
+        cn = colour_name(rgb)
+        ys, xs = np.nonzero(mk)
+        cs, _ = cv2.findContours(mk.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        poly = []
+        for c in sorted(cs, key=cv2.contourArea, reverse=True)[:3]:
+            if cv2.contourArea(c) < 6:
+                continue
+            ap = cv2.approxPolyDP(c, 0.8, True)[:, 0, :]
+            poly.append([fr(float(px), float(py)) for px, py in ap])
+        Image.fromarray((mk * 255).astype(np.uint8)).convert("1").save(out / "masks" / f"{sl}.png")
+        groups.setdefault(cn, []).append((sl, mk))
+        rows.append({"n": i, "label": p_.get("label"), "slug": sl, "kind": p_.get("kind"), "rgb": rgb, "hex": "#%02x%02x%02x" % tuple(rgb),
+                     "colour": cn, "area_frac": round(float(mk.sum()) / total, 5),
+                     "bbox": fr(xs.min(), ys.min()) + fr(xs.max() + 1, ys.max() + 1),
+                     "centroid": fr(float(xs.mean()), float(ys.mean())), "polygons": poly, "mask": f"masks/{sl}.png",
+                     "sam_score": p_.get("sam_score")})
+    cgroups = {}
+    for cn, lst in sorted(groups.items()):
+        u = np.zeros((H, W), bool)
+        for _, mk in lst:
+            u |= mk
+        Image.fromarray((u * 255).astype(np.uint8)).convert("1").save(out / "colours" / f"{cn}.png")
+        cgroups[cn] = {"parts": [sl for sl, _ in lst], "area_frac": round(float(u.sum()) / total, 5), "mask": f"colours/{cn}.png"}
+    Image.fromarray(ids).save(sf.parent / f"{sf.stem}.parts_id.png")
+    idx = {"photo": photo, "crop": crop, "size": [W, H], "id_map": f"../{sf.stem}.parts_id.png", "parts": rows, "colour_groups": cgroups}
+    (out / "index.json").write_text(json.dumps(idx))
+    return {"parts": len(rows), "colours": {k: len(v["parts"]) for k, v in cgroups.items()}, "dir": str(out)}
+
+
+def load_parts(segdir):
+    """Read an export back: returns {'index': dict, 'part(key)': bool mask by label/slug, 'colour(name)': bool mask}."""
+    from PIL import Image
+
+    seg = Path(segdir)
+    idx = json.loads((seg / "index.json").read_text())
+    by = {}
+    for r in idx["parts"]:
+        by[r["slug"]] = r
+        by[str(r["label"]).lower()] = r
+
+    class P:
+        index = idx
+
+        @staticmethod
+        def part(key):
+            r = by[str(key).lower()]
+            return np.asarray(Image.open(seg / r["mask"])) > 0
+
+        @staticmethod
+        def colour(name):
+            return np.asarray(Image.open(seg / idx["colour_groups"][name]["mask"])) > 0
+
+    return P
+
+
 def add_cli(sub):
     p = sub.add_parser("partseg", help="segment reference photos into parts (LLM drawn polygons) and score against the model")
     ps = p.add_subparsers(dest="pcmd", required=True)
@@ -746,8 +883,12 @@ def add_cli(sub):
     r.set_defaults(func=lambda a: print(f"{regions(Path(a.spec_dir), a.photo, a.n, a.merge, method=a.method).max()} regions; view: {a.spec_dir}/reference/segments/{Path(a.photo).stem}.regions.view.png") or 0)
     sm = ps.add_parser("sam", help="SAM (Segment Anything) from Haiku click prompts: exact masks per named part")
     sm.add_argument("segfile")
+    sm.add_argument("--pps", type=int, default=16, help="SAM automatic grid points per side (24 = finer but slower)")
     sm.add_argument("--redo-auto", action="store_true", help="recompute the SAM automatic base (slow, ~1 min); default: reuse <stem>.sam_auto.png if it exists")
-    sm.set_defaults(func=lambda a: print(json.dumps(sam(a.segfile, auto=True if a.redo_auto else None), indent=1)) or 0)
+    sm.set_defaults(func=lambda a: print(json.dumps(sam(a.segfile, auto=True if a.redo_auto else None, points_per_side=a.pps), indent=1)) or 0)
+    ex = ps.add_parser("export", help="write every part and every colour group as its own addressable mask + index.json")
+    ex.add_argument("segfile")
+    ex.set_defaults(func=lambda a: print(json.dumps(export(a.segfile), indent=1)) or 0)
     f = ps.add_parser("fuse", help="round of brush polygons correcting the auto regions (split / carve), in place")
     f.add_argument("segfile")
     f.add_argument("--split-frac", type=float, default=0.15, help="a region is split along a big brush polygon covering this share of it")
