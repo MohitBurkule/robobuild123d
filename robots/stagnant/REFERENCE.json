@@ -1,0 +1,22 @@
+{
+ "robot_type": "wedge",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "stagnant.aws62.webp",
+  "stagnant.aws67.webp"
+ ],
+ "mask_mode": {
+  "stagnant.aws62.webp": "textured"
+ },
+ "view": {
+  "stagnant.aws62.webp": "front",
+  "stagnant.aws67.webp": "front"
+ },
+ "elevation": {
+  "stagnant.aws62.webp": 45,
+  "stagnant.aws67.webp": 25
+ }
+}
