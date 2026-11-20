@@ -1,0 +1,22 @@
+{
+ "robot_type": "vertical_spinner",
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "position": "middle",
+  "width_frac": 0.35,
+  "teeth": 1
+ },
+ "wheels": 2,
+ "source": "read from reference photos by Sonnet",
+ "view": {
+  "delta_v.aws76.webp": "front_left_iso",
+  "delta_v.aws72.webp": "front_right_iso",
+  "delta_v.aws74.webp": "front_right_iso"
+ },
+ "view_source": {
+  "delta_v.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "delta_v.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "delta_v.aws74.webp": "user camera pick (azimuth 45, elevation 35); replaces the automatic label"
+ }
+}
