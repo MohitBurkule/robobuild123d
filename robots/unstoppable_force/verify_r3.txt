@@ -1,0 +1,128 @@
+BLOCKERS: 56
+  [ran] integrity 0.05s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 3.57s
+  [ran] connections 0.58s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.09s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.43s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.07s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.35s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.05s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+unstoppable force: ok=False 56 blockers in 45 root causes, mass 354.0/150 g
+1. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, -0.00), volume 241622.5 mm3
+   |   OVERLAP `weapon` 12.22 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_l` 4.38 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_r` 4.38 mm (allowed 0.08)
+2. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -44.90..-41.10  y -44.90..-41.10  z 14.60..16.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-43.00, -43.00, 15.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, -0.00), volume 241622.5 mm3
+3. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -44.90..-41.10  y -44.90..-41.10  z 14.60..16.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-43.00, -43.00, 15.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 41.10..44.90  y -44.90..-41.10  z 14.60..16.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (43.00, -43.00, 15.30), volume 15.9 mm3
+4. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -25.00..25.00  y 24.93..51.07  z -15.00..13.01  size 50.00 x 26.14 x 28.02 mm
+   |   centre (0.00, 38.00, -0.99), volume 27327.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 38.0, -1.0] range 0..360 default 0
+   |   OVERLAP `chassis` 12.22 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_weapon` 1.78 mm (allowed 0.08)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_shaft_weapon`. (+1 consequences)
+   | weapon: x -25.00..25.00  y 24.93..51.07  z -15.00..13.01  size 50.00 x 26.14 x 28.02 mm
+   |   centre (0.00, 38.00, -0.99), volume 27327.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 38.0, -1.0] range 0..360 default 0
+   |   OVERLAP `chassis` 12.22 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_weapon` 1.78 mm (allowed 0.08)
+6. [mass.over] 354.0 g (range 296.1 to 411.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+7. [proxy.interference] `chassis` and `weapon` overlap by 12.22 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, -0.00), volume 241622.5 mm3
+   |   OVERLAP `weapon` 12.22 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_l` 4.38 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_r` 4.38 mm (allowed 0.08)
+8. [proxy.interference] `chassis` and `drum_arm_l` overlap by 4.38 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, -0.00), volume 241622.5 mm3
+   |   OVERLAP `weapon` 12.22 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_l` 4.38 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_r` 4.38 mm (allowed 0.08)
+9. [proxy.interference] `chassis` and `drum_arm_r` overlap by 4.38 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, -0.00), volume 241622.5 mm3
+   |   OVERLAP `weapon` 12.22 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_l` 4.38 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_r` 4.38 mm (allowed 0.08)
+10. [proxy.interference] `chassis` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, -0.00), volume 241622.5 mm3
+   |   OVERLAP `weapon` 12.22 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_l` 4.38 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_r` 4.38 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, -0.00), volume 241622.5 mm3
+   |   OVERLAP `weapon` 12.22 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_l` 4.38 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_r` 4.38 mm (allowed 0.08)
+12. [proxy.interference] `chassis` and `dt_shaft_weapon` overlap by 1.78 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, -0.00), volume 241622.5 mm3
+   |   OVERLAP `weapon` 12.22 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_l` 4.38 mm (allowed 0.08)
+   |   OVERLAP `drum_arm_r` 4.38 mm (allowed 0.08)
+... 33 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 354.0 g of 150 g (-204.0 g margin)
+    chassis                   230.02 g  fills 81% of its box  <- solid block? a tub should be a shell
+    weapon                     73.78 g  fills 75% of its box  <- solid block? a tub should be a shell
+    wheel_l0                    9.26 g  fills 79% of its box
+    wheel_r0                    9.26 g  fills 79% of its box
+    drum_arm_l                  7.95 g  fills 97% of its box
+    drum_arm_r                  7.95 g  fills 97% of its box
+    dt_shaft_weapon             5.96 g  fills 79% of its box
+    dt_hub_wheel_l0             2.62 g  fills 79% of its box
+    dt_hub_wheel_r0             2.62 g  fills 79% of its box
+    dt_axle_wheel_r0            1.15 g  fills 79% of its box
+    dt_axle_wheel_l0            1.15 g  fills 79% of its box
+    dt_nut_wheel_l0             0.27 g  fills 79% of its box
+    dt_nut_wheel_r0             0.27 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    mass.over: 354.0 g (range 296.1 to 411.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 2 hit / 0 miss, group 0 hit / 31 miss, inside 6 hit / 11 miss, likeness 3 hit / 0 miss, min_gap 60 hit / 35 miss, overlap 181 hit / 261 miss, part_check 2 hit / 0 miss, part_geom 17 hit / 0 miss, ray 30 hit / 55 miss

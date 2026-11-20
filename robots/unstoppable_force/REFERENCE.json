@@ -1,0 +1,24 @@
+{
+ "robot_type": "drum",
+ "wheels": 2,
+ "weapon": {
+  "kind": "drum",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "unstoppable_force.aws69.webp",
+  "unstoppable_force.aws71.webp",
+  "unstoppable_force.aws72.webp"
+ ],
+ "view": {
+  "unstoppable_force.aws69.webp": "front_left_iso",
+  "unstoppable_force.aws71.webp": "front_left_iso",
+  "unstoppable_force.aws72.webp": "front_left_iso"
+ },
+ "view_source": {
+  "unstoppable_force.aws69.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "unstoppable_force.aws71.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "unstoppable_force.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
+}
