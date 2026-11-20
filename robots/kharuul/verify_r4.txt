@@ -1,0 +1,62 @@
+BLOCKERS: 2
+  [ran] integrity 0.14s
+  [proxy] wiring 1.16s
+  [ran] mass 0.00s
+  [proxy] interference 17.87s
+  [ran] connections 2.91s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.53s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.80s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.08s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 24.14s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.19s
+  [ran] dfm 0.11s
+  [ran] realworld 0.14s
+kharuul: ok=False 2 blockers in 2 root causes, mass 147.3/150 g
+1. [likeness.view] `reference/kharuul.aws67.webp` is declared `front_left_iso` (IoU 0.65 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 210) (IoU 0.74).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+2. [likeness.silhouette] `reference/kharuul.aws67.webp`: best silhouette IoU 0.65 at camera front_left_iso (elevation 45, azimuth 150) (need 0.82: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.82). Regions (photo frame, left third first) 0.51 / 0.81 / 0.51: worst = rear third. Height/length 0.76 model vs 0.84 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 147.3 g of 150 g (+2.7 g margin)
+    chassis                    63.27 g  fills 44% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    scoop                       9.42 g  fills 17% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    2.69 g  fills 57% of its box
+    wheel_r0                    2.69 g  fills 57% of its box
+    wheel_l1                    2.69 g  fills 57% of its box
+    wheel_r1                    2.69 g  fills 57% of its box
+    label                       2.53 g  fills 73% of its box
+    dt_hub_wheel_l0             1.04 g  fills 65% of its box
+    dt_hub_wheel_r0             1.04 g  fills 65% of its box
+    dt_hub_wheel_l1             1.04 g  fills 65% of its box
+    dt_hub_wheel_r1             1.04 g  fills 65% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 147.3 g (range 124.8 to 169.7 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 18 miss
