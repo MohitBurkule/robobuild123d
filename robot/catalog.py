@@ -458,12 +458,23 @@ def split_outrunner(e):
 
     def half(lo, hi):
         return minus({"type": "intersect", "items": [e.shape, at(box(hi - lo, big, big), 0.5 * (lo + hi), 0, 0)]}, bore)
+    br = float(pr.get("bell_r", 9.0))
+    wall = max(1.0, br * 0.2)
+    bore_r = max(sr + 0.5, br - wall)
+    stator_r = max(sr + 0.3, bore_r - 0.5)
+    cap_t = min(1.5, float(pr["bell_len"]) * 0.2)
+    cav_lo, cav_hi = xs - 0.1, x1 - cap_t
+    cav = at(cyl_x(bore_r, cav_hi - cav_lo), 0.5 * (cav_lo + cav_hi), 0, 0)
+    core_lo, core_hi = xs - SPLIT_GAP - 0.1, cav_hi - 0.4
+    core = minus(at(cyl_x(stator_r, core_hi - core_lo), 0.5 * (core_lo + core_hi), 0, 0), bore)
+    fixed_sh = {"type": "union", "items": [half(x0 - big, xs - SPLIT_GAP), core]} if core_hi > core_lo + 0.5 else half(x0 - big, xs - SPLIT_GAP)
+    bell_sh = minus(half(xs, x1 + 0.01), [cav]) if cav_hi > cav_lo + 0.5 else half(xs, x1 + 0.01)
     frac = float(pr.get("bell_mass_frac", 0.5))
     fixed = CatalogEntry(e.id + SPLIT_FIXED, "weapon_motor", e.name + " (fixed half: base, stator, leads)", round(e.mass_g * (1 - frac), 3), e.confidence,
-                         half(x0 - big, xs - SPLIT_GAP), dict(e.ports), dict(e.shaft) if e.shaft else None,
+                         fixed_sh, dict(e.ports), dict(e.shaft) if e.shaft else None,
                          {**pr, "bell_mass_frac": 0.0, "rotor_part": e.id + SPLIT_BELL, "half_of": e.id}, e.color, e.source)
     bell = CatalogEntry(e.id + SPLIT_BELL, "other", e.name + " (bell: rotating can)", round(e.mass_g * frac, 3), e.confidence,
-                        half(xs, x1 + 0.01), {}, dict(e.shaft) if e.shaft else None, {"half_of": e.id}, e.color, e.source)
+                        bell_sh, {}, dict(e.shaft) if e.shaft else None, {"half_of": e.id}, e.color, e.source)
     return fixed, bell
 
 
