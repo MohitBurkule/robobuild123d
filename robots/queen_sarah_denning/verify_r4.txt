@@ -1,0 +1,84 @@
+BLOCKERS: 8
+  [ran] integrity 0.10s
+  [proxy] wiring 1.86s
+  [ran] mass 0.00s
+  [proxy] interference 0.36s
+  [ran] connections 0.00s
+  [ran] legal 0.02s
+  [ran] fasteners 0.09s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.62s
+  [ran] dynamics 0.00s
+  [ran] strength 0.11s
+  [ran] printability 1.70s
+  [ran] process 0.00s
+  [ran] electrical 1.37s
+  [ran] combat 0.16s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.11s
+  [ran] bom 0.01s
+  [ran] wire_review 0.65s
+  [ran] fastener_record 0.00s
+  [ran] likeness 51.07s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.34s
+  [ran] dfm 0.16s
+  [ran] realworld 1.43s
+queen sarah denning: ok=False 7 blockers in 7 root causes, mass 189.8/150 g
+1. [proxy.wiring] Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+2. [proxy.wiring] Wire `w_sig_flipper` (`el_rx_esc.wpn` to `el_servo_flipper.signal`): the baseline route is now blocked by `chassis` (2 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -50.00..50.00  y -55.00..55.00  z -10.00..26.00  size 100.00 x 110.00 x 36.00 mm
+   |   centre (-0.00, 0.00, 8.00), volume 101546.2 mm3
+   |   overlap allowed `scoop` 0.35 mm (allowed inf)
+   |   overlap allowed `eye_chassis` 0.21 mm (allowed inf)
+   |   overlap allowed `fs_look_top_plate_0` 0.07 mm (allowed inf)
+3. [mass.over] 189.8 g (range 157.2 to 222.4 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+4. [wire.render_wires] 2 of 2 robot render(s) do not draw all 5 wires: renders/iso.png: wire `w_m1` not drawn; renders/top.png: wire `w_m1` not drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+5. [wire.render_count] iso.png: 4 routes vs 5 spec wires (missing ['w_m1']); top.png: 4 routes vs 5 spec wires (missing ['w_m1'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+6. [likeness.view] `reference/queen_sarah_denning.aws70.webp` is declared `top` (IoU 0.68 there) but the model matches it better from front (elevation 45, azimuth 90) (IoU 0.76).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+7. [likeness.silhouette] `reference/queen_sarah_denning.aws70.webp`: best silhouette IoU 0.68 at camera top (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.71). Regions (photo frame, left third first) 0.62 / 0.74 / 0.66: worst = front third. Height/length 1.27 model vs 1.08 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 189.8 g of 150 g (-39.8 g margin)
+    chassis                    96.67 g  fills 26% of its box
+    flipper                    24.37 g  fills 100% of its box  <- solid block? a tub should be a shell
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_servo_flipper            9.00 g  fills 75% of its box
+    scoop                       5.14 g  fills 21% of its box
+    top_plate                   4.30 g  fills 87% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    3.37 g  fills 57% of its box
+    wheel_r0                    3.37 g  fills 57% of its box
+    dt_hub_wheel_l0             1.27 g  fills 67% of its box
+    dt_hub_wheel_r0             1.27 g  fills 67% of its box
+    eye_chassis                 0.82 g  fills 63% of its box
+    eye_top_plate               0.82 g  fills 63% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fs_look_top_plate_0         0.28 g  fills 27% of its box
+    fs_look_top_plate_1         0.28 g  fills 27% of its box
+    fs_look_top_plate_2         0.28 g  fills 27% of its box
+    fs_look_top_plate_3         0.28 g  fills 27% of its box
+    iris_chassis                0.09 g  fills 78% of its box
+    iris_top_plate              0.09 g  fills 78% of its box
+    mass.over: 189.8 g (range 157.2 to 222.4 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 7 miss, group 0 hit / 31 miss, inside 5 hit / 31 miss, likeness 2 hit / 0 miss, min_gap 21 hit / 0 miss, overlap 218 hit / 16 miss, part_check 5 hit / 7 miss, part_geom 70 hit / 0 miss, ray 45 hit / 109 miss
+
+FULL WIRING GROUP (tier full, --only wiring): 1 blocker(s) counted in the total above
+[BLOCKER] wiring.route - Wire `w_m1` (26 AWG, 1.3 mm thick) from `el_rx_esc.m1` to `dm_wheel_l0.terminals` has no clear path; it gets within 7.6 mm of the end at (3.0, -29.7, 0.1) and `chassis` blocks it. parts: el_rx_esc.m1, dm_wheel_l0.terminals at (3.0, -29.7, 0.1)

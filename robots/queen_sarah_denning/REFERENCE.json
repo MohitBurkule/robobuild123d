@@ -1,0 +1,25 @@
+{
+ "robot_type": "flipper",
+ "wheels": 2,
+ "weapon": {
+  "kind": "flipper",
+  "axis": "x"
+ },
+ "photos": [
+  "queen_sarah_denning.aws70.webp",
+  "queen_sarah_denning.aws71.webp"
+ ],
+ "view": {
+  "queen_sarah_denning.aws69.webp": "front",
+  "queen_sarah_denning.aws70.webp": "top",
+  "queen_sarah_denning.aws71.webp": "front"
+ },
+ "elevation": {
+  "queen_sarah_denning.aws69.webp": 70,
+  "queen_sarah_denning.aws70.webp": 45,
+  "queen_sarah_denning.aws71.webp": 25
+ },
+ "view_source": {
+  "queen_sarah_denning.aws70.webp": "user camera pick (azimuth 90, elevation 90); replaces the automatic label"
+ }
+}

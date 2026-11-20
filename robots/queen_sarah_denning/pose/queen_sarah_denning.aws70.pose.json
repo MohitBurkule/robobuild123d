@@ -1,0 +1,101 @@
+{
+ "photo": "queen_sarah_denning.aws70.webp",
+ "evidence": [
+  "photo mask",
+  "monocular depth (Depth Anything V2 small)"
+ ],
+ "declared_view": "top",
+ "camera": {
+  "azimuth": 76.35,
+  "elevation": 43.27,
+  "roll": 0.28,
+  "distance_mm": 321.9,
+  "intrinsics_px": {
+   "fx": 807.3,
+   "fy": 807.3,
+   "cx": 169.9,
+   "cy": 140.8,
+   "width": 327,
+   "height": 358,
+   "fov_deg_long_side": 25.0
+  },
+  "camera_position_mm": [
+   55.3,
+   227.8,
+   220.6
+  ],
+  "robot_in_camera_4x4": [
+   [
+    -0.97254,
+    0.23272,
+    0.0036,
+    -0.0
+   ],
+   [
+    0.15696,
+    0.6672,
+    -0.72815,
+    0.0
+   ],
+   [
+    -0.17186,
+    -0.70759,
+    -0.68541,
+    321.87415
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "view_string": "76,43!"
+ },
+ "scores": {
+  "iou": 0.814,
+  "depth_corr": 0.696
+ },
+ "confidence": "ambiguous",
+ "runner_up_loss_gap": 0.014,
+ "alternatives": [
+  {
+   "azimuth": 85.3,
+   "elevation": 52.7,
+   "loss": 0.298,
+   "iou": 0.817,
+   "depth_corr": 0.672
+  },
+  {
+   "azimuth": 254.0,
+   "elevation": 71.6,
+   "loss": 0.306,
+   "iou": 0.812,
+   "depth_corr": 0.662
+  },
+  {
+   "azimuth": 86.0,
+   "elevation": 91.0,
+   "loss": 0.311,
+   "iou": 0.799,
+   "depth_corr": 0.685
+  },
+  {
+   "azimuth": 186.7,
+   "elevation": 80.5,
+   "loss": 0.356,
+   "iou": 0.743,
+   "depth_corr": 0.718
+  }
+ ],
+ "model_bbox_centre_mm": [
+  0.0,
+  10.9,
+  10.0
+ ],
+ "assumptions": [
+  "robot flat on floor",
+  "square pixels",
+  "spec articulation as built"
+ ]
+}
