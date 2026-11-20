@@ -21,6 +21,22 @@ Battery, ESC, receiver and switch in a row (catalog parts), centred on the origi
 
 `battery='lipo_2s_180', esc='bbb_malenki_nano', receiver='rx_fs_ia6_decased', switch='switch_slide_bbb_ant', gap=2.0, along='y'`
 
+## fork_set
+
+Fork set (robot/modules/forks.py): `n` tines `length` x `width` (tip = width*taper), `thick` sheet, `pitch` mm
+apart (or outer centres `spread` apart), pitched `tilt_deg` down; style plate (own tab per tine) | sheet (one comb).
+Origin = hinge axis / tab bend line, tines +y. hinge {pin_d, range: [min, max], tab_h} adds pin, lugs + mount tab;
+lift {servo, angle} adds a coaxial servo + horn link. Symmetric about `x`; `mirror` (here or in the use entry)
+adds the mirror-image set at -x.
+Parts: rigid plate -> `<id>_<j>` (kind fork, tab with `holes` x `hole_d` screw holes); rigid sheet -> `<id>`;
+hinged -> `<id>` knuckle tube (revolute about +x, joint `range` deg, + = tips up), `<id>_<j>` tines or `<id>_sheet`
+(children, kind other), `<id>_mount` (lugs + tab with screw holes), `<id>_pin` (kind pin); lift adds `<id>_horn`
+and `<id>_servo`. Hinged parts are kind other with no `weapon`, so the kinematics checker sweeps only the joint
+range: long hinged forks on a spinner are not swept through a full circle (what blocks `kind: weapon` forks).
+In kit.json the same set is `"forks": {"style": "plate" | "sheet", ...}` (placed at the nose, tips on the floor).
+
+`style='plate', n=2, length=25.0, width=6.0, taper=1.0, thick=1.5, pitch=None, spread=30.0, tilt_deg=0.0, tab=8.0, tab_width=None, holes=1, hole_d=2.2, x=0.0, mirror=False, hinge=None, lift=None, material='titanium', process='laser'`
+
 ## hinged_arm
 
 Flipper / lifter / axe / hammer arm. Origin = hinge (axis x), arm runs +y. head [x, y, z] box at the tip.
