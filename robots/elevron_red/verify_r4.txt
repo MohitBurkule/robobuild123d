@@ -1,0 +1,119 @@
+BLOCKERS: 11
+  [ran] integrity 0.11s
+  [proxy] wiring 2.90s
+  [ran] mass 0.00s
+  [proxy] interference 23.90s
+  [ran] connections 2.57s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.08s
+  [ran] shape 1.11s
+  [ran] dynamics 0.01s
+  [ran] strength 0.01s
+  [ran] printability 2.91s
+  [ran] process 0.03s
+  [ran] electrical 40.91s
+  [ran] combat 0.20s
+  [ran] physics 0.01s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.26s
+  [ran] bom 0.01s
+  [ran] wire_review 4.46s
+  [ran] fastener_record 0.00s
+  [ran] likeness 31.63s
+  [ran] drive_recess 0.01s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.60s
+  [ran] dfm 0.37s
+  [ran] realworld 16.80s
+elevron red: ok=False 11 blockers in 11 root causes, mass 176.0/150 g
+1. [mass.over] 176.0 g (range 149.7 to 202.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `lift_arm` overlap by 2.38 mm (allowed 0.08).
+   | chassis: x -39.00..39.00  y -46.00..46.00  z -10.00..10.00  size 78.00 x 92.00 x 20.00 mm
+   |   centre (-0.00, -0.00, 0.00), volume 56267.7 mm3
+   |   OVERLAP `lift_arm` 2.38 mm (allowed 0.08)
+   |   gap to `fork_0` 0.00 mm (touching)
+   |   gap to `fork_1` 0.00 mm (touching)
+3. [proxy.interference] `lift_arm` and `dm_wheel_l1` overlap by 0.10 mm (allowed 0.08).
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+4. [proxy.interference] `lift_arm` and `dm_wheel_r1` overlap by 0.10 mm (allowed 0.08).
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+5. [proxy.sweep] joint `lift_arm`: `lift_arm` hits `chassis` 2.38 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lift_arm` lists the closest approach to every part.
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+6. [connection.floating] `pod_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wheel_l0`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_l: x 20.00..40.00  y -30.00..0.00  z 12.00..24.00  size 20.00 x 30.00 x 12.00 mm
+   |   centre (30.00, -15.00, 18.00), volume 7200.0 mm3
+   |   gap to `wheel_l0` 0.00 mm (touching)
+   |   gap to `chassis` 2.00 mm
+   | wheel_l0: x 33.00..43.00  y -38.00..-14.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+7. [connection.floating] `pod_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wheel_r0`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_r: x -40.00..-20.00  y -30.00..0.00  z 12.00..24.00  size 20.00 x 30.00 x 12.00 mm
+   |   centre (-30.00, -15.00, 18.00), volume 7200.0 mm3
+   |   gap to `wheel_r0` 0.00 mm (touching)
+   |   gap to `chassis` 2.00 mm
+   | wheel_r0: x -43.00..-33.00  y -38.00..-14.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+8. [power.weapon_motor] lifter `lift_arm` has no actuator (`weapon.motor` / `actuated_by`).
+   fix: Add a catalog servo (e.g. `servo_cs07`) or geared motor and name it in `weapon.motor` (or `actuated_by`); a brushless motor needs `weapon.reduction` >= 10.
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+9. [likeness.silhouette] `reference/elevron_red.aws72.webp`: best silhouette IoU 0.70 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.76). Regions (photo frame, left third first) 0.74 / 0.83 / 0.41: worst = rear third. Height/length 0.72 model vs 0.68 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+10. [likeness.silhouette] `reference/elevron_red.aws74.webp`: best silhouette IoU 0.65 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.69). Regions (photo frame, left third first) 0.76 / 0.81 / 0.15: worst = rear third. Height/length 0.55 model vs 0.54 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+11. [geom.near_miss_hole] `chassis`: 2 pair(s) of cylinders meant coaxial have axes less than 0.1 mm apart but not on one line. World mm: [2.04, 2.72, 4.03] axes 0.0306 mm apart (d6.88 / d6.83); [2.04, -19.76, 4.03] axes 0.0332 mm apart (d6.83 / d6.88).
+   fix: Place the counterbore / second bore at the SAME centre as the through hole: one centre point (one variable or one `Pos`) used by both cuts, not two typed coordinates.
+   | chassis: x -39.00..39.00  y -46.00..46.00  z -10.00..10.00  size 78.00 x 92.00 x 20.00 mm
+   |   centre (-0.00, -0.00, 0.00), volume 56267.7 mm3
+   |   OVERLAP `lift_arm` 2.38 mm (allowed 0.08)
+   |   gap to `fork_0` 0.00 mm (touching)
+   |   gap to `fork_1` 0.00 mm (touching)
+MASS BUDGET:
+  mass 176.0 g of 150 g (-26.0 g margin)
+    chassis                    53.57 g  fills 39% of its box
+    lift_arm                   20.53 g  fills 27% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    pod_l                       6.85 g  fills 100% of its box
+    pod_r                       6.85 g  fills 100% of its box
+    fork_0                      5.93 g  fills 17% of its box
+    fork_1                      5.93 g  fills 17% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    3.37 g  fills 57% of its box
+    wheel_r0                    3.37 g  fills 57% of its box
+    wheel_l1                    3.37 g  fills 57% of its box
+    wheel_r1                    3.37 g  fills 57% of its box
+    dt_hub_wheel_l0             1.35 g  fills 71% of its box
+    dt_hub_wheel_l1             1.35 g  fills 71% of its box
+    dt_hub_wheel_r0             1.35 g  fills 71% of its box
+    dt_hub_wheel_r1             1.35 g  fills 71% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 176.0 g (range 149.7 to 202.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 21 miss
