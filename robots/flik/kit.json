@@ -1,0 +1,133 @@
+{
+ "robot_type": "flipper",
+ "skip_photos": [
+  1
+ ],
+ "body": {
+  "length": 80,
+  "width": 76,
+  "height": 40,
+  "ramp": 0,
+  "side": [
+   [
+    -35,
+    2
+   ],
+   [
+    45,
+    2
+   ],
+   [
+    45,
+    6
+   ],
+   [
+    8,
+    40
+   ],
+   [
+    -35,
+    40
+   ]
+  ]
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -20
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#26282c",
+  "wheel": "#202226",
+  "weapon": "#e8e01c",
+  "fork": "#e8e01c"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     51,
+     0.5
+    ],
+    [
+     53,
+     2
+    ],
+    [
+     4,
+     45
+    ],
+    [
+     2,
+     43.5
+    ]
+   ],
+   "x": [
+    -46,
+    46
+   ],
+   "weapon": "flipper",
+   "pivot": [
+    3,
+    44
+   ],
+   "id": "flipper",
+   "color": "#e8e01c",
+   "material": "polycarbonate",
+   "process": "laser"
+  },
+  {
+   "side": [
+    [
+     -35,
+     2
+    ],
+    [
+     47,
+     2
+    ],
+    [
+     8,
+     40
+    ],
+    [
+     -35,
+     40
+    ]
+   ],
+   "x": [
+    38,
+    40
+   ],
+   "id": "side_panel",
+   "mirror": true,
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#e8e01c"
+  },
+  {
+   "box": [
+    72,
+    34,
+    2
+   ],
+   "at": [
+    0,
+    -17,
+    41
+   ],
+   "id": "top_plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#e8e01c"
+  }
+ ],
+ "name": "flik",
+ "weapon": {
+  "kind": "none"
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "flik.aws70.webp": {
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.716
+ },
+ "flik.aws74.webp": {
+  "view": "60,35!",
+  "azimuth": 60.0,
+  "elevation": 35.0,
+  "iou": 0.685
+ }
+}
