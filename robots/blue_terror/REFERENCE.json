@@ -1,0 +1,16 @@
+{
+ "robot_type": "wedge",
+ "wheels": 6,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "blue-terror.aws72.webp"
+ ],
+ "view": {
+  "blue-terror.aws72.webp": "front_right_iso"
+ },
+ "view_source": {
+  "blue-terror.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
+ }
+}
