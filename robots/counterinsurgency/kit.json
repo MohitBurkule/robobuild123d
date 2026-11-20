@@ -1,0 +1,79 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 50,
+  "width": 120,
+  "height": 14,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 9,
+  "width": 8,
+  "y": [
+   -10
+  ],
+  "outside": false
+ },
+ "forks": {
+  "n": 3,
+  "length": 36,
+  "width": 5,
+  "spread": 18,
+  "tilt_deg": 8
+ },
+ "colors": {
+  "body": "#1c1d20",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#8a8d92"
+ },
+ "name": "counterinsurgency",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "top": [
+    [
+     52,
+     -25
+    ],
+    [
+     60,
+     -25
+    ],
+    [
+     78,
+     95
+    ],
+    [
+     70,
+     96
+    ]
+   ],
+   "z": [
+    0,
+    14
+   ],
+   "color": "#1c1d20",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "side_arm"
+  },
+  {
+   "box": [
+    70,
+    30,
+    8
+   ],
+   "at": [
+    0,
+    -8,
+    20
+   ],
+   "id": "deck",
+   "color": "#1c1d20"
+  }
+ ]
+}

@@ -1,0 +1,219 @@
+{
+ "aggregate": {
+  "photos": 1,
+  "area_weighted_iou": 0.208,
+  "mean_iou": 0.07
+ },
+ "photos": [
+  {
+   "photo": "counterinsurgency.aws76.webp",
+   "camera": {
+    "azimuth": 60.0,
+    "elevation": 35.0
+   },
+   "silhouette_iou": 0.465,
+   "mean_iou": 0.07,
+   "area_weighted_iou": 0.208,
+   "f1_at_0.5": 0.053,
+   "segments": [
+    {
+     "id": "p02",
+     "label": "top-right dome cap",
+     "area": 396,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p22",
+     "label": "auto_8",
+     "area": 99,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p25",
+     "label": "auto_11",
+     "area": 64,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p24",
+     "label": "auto_10",
+     "area": 56,
+     "best_part": "chassis",
+     "iou": 0.0
+    },
+    {
+     "id": "p13",
+     "label": "screw top centre",
+     "area": 44,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p15",
+     "label": "screw top right",
+     "area": 43,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p27",
+     "label": "auto_13",
+     "area": 24,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p03",
+     "label": "top-left roller knob",
+     "area": 7,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p04",
+     "label": "left arm joint block",
+     "area": 35,
+     "best_part": "chassis",
+     "iou": 0.001
+    },
+    {
+     "id": "p14",
+     "label": "screw top middle-right",
+     "area": 47,
+     "best_part": "chassis",
+     "iou": 0.002
+    },
+    {
+     "id": "p18",
+     "label": "auto_4",
+     "area": 40,
+     "best_part": "side_arm_l",
+     "iou": 0.002
+    },
+    {
+     "id": "p23",
+     "label": "auto_9",
+     "area": 120,
+     "best_part": "chassis",
+     "iou": 0.005
+    },
+    {
+     "id": "p21",
+     "label": "auto_7",
+     "area": 376,
+     "best_part": "chassis",
+     "iou": 0.012
+    },
+    {
+     "id": "p19",
+     "label": "auto_5",
+     "area": 686,
+     "best_part": "chassis",
+     "iou": 0.02
+    },
+    {
+     "id": "p05",
+     "label": "left arm joint screw",
+     "area": 82,
+     "best_part": "dm_wheel_l0",
+     "iou": 0.022
+    },
+    {
+     "id": "p26",
+     "label": "auto_12",
+     "area": 246,
+     "best_part": "fork_1",
+     "iou": 0.028
+    },
+    {
+     "id": "p12",
+     "label": "front prong C (right)",
+     "area": 1806,
+     "best_part": "chassis",
+     "iou": 0.034
+    },
+    {
+     "id": "p07",
+     "label": "right arm (rear leg)",
+     "area": 5805,
+     "best_part": "chassis",
+     "iou": 0.035
+    },
+    {
+     "id": "p11",
+     "label": "front prong B (middle, white tip)",
+     "area": 2582,
+     "best_part": "chassis",
+     "iou": 0.043
+    },
+    {
+     "id": "p17",
+     "label": "auto_3",
+     "area": 384,
+     "best_part": "dm_wheel_l0",
+     "iou": 0.048
+    },
+    {
+     "id": "p16",
+     "label": "auto_2",
+     "area": 1751,
+     "best_part": "chassis",
+     "iou": 0.069
+    },
+    {
+     "id": "p20",
+     "label": "auto_6",
+     "area": 870,
+     "best_part": "fork_0",
+     "iou": 0.111
+    },
+    {
+     "id": "p09",
+     "label": "central hinge / motor",
+     "area": 599,
+     "best_part": "fork_1",
+     "iou": 0.112
+    },
+    {
+     "id": "p08",
+     "label": "left front wall / belly",
+     "area": 2839,
+     "best_part": "chassis",
+     "iou": 0.127
+    },
+    {
+     "id": "p01",
+     "label": "top plate (textured lid)",
+     "area": 14496,
+     "best_part": "chassis",
+     "iou": 0.257
+    },
+    {
+     "id": "p06",
+     "label": "left front leg (plow arm)",
+     "area": 7595,
+     "best_part": "side_arm_l",
+     "iou": 0.393
+    },
+    {
+     "id": "p10",
+     "label": "front prong A (left, dark)",
+     "area": 2078,
+     "best_part": "fork_0",
+     "iou": 0.579
+    }
+   ],
+   "unmatched_model_parts": [
+    "wheel_l0",
+    "wheel_r0",
+    "fork_2",
+    "side_arm_r",
+    "dt_hub_wheel_l0",
+    "el_battery"
+   ]
+  }
+ ]
+}
