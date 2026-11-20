@@ -1,0 +1,14 @@
+{
+ "robot_type": "drum",
+ "wheels": 2,
+ "weapon": {
+  "kind": "drum",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "baphomet.aws74.webp",
+  "baphomet.aws76.webp",
+  "baphomet.aws77.webp"
+ ]
+}
