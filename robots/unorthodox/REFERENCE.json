@@ -1,0 +1,26 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "unorthodox.aws74.webp",
+  "unorthodox.aws76.webp"
+ ],
+ "view": {
+  "unorthodox.aws61.webp": "front_left_iso",
+  "unorthodox.aws74.webp": "front_right_iso",
+  "unorthodox.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "unorthodox.aws61.webp": 45,
+  "unorthodox.aws74.webp": 25,
+  "unorthodox.aws76.webp": 25
+ },
+ "view_source": {
+  "unorthodox.aws74.webp": "user camera pick (azimuth 30, elevation 20); replaces the automatic label",
+  "unorthodox.aws76.webp": "user camera pick (azimuth 150, elevation 20); replaces the automatic label"
+ }
+}

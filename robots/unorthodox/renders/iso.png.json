@@ -1,0 +1,48 @@
+{
+ "spec": "/tmp/work10_unorthodox/robots/unorthodox/spec.json",
+ "rendered_at": 1795045456.4099329,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "scoop",
+  "servo",
+  "servo_plate_l",
+  "servo_plate_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_lesc",
+  "el_act_scoop",
+  "el_switch"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.012999999999998652,
+    -4.983,
+    -1.989
+   ],
+   "to": [
+    -4.0,
+    -24.8,
+    -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -24.8,
+    -3.0
+   ],
+   "to": [
+    -11.987,
+    -3.983,
+    9.511
+   ]
+  }
+ }
+}

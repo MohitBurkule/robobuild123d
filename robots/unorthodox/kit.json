@@ -1,0 +1,97 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 62,
+  "width": 72,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -15
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#1c3a2c",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0
+ ],
+ "name": "unorthodox",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     28,
+     2
+    ],
+    [
+     92,
+     0
+    ],
+    [
+     92,
+     1.5
+    ],
+    [
+     31,
+     26
+    ],
+    [
+     28,
+     26
+    ]
+   ],
+   "x": [
+    -62,
+    62
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    30,
+    18
+   ],
+   "id": "scoop",
+   "color": "#2f5a44"
+  },
+  {
+   "box": [
+    34,
+    30,
+    16
+   ],
+   "at": [
+    0,
+    -2,
+    36
+   ],
+   "id": "servo",
+   "color": "#16181a"
+  },
+  {
+   "box": [
+    3,
+    34,
+    18
+   ],
+   "at": [
+    20,
+    -2,
+    36
+   ],
+   "mirror": true,
+   "id": "servo_plate",
+   "color": "#d8b81c"
+  }
+ ]
+}

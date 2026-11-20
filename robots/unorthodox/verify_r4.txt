@@ -1,0 +1,107 @@
+BLOCKERS: 17
+  [ran] integrity 0.06s
+  [proxy] wiring 1.57s
+  [ran] mass 0.00s
+  [proxy] interference 11.94s
+  [ran] connections 1.03s
+  [ran] legal 0.06s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.46s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.79s
+  [ran] process 0.00s
+  [ran] electrical 1.44s
+  [ran] combat 0.10s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
+  [ran] bom 0.01s
+  [ran] wire_review 0.91s
+  [ran] fastener_record 0.00s
+  [ran] likeness 16.20s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.28s
+  [ran] dfm 0.16s
+  [ran] realworld 1.58s
+unorthodox: ok=False 17 blockers in 17 root causes, mass 213.4/150 g
+1. [proxy.wiring] Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+2. [proxy.wiring] Wire `w_m2` (`el_rx_esc.m2` to `dm_wheel_r0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+3. [proxy.wiring] Wire `w_lesc_bat` (`el_switch.out` to `el_lesc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [proxy.wiring] Wire `w_lesc_sig` (`el_rx_esc.wpn` to `el_lesc.rx`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+5. [proxy.wiring] Wire `w_act_scoop` (`el_lesc.m1` to `el_act_scoop.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+6. [mass.over] 213.4 g (range 175.0 to 251.9 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+7. [proxy.interference] `chassis` and `scoop` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -31.00..31.00  z -9.00..17.00  size 72.00 x 62.00 x 26.00 mm
+   |   centre (0.00, 0.00, 4.00), volume 47611.5 mm3
+   |   OVERLAP `scoop` 1.39 mm (allowed 0.08)
+   |   overlap allowed `servo_plate_l` 0.46 mm (allowed inf)
+   |   overlap allowed `servo_plate_r` 0.46 mm (allowed inf)
+8. [proxy.interference] `dm_wheel_l0` and `dm_wheel_r0` overlap by 0.14 mm (allowed 0.08).
+   | dm_wheel_l0: x -1.40..34.60  y -21.00..-9.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
+   |   centre (16.60, -15.00, 0.00), volume 2852.2 mm3
+   |   port terminals: (-1.40, -15.00, 0.00)
+   |   OVERLAP `dm_wheel_r0` 0.14 mm (allowed 0.08)
+   |   gap to `dt_hub_wheel_l0` 0.05 mm
+9. [proxy.sweep] joint `scoop`: `scoop` hits `chassis` 1.39 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
+   | scoop: x -62.00..62.00  y 28.00..92.00  z -11.00..15.00  size 124.00 x 64.00 x 26.00 mm
+   |   centre (0.00, 60.00, 2.00), volume 105741.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 30, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   | chassis: x -36.00..36.00  y -31.00..31.00  z -9.00..17.00  size 72.00 x 62.00 x 26.00 mm
+10. [retention.loose] `el_act_scoop` can move more than 0.5 mm toward +x, -x, +y, -y, +z, -z without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | el_act_scoop: x -15.54..14.56  y 0.02..10.02  z 14.01..26.01  size 30.10 x 10.00 x 12.00 mm
+   |   centre (-0.49, 5.02, 20.01), volume 2404.7 mm3
+   |   port terminals: (-15.84, 5.02, 20.01)
+   |   gap to `chassis` 0.50 mm
+   |   gap to `servo` 0.50 mm
+11. [connection.fused_mismatch] `servo` is fused to `chassis` but they share 0.00 mm3 (need >= 1 mm3); faces that only touch print as two pieces or a paper-thin seam.
+   fix: Overlap the two bodies by at least a wall thickness so they print as one solid, or bolt them.
+   | servo: x -17.00..17.00  y -17.00..13.00  z 17.00..33.00  size 34.00 x 30.00 x 16.00 mm
+   |   centre (0.00, -2.00, 25.00), volume 9800.2 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_lesc` 0.25 mm
+   |   gap to `el_act_scoop` 0.50 mm
+12. [combat.R051] `scoop`: Weapon sweep above the floor is -0.00 mm (needs 0.3 mm).
+   fix: Raise the weapon axle: the weapon would strike the floor.
+   | scoop: x -62.00..62.00  y 28.00..92.00  z -11.00..15.00  size 124.00 x 64.00 x 26.00 mm
+   |   centre (0.00, 60.00, 2.00), volume 105741.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 30, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+... 5 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 213.4 g of 150 g (-63.4 g margin)
+    scoop                     100.67 g  fills 51% of its box
+    chassis                    45.33 g  fills 41% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    servo                       9.33 g  fills 60% of its box
+    el_act_scoop                7.50 g  fills 67% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    el_lesc                     3.00 g  fills 100% of its box
+    wheel_l0                    2.26 g  fills 57% of its box
+    wheel_r0                    2.26 g  fills 57% of its box
+    servo_plate_l               1.75 g  fills 100% of its box
+    servo_plate_r               1.75 g  fills 100% of its box
+    dt_hub_wheel_r0             0.86 g  fills 64% of its box
+    dt_hub_wheel_l0             0.86 g  fills 64% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 213.4 g (range 175.0 to 251.9 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 16 miss

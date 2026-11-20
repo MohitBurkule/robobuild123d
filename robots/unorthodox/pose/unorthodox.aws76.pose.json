@@ -1,0 +1,101 @@
+{
+ "photo": "unorthodox.aws76.webp",
+ "evidence": [
+  "photo mask",
+  "monocular depth (Depth Anything V2 small)"
+ ],
+ "declared_view": "front_left_iso",
+ "camera": {
+  "azimuth": 139.84,
+  "elevation": 19.85,
+  "roll": 4.59,
+  "distance_mm": 349.2,
+  "intrinsics_px": {
+   "fx": 3688.5,
+   "fy": 3688.5,
+   "cx": 985.7,
+   "cy": 394.2,
+   "width": 1831,
+   "height": 1152,
+   "fov_deg_long_side": 27.9
+  },
+  "camera_position_mm": [
+   -251.0,
+   211.8,
+   118.6
+  ],
+  "robot_in_camera_4x4": [
+   [
+    -0.62215,
+    -0.77928,
+    0.0752,
+    0.0
+   ],
+   [
+    -0.31025,
+    0.15722,
+    -0.93756,
+    -0.0
+   ],
+   [
+    0.7188,
+    -0.60663,
+    -0.33959,
+    349.21698
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "view_string": "140,20!"
+ },
+ "scores": {
+  "iou": 0.915,
+  "depth_corr": 0.72
+ },
+ "confidence": "ambiguous",
+ "runner_up_loss_gap": 0.042,
+ "alternatives": [
+  {
+   "azimuth": 138.5,
+   "elevation": 24.9,
+   "loss": 0.189,
+   "iou": 0.913,
+   "depth_corr": 0.709
+  },
+  {
+   "azimuth": 241.4,
+   "elevation": 42.3,
+   "loss": 0.225,
+   "iou": 0.828,
+   "depth_corr": 0.847
+  },
+  {
+   "azimuth": 46.9,
+   "elevation": 20.2,
+   "loss": 0.241,
+   "iou": 0.85,
+   "depth_corr": 0.741
+  },
+  {
+   "azimuth": 265.8,
+   "elevation": 20.6,
+   "loss": 0.309,
+   "iou": 0.808,
+   "depth_corr": 0.665
+  }
+ ],
+ "model_bbox_centre_mm": [
+  0.0,
+  30.5,
+  11.5
+ ],
+ "assumptions": [
+  "robot flat on floor",
+  "square pixels",
+  "spec articulation as built"
+ ]
+}
