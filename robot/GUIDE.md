@@ -731,3 +731,5 @@ Monocular depth (Depth Anything V2 small, ONNX CPU, auto-downloaded) + silhouett
 Writes `<robot>/pose/<photo>.pose.json` (camera az/el/roll, distance, fx/fy/cx/cy, robot-in-camera 4x4, scores, runner-ups,
 `confidence`), `.depth.png` and a side-by-side `.overlay.png`. `view_string` ("az,el!") feeds `robot render --view`.
 Evidence is photo mask + depth only; the declared REFERENCE.json view is reported, not used. Robot assumed flat on floor.
+`robot part-pose SPEC [SEGDIR]`: per partseg part, median metric depth, 3D centroid / normal / extent in the robot frame and
+pairwise offsets (`part_pose.json` in the segments folder). Needs pose-photo + partseg export; trust only if `calibration.r` is high.
